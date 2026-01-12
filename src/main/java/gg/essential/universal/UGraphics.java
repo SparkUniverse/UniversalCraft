@@ -668,7 +668,18 @@ public class UGraphics {
 
     //#if MC>=12106 && !STANDALONE
     //$$ private static class GlyphDrawerImpl implements TextRenderer.GlyphDrawer {
-    //$$     private static final int LIGHT = 0x00F0_00F0; // see GlyphGuiElementRenderState.setupVertices
+        //#if MC >= 26.1
+        //$$ private final GpuTextureView lightTexture = Minecraft.getInstance().gameRenderer.lightmap();
+        //$$ // lightmap() may return either the uiLightmap, which is 1x1, or the regular lightmap (like pre-26.1)
+        //$$ // and the text shader uses texelFetch which ignores the wrapping mode, so we need to pass it 0/0 as the
+        //$$ // light coord or it will simply return 0 as the color.
+        //$$ // for the 0, see GlyphRenderState.buildVertices
+        //$$ // for the 0x00F0_00F0, see e.g. DrawableGizmoPrimitives.Group.renderTexts
+        //$$ private final int light = lightTexture.getWidth(0) == 1 ? 0 : 0x00F0_00F0;
+        //#else
+        //$$ private final GpuTextureView lightTexture = MinecraftClient.getInstance().gameRenderer.getLightmapTextureManager().getGlTextureView();
+        //$$ private final int light = 0x00F0_00F0; // see GlyphGuiElementRenderState.setupVertices
+        //#endif
     //$$     private org.joml.Matrix4f matrix;
     //$$     private RenderPipeline pipeline;
     //$$     private GpuTextureView texture;
@@ -691,7 +702,11 @@ public class UGraphics {
     //$$
     //$$         try (BuiltBuffer builtBuffer = bufferBuilder.endNullable()) {
     //$$             if (builtBuffer == null) return;
-    //$$             GpuTextureView lightTexture = MinecraftClient.getInstance().gameRenderer.getLightmapTextureManager().getGlTextureView();
+                //#if MC >= 26.1
+                //$$ GpuTextureView lightTexture = Minecraft.getInstance().gameRenderer.lightmap();
+                //#else
+                //$$ GpuTextureView lightTexture = MinecraftClient.getInstance().gameRenderer.getLightmapTextureManager().getGlTextureView();
+                //#endif
     //$$             try (URenderPass renderPass = new URenderPass()) {
     //$$                 renderPass.draw(UBuiltBuffer.wrap(builtBuffer), URenderPipeline.wrap(pipeline), builder -> {
     //$$                     RenderPass mcRenderPass = ((URenderPass.DrawCallBuilderImpl) builder).getMc();
@@ -716,7 +731,7 @@ public class UGraphics {
     //$$             texture = drawable.textureView();
     //$$             bufferBuilder = Tessellator.getInstance().begin(pipeline.getVertexFormatMode(), pipeline.getVertexFormat());
     //$$         }
-    //$$         drawable.render(matrix, bufferBuilder, LIGHT, false);
+    //$$         drawable.render(matrix, bufferBuilder, light, false);
     //$$     }
     //#if MC>=12111
     //$$     @Override public void drawGlyph(TextDrawable.DrawnGlyphRect glyph) { draw(glyph); }
@@ -740,13 +755,13 @@ public class UGraphics {
     //$$         BakedGlyph bakedGlyph = drawnGlyph.glyph();
     //$$         if (bakedGlyph.getTexture() == null) return;
     //$$         setupBuffer(bakedGlyph);
-    //$$         bakedGlyph.draw(drawnGlyph, matrix, bufferBuilder, LIGHT, false);
+    //$$         bakedGlyph.draw(drawnGlyph, matrix, bufferBuilder, light, false);
     //$$     }
     //$$
     //$$     @Override
     //$$     public void drawRectangle(BakedGlyph bakedGlyph, BakedGlyph.Rectangle rectangle) {
     //$$         if (bakedGlyph.getTexture() == null) return;
-    //$$         bakedGlyph.drawRectangle(rectangle, matrix, bufferBuilder, LIGHT, false);
+    //$$         bakedGlyph.drawRectangle(rectangle, matrix, bufferBuilder, light, false);
     //$$     }
     //#endif
     //$$ }

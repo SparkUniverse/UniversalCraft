@@ -483,7 +483,7 @@ abstract class UScreen(
             //$$ super.keyPressed(keyCode, 0, modifiers.toInt())
             //#endif
         //$$ }
-        //$$ if (typedChar != 0.toChar()) {
+        //$$ if (!typedChar.isISOControl()) {
             //#if MC>=12109
             //$$ super.charTyped(CharInput(typedChar.code, modifiers.toInt()))
             //#else

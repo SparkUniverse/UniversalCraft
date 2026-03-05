@@ -53,6 +53,7 @@ abstract class UScreen(
     private var guiScaleToRestore = -1
     private var restoringGuiScale = false
     private val screenToRestore: GuiScreen? = if (restoreCurrentGuiOnClose) currentScreen else null
+    var consumableInputHandler: ConsumableInputHandler? = this as? ConsumableInputHandler
     //#if MC>=12106
     //$$ // Background is now draw from the final `renderWithTooltip` method, before we ever get control, so we need
     //$$ // to suppress by default and can only allow during `onDrawScreen`.
@@ -136,11 +137,19 @@ abstract class UScreen(
     //$$
     //#if MC>=12109
     //$$ final override fun keyPressed(input: KeyInput): Boolean {
+    //$$     consumableInputHandler?.let {
+    //$$         return it.uKeyPressed(input.key, 0.toChar(), input.modifiers.toModifiers())
+    //$$     }
+    //$$
     //$$     onKeyPressed(input.key, 0.toChar(), input.modifiers.toModifiers())
     //$$     return false
     //$$ }
     //$$
     //$$ final override fun keyReleased(input: KeyInput): Boolean {
+    //$$     consumableInputHandler?.let {
+    //$$         return it.uKeyReleased(input.key, 0.toChar(), input.modifiers.toModifiers())
+    //$$     }
+    //$$
     //$$     onKeyReleased(input.key, 0.toChar(), input.modifiers.toModifiers())
     //$$     return false
     //$$ }
@@ -148,8 +157,17 @@ abstract class UScreen(
     //$$ final override fun charTyped(input: CharInput): Boolean {
     //$$     val codepoint = input.codepoint
     //$$     if (Character.isBmpCodePoint(codepoint)) {
+    //$$         consumableInputHandler?.let {
+    //$$             return it.uKeyPressed(0, input.codepoint.toChar(), input.modifiers.toModifiers())
+    //$$         }
+    //$$
     //$$         onKeyPressed(0, input.codepoint.toChar(), input.modifiers.toModifiers())
     //$$     } else if (Character.isValidCodePoint(codepoint)) {
+    //$$         consumableInputHandler?.let {
+    //$$             return it.uKeyPressed(0, Character.highSurrogate(input.codepoint), input.modifiers.toModifiers()) or
+    //$$                     it.uKeyPressed(0, Character.lowSurrogate(input.codepoint), input.modifiers.toModifiers())
+    //$$         }
+    //$$
     //$$         onKeyPressed(0, Character.highSurrogate(input.codepoint), input.modifiers.toModifiers())
     //$$         onKeyPressed(0, Character.lowSurrogate(input.codepoint), input.modifiers.toModifiers())
     //$$     }
@@ -163,6 +181,14 @@ abstract class UScreen(
     //$$     lastMouseInput = click.buttonInfo
     //$$     lastDoubled = doubled
     //$$     if (click.button() == 1) lastClick = UMinecraft.getTime()
+    //$$
+    //$$     consumableInputHandler?.let {
+    //$$         return it.uMouseClicked(click.x, click.y, click.button()).also {
+    //$$             lastMouseInput = null
+    //$$             lastDoubled = null
+    //$$         }
+    //$$     }
+    //$$
     //$$     onMouseClicked(click.x, click.y, click.button())
     //$$     lastMouseInput = null
     //$$     lastDoubled = null
@@ -171,6 +197,13 @@ abstract class UScreen(
     //$$
     //$$ final override fun mouseReleased(click: Click): Boolean {
     //$$     lastMouseInput = click.buttonInfo
+    //$$
+    //$$     consumableInputHandler?.let {
+    //$$         return it.uMouseReleased(click.x, click.y, click.button()).also {
+    //$$             lastMouseInput = null
+    //$$         }
+    //$$     }
+    //$$
     //$$     onMouseReleased(click.x, click.y, click.button())
     //$$     lastMouseInput = null
     //$$     return false
@@ -180,22 +213,41 @@ abstract class UScreen(
     //$$     lastMouseInput = click.buttonInfo
     //$$     lastDraggedDx = offsetX
     //$$     lastDraggedDy = offsetY
+    //$$
+    //$$     consumableInputHandler?.let {
+    //$$         return it.uMouseDragged(click.x, click.y, click.button(), UMinecraft.getTime() - lastClick).also {
+    //$$             lastMouseInput = null
+    //$$         }
+    //$$     }
+    //$$
     //$$     onMouseDragged(click.x, click.y, click.button(), UMinecraft.getTime() - lastClick)
     //$$     lastMouseInput = null
     //$$     return false
     //$$ }
     //#else
     //$$ final override fun keyPressed(keyCode: Int, scanCode: Int, modifierCode: Int): Boolean {
+    //$$     consumableInputHandler?.let {
+    //$$         return it.uKeyPressed(keyCode, 0.toChar(), modifierCode.toModifiers())
+    //$$     }
+    //$$
     //$$     onKeyPressed(keyCode, 0.toChar(), modifierCode.toModifiers())
     //$$     return false
     //$$ }
     //$$
     //$$ final override fun keyReleased(keyCode: Int, scanCode: Int, modifierCode: Int): Boolean {
+    //$$     consumableInputHandler?.let {
+    //$$         return it.uKeyReleased(keyCode, 0.toChar(), modifierCode.toModifiers())
+    //$$     }
+    //$$
     //$$     onKeyReleased(keyCode, 0.toChar(), modifierCode.toModifiers())
     //$$     return false
     //$$ }
     //$$
     //$$ final override fun charTyped(char: Char, modifierCode: Int): Boolean {
+    //$$     consumableInputHandler?.let {
+    //$$         return it.uKeyPressed(0, char, modifierCode.toModifiers())
+    //$$     }
+    //$$
     //$$     onKeyPressed(0, char, modifierCode.toModifiers())
     //$$     return false
     //$$ }
@@ -203,11 +255,20 @@ abstract class UScreen(
     //$$ final override fun mouseClicked(mouseX: Double, mouseY: Double, mouseButton: Int): Boolean {
     //$$     if (mouseButton == 1)
     //$$         lastClick = UMinecraft.getTime()
+    //$$
+    //$$     consumableInputHandler?.let {
+    //$$         return it.uMouseClicked(mouseX, mouseY, mouseButton)
+    //$$     }
+    //$$
     //$$     onMouseClicked(mouseX, mouseY, mouseButton)
     //$$     return false
     //$$ }
     //$$
     //$$ final override fun mouseReleased(mouseX: Double, mouseY: Double, mouseButton: Int): Boolean {
+    //$$     consumableInputHandler?.let {
+    //$$         return it.uMouseReleased(mouseX, mouseY, mouseButton)
+    //$$     }
+    //$$
     //$$     onMouseReleased(mouseX, mouseY, mouseButton)
     //$$     return false
     //$$ }
@@ -215,6 +276,11 @@ abstract class UScreen(
     //$$ final override fun mouseDragged(x: Double, y: Double, mouseButton: Int, dx: Double, dy: Double): Boolean {
     //$$     lastDraggedDx = dx
     //$$     lastDraggedDy = dy
+    //$$
+    //$$     consumableInputHandler?.let {
+    //$$         return it.uMouseDragged(x, y, mouseButton, UMinecraft.getTime() - lastClick)
+    //$$     }
+    //$$
     //$$     onMouseDragged(x, y, mouseButton, UMinecraft.getTime() - lastClick)
     //$$     return false
     //$$ }
@@ -228,6 +294,11 @@ abstract class UScreen(
     //#endif
     //$$     lastScrolledX = mouseX
     //$$     lastScrolledY = mouseY
+    //$$
+    //$$     consumableInputHandler?.let {
+    //$$         return it.uMouseScrolled(delta)
+    //$$     }
+    //$$
     //$$     onMouseScrolled(delta)
     //$$     return false
     //$$ }
@@ -283,26 +354,32 @@ abstract class UScreen(
     }
 
     final override fun keyTyped(typedChar: Char, keyCode: Int) {
-        onKeyPressed(keyCode, typedChar, UKeyboard.getModifiers())
+        consumableInputHandler?.uKeyPressed(keyCode, typedChar, UKeyboard.getModifiers())
+            ?: onKeyPressed(keyCode, typedChar, UKeyboard.getModifiers())
     }
 
     final override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
-        onMouseClicked(mouseX.toDouble(), mouseY.toDouble(), mouseButton)
+        consumableInputHandler?.uMouseClicked(mouseX.toDouble(), mouseY.toDouble(), mouseButton)
+            ?: onMouseClicked(mouseX.toDouble(), mouseY.toDouble(), mouseButton)
     }
 
     final override fun mouseReleased(mouseX: Int, mouseY: Int, state: Int) {
-        onMouseReleased(mouseX.toDouble(), mouseY.toDouble(), state)
+        consumableInputHandler?.uMouseReleased(mouseX.toDouble(), mouseY.toDouble(), state)
+            ?: onMouseReleased(mouseX.toDouble(), mouseY.toDouble(), state)
     }
 
     final override fun mouseClickMove(mouseX: Int, mouseY: Int, clickedMouseButton: Int, timeSinceLastClick: Long) {
-        onMouseDragged(mouseX.toDouble(), mouseY.toDouble(), clickedMouseButton, timeSinceLastClick)
+        consumableInputHandler?.uMouseDragged(mouseX.toDouble(), mouseY.toDouble(), clickedMouseButton, timeSinceLastClick)
+            ?: onMouseDragged(mouseX.toDouble(), mouseY.toDouble(), clickedMouseButton, timeSinceLastClick)
     }
 
     final override fun handleMouseInput() {
         super.handleMouseInput()
         val scrollDelta = Mouse.getEventDWheel()
-        if (scrollDelta != 0)
-            onMouseScrolled(scrollDelta.toDouble())
+        if (scrollDelta != 0) {
+            consumableInputHandler?.uMouseScrolled(scrollDelta.toDouble())
+                ?: onMouseScrolled(scrollDelta.toDouble())
+        }
     }
 
     final override fun updateScreen() {

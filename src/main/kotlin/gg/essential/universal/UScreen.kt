@@ -543,6 +543,42 @@ abstract class UScreen(
         @Suppress("DEPRECATION")
         onDrawBackground(tint)
     }
+
+    @Suppress("unused") // Becomes used if the child class is an instance of [ConsumableInputHandler]
+    fun uSuperConsumableInputHandler(): ConsumableInputHandler = object : ConsumableInputHandler {
+        override fun uSuperConsumableInputHandler(): ConsumableInputHandler = this
+
+        override fun uMouseClicked(mouseX: Double, mouseY: Double, mouseButton: Int): Boolean {
+            onMouseClicked(mouseX, mouseY, mouseButton)
+            return false
+        }
+
+        override fun uMouseReleased(mouseX: Double, mouseY: Double, state: Int): Boolean {
+            onMouseReleased(mouseX, mouseY, state)
+            return false
+        }
+
+        override fun uMouseDragged(x: Double, y: Double, clickedButton: Int, timeSinceLastClick: Long): Boolean {
+            onMouseDragged(x, y, clickedButton, timeSinceLastClick)
+            return false
+        }
+
+        override fun uMouseScrolled(delta: Double): Boolean {
+            onMouseScrolled(delta)
+            return false
+        }
+
+        override fun uKeyPressed(keyCode: Int, typedChar: Char, modifiers: UKeyboard.Modifiers?): Boolean {
+            onKeyPressed(keyCode, typedChar, modifiers)
+            return false
+        }
+
+        override fun uKeyReleased(keyCode: Int, typedChar: Char, modifiers: UKeyboard.Modifiers?): Boolean {
+            onKeyReleased(keyCode, typedChar, modifiers)
+            return false
+        }
+    }
+
     /** Interface to replace [UScreen]'s input handling functions with consumable alternatives.
      * I.e. The new input functions will return a boolean, indicating whether the input was consumed, to Minecraft.
      *

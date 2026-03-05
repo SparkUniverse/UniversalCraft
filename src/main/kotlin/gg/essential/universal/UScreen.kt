@@ -543,6 +543,37 @@ abstract class UScreen(
         @Suppress("DEPRECATION")
         onDrawBackground(tint)
     }
+    /** Interface to replace [UScreen]'s input handling functions with consumable alternatives.
+     * I.e. The new input functions will return a boolean, indicating whether the input was consumed, to Minecraft.
+     *
+     * On versions below 1.16, the boolean returns are not passed to Minecraft as they are not used,
+     * the interface still replaces and executes the same for consistency.
+     *
+     * [UScreen] automatically handles this if it's subclass implements this interface. (via `consumableInputHandler`)
+     * To aid this, [UScreen] already implements `uSuperConsumableInputHandler()` itself which, by default, defers to the
+     * original non-returning functions. So you only need to override the functions you actually want to consume.
+     */
+    interface ConsumableInputHandler {
+        fun uSuperConsumableInputHandler(): ConsumableInputHandler
+
+        fun uMouseClicked(mouseX: Double, mouseY: Double, mouseButton: Int): Boolean =
+            uSuperConsumableInputHandler().uMouseClicked(mouseX, mouseY, mouseButton)
+
+        fun uMouseReleased(mouseX: Double, mouseY: Double, state: Int): Boolean =
+            uSuperConsumableInputHandler().uMouseReleased(mouseX, mouseY, state)
+
+        fun uMouseDragged(x: Double, y: Double, clickedButton: Int, timeSinceLastClick: Long): Boolean =
+            uSuperConsumableInputHandler().uMouseDragged(x, y, clickedButton, timeSinceLastClick)
+
+        fun uMouseScrolled(delta: Double): Boolean =
+            uSuperConsumableInputHandler().uMouseScrolled(delta)
+
+        fun uKeyPressed(keyCode: Int, typedChar: Char, modifiers: UKeyboard.Modifiers?): Boolean =
+            uSuperConsumableInputHandler().uKeyPressed(keyCode, typedChar, modifiers)
+
+        fun uKeyReleased(keyCode: Int, typedChar: Char, modifiers: UKeyboard.Modifiers?): Boolean =
+            uSuperConsumableInputHandler().uKeyReleased(keyCode, typedChar, modifiers)
+    }
 
     companion object {
         @JvmStatic

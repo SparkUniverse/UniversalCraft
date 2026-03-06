@@ -354,7 +354,7 @@ abstract class UScreen(
     }
 
     final override fun keyTyped(typedChar: Char, keyCode: Int) {
-        consumableInputHandler?.uKeyPressed(keyCode, typedChar, UKeyboard.getModifiers())
+        consumableInputHandler?.uKeyPressed(keyCode, if (typedChar.isISOControl()) 0.toChar() else typedChar, UKeyboard.getModifiers())
             ?: onKeyPressed(keyCode, typedChar, UKeyboard.getModifiers())
     }
 

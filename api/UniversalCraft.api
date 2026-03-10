@@ -1057,8 +1057,9 @@ public final class gg/essential/universal/UScreen$Companion {
 }
 
 public abstract interface class gg/essential/universal/UScreen$ConsumableInputHandler {
-	public fun uKeyPressed (ICLgg/essential/universal/UKeyboard$Modifiers;)Z
-	public fun uKeyReleased (ICLgg/essential/universal/UKeyboard$Modifiers;)Z
+	public fun uCharTyped (CLgg/essential/universal/UKeyboard$Modifiers;)Z
+	public fun uKeyPressed (ILgg/essential/universal/UKeyboard$Modifiers;)Z
+	public fun uKeyReleased (ILgg/essential/universal/UKeyboard$Modifiers;)Z
 	public fun uMouseClicked (DDI)Z
 	public fun uMouseDragged (DDIJ)Z
 	public fun uMouseReleased (DDI)Z

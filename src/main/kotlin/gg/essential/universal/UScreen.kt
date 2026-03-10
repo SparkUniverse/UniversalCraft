@@ -53,7 +53,7 @@ abstract class UScreen(
     private var guiScaleToRestore = -1
     private var restoringGuiScale = false
     private val screenToRestore: GuiScreen? = if (restoreCurrentGuiOnClose) currentScreen else null
-    var consumableInputHandler: ConsumableInputHandler? = this as? ConsumableInputHandler
+    protected var consumableInputHandler: ConsumableInputHandler? = this as? ConsumableInputHandler
     //#if MC>=12106
     //$$ // Background is now draw from the final `renderWithTooltip` method, before we ever get control, so we need
     //$$ // to suppress by default and can only allow during `onDrawScreen`.

@@ -147,7 +147,7 @@ abstract class UScreen(
     //$$
     //$$ final override fun keyReleased(input: KeyInput): Boolean {
     //$$     consumableInputHandler?.let {
-    //$$         return it.uKeyReleased(input.key, 0.toChar(), input.modifiers.toModifiers())
+    //$$         return it.uKeyReleased(input.key, input.modifiers.toModifiers())
     //$$     }
     //$$
     //$$     onKeyReleased(input.key, 0.toChar(), input.modifiers.toModifiers())
@@ -164,8 +164,8 @@ abstract class UScreen(
     //$$         onKeyPressed(0, input.codepoint.toChar(), input.modifiers.toModifiers())
     //$$     } else if (Character.isValidCodePoint(codepoint)) {
     //$$         consumableInputHandler?.let {
-    //$$             return it.uKeyPressed(0, Character.highSurrogate(input.codepoint), input.modifiers.toModifiers()) or
-    //$$                     it.uKeyPressed(0, Character.lowSurrogate(input.codepoint), input.modifiers.toModifiers())
+    //$$             return it.uCharTyped(Character.highSurrogate(input.codepoint), input.modifiers.toModifiers()) or
+    //$$                     it.uCharTyped(Character.lowSurrogate(input.codepoint), input.modifiers.toModifiers())
     //$$         }
     //$$
     //$$         onKeyPressed(0, Character.highSurrogate(input.codepoint), input.modifiers.toModifiers())
@@ -236,7 +236,7 @@ abstract class UScreen(
     //$$
     //$$ final override fun keyReleased(keyCode: Int, scanCode: Int, modifierCode: Int): Boolean {
     //$$     consumableInputHandler?.let {
-    //$$         return it.uKeyReleased(keyCode, 0.toChar(), modifierCode.toModifiers())
+    //$$         return it.uKeyReleased(keyCode, modifierCode.toModifiers())
     //$$     }
     //$$
     //$$     onKeyReleased(keyCode, 0.toChar(), modifierCode.toModifiers())

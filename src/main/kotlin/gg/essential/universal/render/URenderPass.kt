@@ -6,6 +6,8 @@ import gg.essential.universal.vertex.UBuiltBufferInternal
 //#if STANDALONE
 //#else
 //#if MC>=12111
+//$$ import com.mojang.blaze3d.textures.AddressMode
+//$$ import com.mojang.blaze3d.textures.FilterMode
 //$$ import net.minecraft.client.render.RenderLayers
 //#endif
 
@@ -173,7 +175,8 @@ internal class URenderPass : AutoCloseable {
             //#endif
             //$$ }
             //#if MC>=12111
-            //$$ mc.bindTexture(name, RenderSystem.getDevice().createTextureView(texture), RenderLayers.BLOCK_SAMPLER.get())
+            //$$ val sampler = RenderSystem.getSamplerCache().get(AddressMode.CLAMP_TO_EDGE, AddressMode.CLAMP_TO_EDGE, FilterMode.LINEAR, FilterMode.NEAREST, true)
+            //$$ mc.bindTexture(name, RenderSystem.getDevice().createTextureView(texture), sampler)
             //#elseif MC>=12106
             //$$ mc.bindSampler(name, RenderSystem.getDevice().createTextureView(texture))
             //#else

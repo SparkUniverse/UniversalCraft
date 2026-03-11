@@ -147,11 +147,16 @@ abstract class UScreen(
     //$$
     //$$ final override fun charTyped(input: CharInput): Boolean {
     //$$     val codepoint = input.codepoint
+        //#if MC >= 26.1
+        //$$ val modifiers = 0.toModifiers()
+        //#else
+        //$$ val modifiers = input.modifiers.toModifiers()
+        //#endif
     //$$     if (Character.isBmpCodePoint(codepoint)) {
-    //$$         onKeyPressed(0, input.codepoint.toChar(), input.modifiers.toModifiers())
+    //$$         onKeyPressed(0, input.codepoint.toChar(), modifiers)
     //$$     } else if (Character.isValidCodePoint(codepoint)) {
-    //$$         onKeyPressed(0, Character.highSurrogate(input.codepoint), input.modifiers.toModifiers())
-    //$$         onKeyPressed(0, Character.lowSurrogate(input.codepoint), input.modifiers.toModifiers())
+    //$$         onKeyPressed(0, Character.highSurrogate(input.codepoint), modifiers)
+    //$$         onKeyPressed(0, Character.lowSurrogate(input.codepoint), modifiers)
     //$$     }
     //$$     return false
     //$$ }
@@ -407,7 +412,9 @@ abstract class UScreen(
             //#endif
         //$$ }
         //$$ if (typedChar != 0.toChar()) {
-            //#if MC>=12109
+            //#if MC >= 26.1
+            //$$ super.charTyped(CharacterEvent(typedChar.code))
+            //#elseif MC>=12109
             //$$ super.charTyped(CharInput(typedChar.code, modifiers.toInt()))
             //#else
             //$$ super.charTyped(typedChar, modifiers.toInt())

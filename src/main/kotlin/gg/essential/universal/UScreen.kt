@@ -228,6 +228,7 @@ abstract class UScreen(
     //#endif
     //$$     lastScrolledX = mouseX
     //$$     lastScrolledY = mouseY
+    //$$     @Suppress("DEPRECATION")
     //$$     onMouseScrolled(delta)
     //$$     return false
     //$$ }
@@ -301,6 +302,7 @@ abstract class UScreen(
     final override fun handleMouseInput() {
         super.handleMouseInput()
         val scrollDelta = Mouse.getEventDWheel()
+        @Suppress("DEPRECATION")
         if (scrollDelta != 0)
             onMouseScrolled(scrollDelta.toDouble())
     }
@@ -474,21 +476,20 @@ abstract class UScreen(
 
     // This function receives the delta from both lwjgl 2 and lwjgl 3.
     // The deltas obtained from lwjgl 2 are scaled by a constant factor and thus much higher than the ones provided by lwjgl 3.
-    // We take the opportunity of adding the new function below to remove the scaling on the vertical delta.
-    // This makes the deltas passed to the new function much more consistent across all versions.
-    // The value of 120 comes from lwjgl's internal scaling:
-    // https://github.com/LWJGL/lwjgl/blob/master/src/java/org/lwjgl/opengl/LinuxMouse.java#L48
-    // https://github.com/LWJGL/lwjgl/blob/master/src/java/org/lwjgl/opengl/MacOSXNativeMouse.java#L53
-    // https://github.com/LWJGL/lwjgl/blob/master/src/java/org/lwjgl/opengl/MouseEventQueue.java#L52
+    @Deprecated("Provided `delta` values have different units depending on Minecraft versions.", ReplaceWith("onMouseScrolled(mouseX, mouseY, deltaHorizontal, deltaVertical)"))
     open fun onMouseScrolled(delta: Double) {
         //#if MC>=11502
         //$$ onMouseScrolled(lastScrolledX, lastScrolledY, lastScrolledDX, delta)
         //#else
+        // Diving by 120 to revert the scaling which LWJGL 2 applies, so we get consistent deltas across all versions on the onMouseScrolled
+        // https://github.com/LWJGL/lwjgl/blob/master/src/java/org/lwjgl/opengl/LinuxMouse.java#L48
+        // https://github.com/LWJGL/lwjgl/blob/master/src/java/org/lwjgl/opengl/MacOSXNativeMouse.java#L53
+        // https://github.com/LWJGL/lwjgl/blob/master/src/java/org/lwjgl/opengl/MouseEventQueue.java#L52
         onMouseScrolled(UMouse.Scaled.x, UMouse.Scaled.y, 0.0, delta / 120.0)
         //#endif
     }
 
-    // Should be called with similarly scaled deltas on all mc/lwjgl versions.
+    // Must be called with consistently scaled deltas on all mc/lwjgl versions.
     // This is to ensure a consistent scrolling experience across all versions.
     // See older function above this for further explanation.
     open fun onMouseScrolled(mouseX: Double, mouseY: Double, deltaHorizontal: Double, deltaVertical: Double) {

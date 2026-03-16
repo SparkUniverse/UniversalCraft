@@ -55,9 +55,9 @@ class UCWindow(val glfwWindow: GlfwWindow, val uiScope: CoroutineScope) {
             }
         }
 
-        GLFW.glfwSetScrollCallback(glfwWindow.glfwId) { _, _, y ->
+        GLFW.glfwSetScrollCallback(glfwWindow.glfwId) { _, x, y ->
             uiScope.launch {
-                UScreen.currentScreen?.onMouseScrolled(y)
+                UScreen.currentScreen?.onMouseScrolled(UMouse.Scaled.x, UMouse.Scaled.y, x, y)
             }
         }
 

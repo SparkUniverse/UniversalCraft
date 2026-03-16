@@ -472,11 +472,30 @@ abstract class UScreen(
         //#endif
     }
 
+    // This function receives the delta from both lwjgl 2 and lwjgl 3.
+    // The deltas obtained from lwjgl 2 are scaled by a constant factor and thus much higher than the ones provided by lwjgl 3.
+    // We take the opportunity of adding the new function below to remove the scaling on the vertical delta.
+    // This makes the deltas passed to the new function much more consistent across all versions.
+    // The value of 120 comes from lwjgl's internal scaling:
+    // https://github.com/LWJGL/lwjgl/blob/master/src/java/org/lwjgl/opengl/LinuxMouse.java#L48
+    // https://github.com/LWJGL/lwjgl/blob/master/src/java/org/lwjgl/opengl/MacOSXNativeMouse.java#L53
+    // https://github.com/LWJGL/lwjgl/blob/master/src/java/org/lwjgl/opengl/MouseEventQueue.java#L52
     open fun onMouseScrolled(delta: Double) {
+        //#if MC>=11502
+        //$$ onMouseScrolled(lastScrolledX, lastScrolledY, lastScrolledDX, delta)
+        //#else
+        onMouseScrolled(UMouse.Scaled.x, UMouse.Scaled.y, 0.0, delta / 120.0)
+        //#endif
+    }
+
+    // Should be called with similarly scaled deltas on all mc/lwjgl versions.
+    // This is to ensure a consistent scrolling experience across all versions.
+    // See older function above this for further explanation.
+    open fun onMouseScrolled(mouseX: Double, mouseY: Double, deltaHorizontal: Double, deltaVertical: Double) {
         //#if MC>=12002
-        //$$ super.mouseScrolled(lastScrolledX, lastScrolledY, lastScrolledDX, delta)
+        //$$ super.mouseScrolled(mouseX, mouseY, deltaHorizontal, deltaVertical)
         //#elseif MC>=11502
-        //$$ super.mouseScrolled(lastScrolledX, lastScrolledY, delta)
+        //$$ super.mouseScrolled(mouseX, mouseY, deltaVertical)
         //#endif
     }
 

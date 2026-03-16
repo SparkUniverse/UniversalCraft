@@ -876,6 +876,7 @@ public abstract class gg/essential/universal/UScreen : net/minecraft/client/gui/
 	public fun onMouseDragged (DDIJ)V
 	public fun onMouseReleased (DDI)V
 	public fun onMouseScrolled (D)V
+	public fun onMouseScrolled (DDDD)V
 	public fun onScreenClose ()V
 	public fun onTick ()V
 	public final fun removed ()V
@@ -960,6 +961,7 @@ public abstract class gg/essential/universal/UScreen : net/minecraft/client/gui/
 	public fun onMouseDragged (DDIJ)V
 	public fun onMouseReleased (DDI)V
 	public fun onMouseScrolled (D)V
+	public fun onMouseScrolled (DDDD)V
 	public fun onScreenClose ()V
 	public fun onTick ()V
 	@1.16.2-forge
@@ -1023,6 +1025,7 @@ public abstract class gg/essential/universal/UScreen : net/minecraft/client/gui/
 	public fun onMouseDragged (DDIJ)V
 	public fun onMouseReleased (DDI)V
 	public fun onMouseScrolled (D)V
+	public fun onMouseScrolled (DDDD)V
 	public fun onScreenClose ()V
 	public fun onTick ()V
 	public final fun restorePreviousScreen ()V

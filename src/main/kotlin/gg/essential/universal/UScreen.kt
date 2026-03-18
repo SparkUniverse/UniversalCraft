@@ -723,15 +723,12 @@ abstract class UScreen(
             superKeyReleased(key, scanCode, modifiers)
     }
 
-    /** Interface to replace [UScreen]'s input handling functions with consumable alternatives.
-     * I.e. The new input functions will return a boolean, indicating whether the input was consumed, to Minecraft.
+    /** Usually you can simply have your screen implement this interface, [UScreen] will then use it automatically.
+     * If you require more control, you can instead also manually set the [consumableInputHandler] property.
+     * [UScreen] provides a [uSuperConsumableInputHandler] implementation you can call from your handler.
      *
      * On versions below 1.16, the boolean returns are not passed to Minecraft as they are not used,
      * the interface still replaces and executes the same for consistency.
-     *
-     * [UScreen] automatically handles this if it's subclass implements this interface. (via `inputHandler`)
-     * To aid this, [UScreen] already implements `uSuperinputHandler()` itself which, by default, defers to the
-     * original non-returning functions. So you only need to override the functions you actually want to consume.
      */
     interface InputHandler {
         fun uSuperInputHandler(): InputHandler

@@ -681,31 +681,24 @@ abstract class UScreen(
     }
 
     private fun superKeyPressed(keyCode: Int, scanCode: Int, modifiers: UKeyboard.Modifiers?): Boolean {
-        //#if MC >= 1.15.2
-        //$$ if (keyCode != 0) {
-            //#if MC >= 1.21.9
-            //$$ return super.keyPressed(KeyInput(keyCode, scanCode, modifiers.toInt()))
-            //#else
-            //$$ return super.keyPressed(keyCode, scanCode, modifiers.toInt())
-            //#endif
-        //$$ }
+        //#if MC >= 1.21.9
+        //$$ return super.keyPressed(KeyInput(keyCode, scanCode, modifiers.toInt()))
+        //#elseif MC >= 1.15.2
+        //$$ return super.keyPressed(keyCode, scanCode, modifiers.toInt())
         //#else
         super.keyTyped(0.toChar(), keyCode)
-        //#endif
         return false
+        //#endif
     }
 
     private fun superKeyReleased(keyCode: Int, scanCode: Int, modifiers: UKeyboard.Modifiers?): Boolean {
-        //#if MC >= 1.15.2
-        //$$ if (keyCode != 0) {
-            //#if MC >= 1.21.9
-            //$$ return super.keyReleased(KeyInput(keyCode, scanCode, modifiers.toInt()))
-            //#else
-            //$$ return super.keyReleased(keyCode, scanCode, modifiers.toInt())
-            //#endif
-        //$$ }
-        //#endif
+        //#if MC >= 1.21.9
+        //$$ return super.keyReleased(KeyInput(keyCode, scanCode, modifiers.toInt()))
+        //#elseif MC >= 1.15.2
+        //$$ return super.keyReleased(keyCode, scanCode, modifiers.toInt())
+        //#else
         return false // No super
+        //#endif
     }
 
     @Suppress("unused") // Becomes used if the child class is an instance of [inputHandler]

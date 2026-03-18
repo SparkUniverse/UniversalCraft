@@ -31,6 +31,8 @@ import java.io.IOException
 
 //#endif
 
+private const val INPUTHANDLER_DEP_MSG = "Implement [UScreen.InputHandler] for input functions that more closely adhere to newer MC input behaviour."
+
 abstract class UScreen(
     val restoreCurrentGuiOnClose: Boolean = false,
     open var newGuiScale: Int = -1,
@@ -141,7 +143,7 @@ abstract class UScreen(
     //$$         return it.uKeyPressed(input.key, input.scancode, input.modifiers.toModifiers())
     //$$     }
     //$$
-    //$$     onKeyPressed(input.key, 0.toChar(), input.modifiers.toModifiers())
+    //$$     @Suppress("DEPRECATION") onKeyPressed(input.key, 0.toChar(), input.modifiers.toModifiers())
     //$$     return false
     //$$ }
     //$$
@@ -150,7 +152,7 @@ abstract class UScreen(
     //$$         return it.uKeyReleased(input.key, input.scancode, input.modifiers.toModifiers())
     //$$     }
     //$$
-    //$$     onKeyReleased(input.key, 0.toChar(), input.modifiers.toModifiers())
+    //$$     @Suppress("DEPRECATION") onKeyReleased(input.key, 0.toChar(), input.modifiers.toModifiers())
     //$$     return false
     //$$ }
     //$$
@@ -161,10 +163,10 @@ abstract class UScreen(
     //$$     }
     //$$
     //$$     if (Character.isBmpCodePoint(codepoint)) {
-    //$$         onKeyPressed(0, input.codepoint.toChar(), input.modifiers.toModifiers())
+    //$$         @Suppress("DEPRECATION") onKeyPressed(0, input.codepoint.toChar(), input.modifiers.toModifiers())
     //$$     } else if (Character.isValidCodePoint(codepoint)) {
-    //$$         onKeyPressed(0, Character.highSurrogate(input.codepoint), input.modifiers.toModifiers())
-    //$$         onKeyPressed(0, Character.lowSurrogate(input.codepoint), input.modifiers.toModifiers())
+    //$$         @Suppress("DEPRECATION") onKeyPressed(0, Character.highSurrogate(input.codepoint), input.modifiers.toModifiers())
+    //$$         @Suppress("DEPRECATION") onKeyPressed(0, Character.lowSurrogate(input.codepoint), input.modifiers.toModifiers())
     //$$     }
     //$$     return false
     //$$ }
@@ -184,7 +186,7 @@ abstract class UScreen(
     //$$         }
     //$$     }
     //$$
-    //$$     onMouseClicked(click.x, click.y, click.button())
+    //$$     @Suppress("DEPRECATION") onMouseClicked(click.x, click.y, click.button())
     //$$     lastMouseInput = null
     //$$     lastDoubled = null
     //$$     return false
@@ -199,7 +201,7 @@ abstract class UScreen(
     //$$         }
     //$$     }
     //$$
-    //$$     onMouseReleased(click.x, click.y, click.button())
+    //$$     @Suppress("DEPRECATION") onMouseReleased(click.x, click.y, click.button())
     //$$     lastMouseInput = null
     //$$     return false
     //$$ }
@@ -215,7 +217,7 @@ abstract class UScreen(
     //$$         }
     //$$     }
     //$$
-    //$$     onMouseDragged(click.x, click.y, click.button(), UMinecraft.getTime() - lastClick)
+    //$$     @Suppress("DEPRECATION") onMouseDragged(click.x, click.y, click.button(), UMinecraft.getTime() - lastClick)
     //$$     lastMouseInput = null
     //$$     return false
     //$$ }
@@ -225,7 +227,7 @@ abstract class UScreen(
     //$$         return it.uKeyPressed(keyCode, scanCode, modifierCode.toModifiers())
     //$$     }
     //$$
-    //$$     onKeyPressed(keyCode, 0.toChar(), modifierCode.toModifiers())
+    //$$     @Suppress("DEPRECATION") onKeyPressed(keyCode, 0.toChar(), modifierCode.toModifiers())
     //$$     return false
     //$$ }
     //$$
@@ -234,7 +236,7 @@ abstract class UScreen(
     //$$         return it.uKeyReleased(keyCode, scanCode, modifierCode.toModifiers())
     //$$     }
     //$$
-    //$$     onKeyReleased(keyCode, 0.toChar(), modifierCode.toModifiers())
+    //$$     @Suppress("DEPRECATION") onKeyReleased(keyCode, 0.toChar(), modifierCode.toModifiers())
     //$$     return false
     //$$ }
     //$$
@@ -243,7 +245,7 @@ abstract class UScreen(
     //$$         return it.uCharTyped(char.code, modifierCode.toModifiers())
     //$$     }
     //$$
-    //$$     onKeyPressed(0, char, modifierCode.toModifiers())
+    //$$     @Suppress("DEPRECATION") onKeyPressed(0, char, modifierCode.toModifiers())
     //$$     return false
     //$$ }
     //$$
@@ -255,7 +257,7 @@ abstract class UScreen(
     //$$         return it.uMouseClicked(mouseX, mouseY, mouseButton, UKeyboard.getModifiers())
     //$$     }
     //$$
-    //$$     onMouseClicked(mouseX, mouseY, mouseButton)
+    //$$     @Suppress("DEPRECATION") onMouseClicked(mouseX, mouseY, mouseButton)
     //$$     return false
     //$$ }
     //$$
@@ -264,7 +266,7 @@ abstract class UScreen(
     //$$         return it.uMouseReleased(mouseX, mouseY, mouseButton, UKeyboard.getModifiers())
     //$$     }
     //$$
-    //$$     onMouseReleased(mouseX, mouseY, mouseButton)
+    //$$     @Suppress("DEPRECATION") onMouseReleased(mouseX, mouseY, mouseButton)
     //$$     return false
     //$$ }
     //$$
@@ -276,7 +278,7 @@ abstract class UScreen(
     //$$         return it.uMouseDragged(x, y, mouseButton, UKeyboard.getModifiers(), dx, dy)
     //$$     }
     //$$
-    //$$     onMouseDragged(x, y, mouseButton, UMinecraft.getTime() - lastClick)
+    //$$     @Suppress("DEPRECATION") onMouseDragged(x, y, mouseButton, UMinecraft.getTime() - lastClick)
     //$$     return false
     //$$ }
     //#endif
@@ -294,7 +296,7 @@ abstract class UScreen(
     //$$         return it.uMouseScrolled(delta)
     //$$     }
     //$$
-    //$$     onMouseScrolled(delta)
+    //$$     @Suppress("DEPRECATION") onMouseScrolled(delta)
     //$$     return false
     //$$ }
     //$$
@@ -356,22 +358,22 @@ abstract class UScreen(
             if (!handled && !typedChar.isISOControl()) {
                 it.uCharTyped(typedChar.code, UKeyboard.getModifiers())
             }
-        } ?: onKeyPressed(keyCode, typedChar, UKeyboard.getModifiers())
+        } ?: @Suppress("DEPRECATION") onKeyPressed(keyCode, typedChar, UKeyboard.getModifiers())
     }
 
     final override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
         inputHandler?.uMouseClicked(mouseX.toDouble(), mouseY.toDouble(), mouseButton, UKeyboard.getModifiers())
-            ?: onMouseClicked(mouseX.toDouble(), mouseY.toDouble(), mouseButton)
+            ?: @Suppress("DEPRECATION") onMouseClicked(mouseX.toDouble(), mouseY.toDouble(), mouseButton)
     }
 
     final override fun mouseReleased(mouseX: Int, mouseY: Int, state: Int) {
         inputHandler?.uMouseReleased(mouseX.toDouble(), mouseY.toDouble(), state, UKeyboard.getModifiers())
-            ?: onMouseReleased(mouseX.toDouble(), mouseY.toDouble(), state)
+            ?: @Suppress("DEPRECATION") onMouseReleased(mouseX.toDouble(), mouseY.toDouble(), state)
     }
 
     final override fun mouseClickMove(mouseX: Int, mouseY: Int, clickedMouseButton: Int, timeSinceLastClick: Long) {
         inputHandler?.uMouseDragged(mouseX.toDouble(), mouseY.toDouble(), clickedMouseButton, UKeyboard.getModifiers(), 0.0, 0.0)
-            ?: onMouseDragged(mouseX.toDouble(), mouseY.toDouble(), clickedMouseButton, timeSinceLastClick)
+            ?: @Suppress("DEPRECATION") onMouseDragged(mouseX.toDouble(), mouseY.toDouble(), clickedMouseButton, timeSinceLastClick)
     }
 
     final override fun handleMouseInput() {
@@ -379,7 +381,7 @@ abstract class UScreen(
         val scrollDelta = Mouse.getEventDWheel()
         if (scrollDelta != 0) {
             inputHandler?.uMouseScrolled(scrollDelta.toDouble())
-                ?: onMouseScrolled(scrollDelta.toDouble())
+                ?: @Suppress("DEPRECATION") onMouseScrolled(scrollDelta.toDouble())
         }
     }
 
@@ -475,6 +477,7 @@ abstract class UScreen(
         onDrawScreen(mouseX, mouseY, partialTicks)
     }
 
+    @Deprecated(INPUTHANDLER_DEP_MSG)
     open fun onKeyPressed(keyCode: Int, typedChar: Char, modifiers: UKeyboard.Modifiers?) {
         //#if MC>=11502
         //$$ if (keyCode != 0) {
@@ -500,6 +503,7 @@ abstract class UScreen(
         //#endif
     }
 
+    @Deprecated(INPUTHANDLER_DEP_MSG)
     open fun onKeyReleased(keyCode: Int, typedChar: Char, modifiers: UKeyboard.Modifiers?) {
         //#if MC>=11502
         //$$ if (keyCode != 0) {
@@ -512,6 +516,7 @@ abstract class UScreen(
         //#endif
     }
 
+    @Deprecated(INPUTHANDLER_DEP_MSG)
     open fun onMouseClicked(mouseX: Double, mouseY: Double, mouseButton: Int) {
         //#if MC>=11502
         //$$ if (mouseButton == 1)
@@ -530,6 +535,7 @@ abstract class UScreen(
         //#endif
     }
 
+    @Deprecated(INPUTHANDLER_DEP_MSG)
     open fun onMouseReleased(mouseX: Double, mouseY: Double, state: Int) {
         //#if MC>=12109
         //$$ super.mouseReleased(Click(mouseX, mouseY, MouseInput(state, lastMouseInput?.modifiers ?: 0)))
@@ -540,6 +546,7 @@ abstract class UScreen(
         //#endif
     }
 
+    @Deprecated(INPUTHANDLER_DEP_MSG)
     open fun onMouseDragged(x: Double, y: Double, clickedButton: Int, timeSinceLastClick: Long) {
         //#if MC>=12109
         //$$ super.mouseDragged(Click(x, y, MouseInput(clickedButton, lastMouseInput?.modifiers ?: 0)), lastDraggedDx, lastDraggedDy)
@@ -550,6 +557,7 @@ abstract class UScreen(
         //#endif
     }
 
+    @Deprecated(INPUTHANDLER_DEP_MSG)
     open fun onMouseScrolled(delta: Double) {
         //#if MC>=12002
         //$$ super.mouseScrolled(lastScrolledX, lastScrolledY, lastScrolledDX, delta)

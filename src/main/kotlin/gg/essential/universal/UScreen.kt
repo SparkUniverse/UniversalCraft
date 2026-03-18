@@ -623,14 +623,10 @@ abstract class UScreen(
     }
 
     private fun superMouseClicked(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers?): Boolean {
-        //#if MC >= 1.15.2
-        //$$ if (button == 1)
-        //$$     lastClick = UMinecraft.getTime()
         //#if MC >= 1.21.9
         //$$ return super.mouseClicked(Click(x, y, MouseInput(button, modifiers.toInt())), lastDoubled ?: false)
-        //#else
+        //#elseif MC >= 1.15.2
         //$$ return super.mouseClicked(x, y, button)
-        //#endif
         //#else
         super.mouseClicked(x.toInt(), y.toInt(), button)
         return false

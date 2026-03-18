@@ -138,7 +138,7 @@ abstract class UScreen(
     //#if MC>=12109
     //$$ final override fun keyPressed(input: KeyInput): Boolean {
     //$$     consumableInputHandler?.let {
-    //$$         return it.uKeyPressed(input.key, input.modifiers.toModifiers())
+    //$$         return it.uKeyPressed(input.key, input.scancode, input.modifiers.toModifiers())
     //$$     }
     //$$
     //$$     onKeyPressed(input.key, 0.toChar(), input.modifiers.toModifiers())
@@ -147,7 +147,7 @@ abstract class UScreen(
     //$$
     //$$ final override fun keyReleased(input: KeyInput): Boolean {
     //$$     consumableInputHandler?.let {
-    //$$         return it.uKeyReleased(input.key, input.modifiers.toModifiers())
+    //$$         return it.uKeyReleased(input.key, input.scancode, input.modifiers.toModifiers())
     //$$     }
     //$$
     //$$     onKeyReleased(input.key, 0.toChar(), input.modifiers.toModifiers())
@@ -227,7 +227,7 @@ abstract class UScreen(
     //#else
     //$$ final override fun keyPressed(keyCode: Int, scanCode: Int, modifierCode: Int): Boolean {
     //$$     consumableInputHandler?.let {
-    //$$         return it.uKeyPressed(keyCode, modifierCode.toModifiers())
+    //$$         return it.uKeyPressed(keyCode, scanCode, modifierCode.toModifiers())
     //$$     }
     //$$
     //$$     onKeyPressed(keyCode, 0.toChar(), modifierCode.toModifiers())
@@ -236,7 +236,7 @@ abstract class UScreen(
     //$$
     //$$ final override fun keyReleased(keyCode: Int, scanCode: Int, modifierCode: Int): Boolean {
     //$$     consumableInputHandler?.let {
-    //$$         return it.uKeyReleased(keyCode, modifierCode.toModifiers())
+    //$$         return it.uKeyReleased(keyCode, scanCode, modifierCode.toModifiers())
     //$$     }
     //$$
     //$$     onKeyReleased(keyCode, 0.toChar(), modifierCode.toModifiers())
@@ -355,7 +355,7 @@ abstract class UScreen(
 
     final override fun keyTyped(typedChar: Char, keyCode: Int) {
         inputHandler?.let {
-            val handled = it.uKeyPressed(keyCode, UKeyboard.getModifiers())
+            val handled = it.uKeyPressed(keyCode, UKeyboard.KEY_NONE, UKeyboard.getModifiers())
             if (!handled) it.uCharTyped(typedChar, UKeyboard.getModifiers())
         } ?: onKeyPressed(keyCode, typedChar, UKeyboard.getModifiers())
     }
@@ -503,7 +503,7 @@ abstract class UScreen(
     }
 
     open fun onKeyReleased(keyCode: Int, typedChar: Char, modifiers: UKeyboard.Modifiers?) {
-        superKeyReleased(keyCode, modifiers)
+        superKeyReleased(keyCode, 0 /* temp */, modifiers)
     }
 
     open fun onMouseClicked(mouseX: Double, mouseY: Double, mouseButton: Int) {
@@ -654,13 +654,13 @@ abstract class UScreen(
         //#endif
     }
 
-    private fun superKeyPressed(keyCode: Int, modifiers: UKeyboard.Modifiers?): Boolean {
+    private fun superKeyPressed(keyCode: Int, scanCode: Int, modifiers: UKeyboard.Modifiers?): Boolean {
         //#if MC >= 1.15.2
         //$$ if (keyCode != 0) {
             //#if MC >= 1.21.9
-            //$$ return super.keyPressed(KeyInput(keyCode, 0, modifiers.toInt()))
+            //$$ return super.keyPressed(KeyInput(keyCode, scanCode, modifiers.toInt()))
             //#else
-            //$$ return super.keyPressed(keyCode, 0, modifiers.toInt())
+            //$$ return super.keyPressed(keyCode, scanCode, modifiers.toInt())
             //#endif
         //$$ }
         //#else
@@ -673,13 +673,13 @@ abstract class UScreen(
         return false
     }
 
-    private fun superKeyReleased(keyCode: Int, modifiers: UKeyboard.Modifiers?): Boolean {
+    private fun superKeyReleased(keyCode: Int, scanCode: Int, modifiers: UKeyboard.Modifiers?): Boolean {
         //#if MC >= 1.15.2
         //$$ if (keyCode != 0) {
             //#if MC >= 1.21.9
-            //$$ return super.keyReleased(KeyInput(keyCode, 0, modifiers.toInt()))
+            //$$ return super.keyReleased(KeyInput(keyCode, scanCode, modifiers.toInt()))
             //#else
-            //$$ return super.keyReleased(keyCode, 0, modifiers.toInt())
+            //$$ return super.keyReleased(keyCode, scanCode, modifiers.toInt())
             //#endif
         //$$ }
         //#endif
@@ -705,11 +705,11 @@ abstract class UScreen(
         override fun uCharTyped(typedChar: Char, modifiers: UKeyboard.Modifiers?): Boolean =
             superCharTyped(typedChar, modifiers)
 
-        override fun uKeyPressed(keyCode: Int, modifiers: UKeyboard.Modifiers?): Boolean =
-            superKeyPressed(keyCode, modifiers)
+        override fun uKeyPressed(keyCode: Int, scanCode: Int, modifiers: UKeyboard.Modifiers?): Boolean =
+            superKeyPressed(keyCode, scanCode, modifiers)
 
-        override fun uKeyReleased(keyCode: Int, modifiers: UKeyboard.Modifiers?): Boolean =
-            superKeyReleased(keyCode, modifiers)
+        override fun uKeyReleased(keyCode: Int, scanCode: Int, modifiers: UKeyboard.Modifiers?): Boolean =
+            superKeyReleased(keyCode, scanCode, modifiers)
     }
 
     /** Interface to replace [UScreen]'s input handling functions with consumable alternatives.
@@ -740,11 +740,11 @@ abstract class UScreen(
         fun uCharTyped(typedChar: Char, modifiers: UKeyboard.Modifiers?): Boolean =
             uSuperInputHandler().uCharTyped(typedChar, modifiers)
 
-        fun uKeyPressed(keyCode: Int, modifiers: UKeyboard.Modifiers?): Boolean =
-            uSuperInputHandler().uKeyPressed(keyCode, modifiers)
+        fun uKeyPressed(keyCode: Int, scanCode: Int, modifiers: UKeyboard.Modifiers?): Boolean =
+            uSuperInputHandler().uKeyPressed(keyCode, scanCode, modifiers)
 
-        fun uKeyReleased(keyCode: Int, modifiers: UKeyboard.Modifiers?): Boolean =
-            uSuperInputHandler().uKeyReleased(keyCode, modifiers)
+        fun uKeyReleased(keyCode: Int, scanCode: Int, modifiers: UKeyboard.Modifiers?): Boolean =
+            uSuperInputHandler().uKeyReleased(keyCode, scanCode, modifiers)
     }
 
     companion object {

@@ -632,11 +632,7 @@ abstract class UScreen(
         //$$ return super.mouseClicked(mouseX, mouseY, mouseButton)
         //#endif
         //#else
-        try {
-            super.mouseClicked(mouseX.toInt(), mouseY.toInt(), mouseButton)
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
+        super.mouseClicked(mouseX.toInt(), mouseY.toInt(), mouseButton)
         return false
         //#endif
     }
@@ -679,11 +675,7 @@ abstract class UScreen(
         //#elseif MC >= 1.15.2
         //$$ return super.charTyped(codepoint.toChar(), modifiers.toInt())
         //#else
-        try {
-            super.keyTyped(codepoint.toChar(), 0)
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
+        super.keyTyped(codepoint.toChar(), 0)
         return false
         //#endif
     }
@@ -698,11 +690,7 @@ abstract class UScreen(
             //#endif
         //$$ }
         //#else
-        try {
-            super.keyTyped(0.toChar(), keyCode)
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
+        super.keyTyped(0.toChar(), keyCode)
         //#endif
         return false
     }

@@ -210,7 +210,7 @@ abstract class UScreen(
     //$$     lastDraggedDy = offsetY
     //$$
     //$$     inputHandler?.let {
-    //$$         return it.uMouseDragged(click.x, click.y, click.button(), UMinecraft.getTime() - lastClick, click.modifiers().toModifiers()).also {
+    //$$         return it.uMouseDragged(click.x, click.y, click.button(), click.modifiers().toModifiers(), offsetX, offsetY).also {
     //$$             lastMouseInput = null
     //$$         }
     //$$     }
@@ -273,7 +273,7 @@ abstract class UScreen(
     //$$     lastDraggedDy = dy
     //$$
     //$$     inputHandler?.let {
-    //$$         return it.uMouseDragged(x, y, mouseButton, UMinecraft.getTime() - lastClick, null)
+    //$$         return it.uMouseDragged(x, y, mouseButton, null, dx, dy)
     //$$     }
     //$$
     //$$     onMouseDragged(x, y, mouseButton, UMinecraft.getTime() - lastClick)
@@ -366,7 +366,7 @@ abstract class UScreen(
     }
 
     final override fun mouseClickMove(mouseX: Int, mouseY: Int, clickedMouseButton: Int, timeSinceLastClick: Long) {
-        inputHandler?.uMouseDragged(mouseX.toDouble(), mouseY.toDouble(), clickedMouseButton, timeSinceLastClick, null)
+        inputHandler?.uMouseDragged(mouseX.toDouble(), mouseY.toDouble(), clickedMouseButton, null, 0.0, 0.0)
             ?: onMouseDragged(mouseX.toDouble(), mouseY.toDouble(), clickedMouseButton, timeSinceLastClick)
     }
 
@@ -648,13 +648,13 @@ abstract class UScreen(
         //#endif
     }
 
-    private fun superMouseDragged(x: Double, y: Double, clickedButton: Int, timeSinceLastClick: Long, modifiers: UKeyboard.Modifiers?): Boolean {
+    private fun superMouseDragged(x: Double, y: Double, clickedButton: Int, modifiers: UKeyboard.Modifiers?, offsetX: Double, offsetY: Double): Boolean {
         //#if MC >= 1.21.9
-        //$$ return super.mouseDragged(Click(x, y, MouseInput(clickedButton, modifiers.toInt())), lastDraggedDx, lastDraggedDy)
+        //$$ return super.mouseDragged(Click(x, y, MouseInput(clickedButton, modifiers.toInt())), offsetX, offsetY)
         //#elseif MC >= 1.15.2
-        //$$ return super.mouseDragged(x, y, clickedButton, lastDraggedDx, lastDraggedDy)
+        //$$ return super.mouseDragged(x, y, clickedButton, offsetX, offsetY)
         //#else
-        super.mouseClickMove(x.toInt(), y.toInt(), clickedButton, timeSinceLastClick)
+        super.mouseClickMove(x.toInt(), y.toInt(), clickedButton, 0L)
         return false
         //#endif
     }
@@ -726,8 +726,8 @@ abstract class UScreen(
         override fun uMouseReleased(mouseX: Double, mouseY: Double, state: Int, modifiers: UKeyboard.Modifiers?): Boolean =
             superMouseReleased(mouseX, mouseY, state, modifiers)
 
-        override fun uMouseDragged(x: Double, y: Double, clickedButton: Int, timeSinceLastClick: Long, modifiers: UKeyboard.Modifiers?): Boolean =
-            superMouseDragged(x, y, clickedButton, timeSinceLastClick, modifiers)
+        override fun uMouseDragged(x: Double, y: Double, clickedButton: Int, modifiers: UKeyboard.Modifiers?, offsetX: Double, offsetY: Double): Boolean =
+            superMouseDragged(x, y, clickedButton, modifiers, offsetX, offsetY)
 
         override fun uMouseScrolled(delta: Double): Boolean =
             superMouseScrolled(delta)
@@ -761,8 +761,8 @@ abstract class UScreen(
         fun uMouseReleased(mouseX: Double, mouseY: Double, state: Int, modifiers: UKeyboard.Modifiers?): Boolean =
             uSuperInputHandler().uMouseReleased(mouseX, mouseY, state, modifiers)
 
-        fun uMouseDragged(x: Double, y: Double, clickedButton: Int, timeSinceLastClick: Long, modifiers: UKeyboard.Modifiers?): Boolean =
-            uSuperInputHandler().uMouseDragged(x, y, clickedButton, timeSinceLastClick, modifiers)
+        fun uMouseDragged(x: Double, y: Double, clickedButton: Int, modifiers: UKeyboard.Modifiers?, offsetX: Double, offsetY: Double): Boolean =
+            uSuperInputHandler().uMouseDragged(x, y, clickedButton, modifiers, offsetX, offsetY)
 
         fun uMouseScrolled(delta: Double): Boolean =
             uSuperInputHandler().uMouseScrolled(delta)

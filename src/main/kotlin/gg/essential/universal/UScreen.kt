@@ -297,7 +297,7 @@ abstract class UScreen(
     //$$     lastScrolledY = mouseY
     //$$
     //$$     inputHandler?.let {
-    //$$         return it.uMouseScrolled(delta)
+    //$$         return it.uMouseScrolled(mouseX, mouseY, lastScrolledDX, delta)
     //$$     }
     //$$
     //$$     @Suppress("DEPRECATION") onMouseScrolled(delta)
@@ -384,7 +384,9 @@ abstract class UScreen(
         super.handleMouseInput()
         val scrollDelta = Mouse.getEventDWheel()
         if (scrollDelta != 0) {
-            inputHandler?.uMouseScrolled(scrollDelta.toDouble())
+            inputHandler?.uMouseScrolled(UMouse.Scaled.x, UMouse.Scaled.y, 0.0,
+                    // Revert LWJGL 2 delta scaling, see onMouseScrolled(Double) for more info
+                    scrollDelta / 120.0)
                 ?: @Suppress("DEPRECATION") onMouseScrolled(scrollDelta.toDouble())
         }
     }
@@ -563,7 +565,6 @@ abstract class UScreen(
         //#endif
     }
 
-    @Deprecated(INPUTHANDLER_DEP_MSG)
     // This function receives the delta from both lwjgl 2 and lwjgl 3.
     // The deltas obtained from lwjgl 2 are scaled by a constant factor and thus much higher than the ones provided by lwjgl 3.
     @Deprecated("Provided `delta` values have different units depending on Minecraft versions.", ReplaceWith("onMouseScrolled(mouseX, mouseY, deltaHorizontal, deltaVertical)"))
@@ -575,6 +576,7 @@ abstract class UScreen(
         // https://github.com/LWJGL/lwjgl/blob/master/src/java/org/lwjgl/opengl/LinuxMouse.java#L48
         // https://github.com/LWJGL/lwjgl/blob/master/src/java/org/lwjgl/opengl/MacOSXNativeMouse.java#L53
         // https://github.com/LWJGL/lwjgl/blob/master/src/java/org/lwjgl/opengl/MouseEventQueue.java#L52
+        @Suppress("DEPRECATION")
         onMouseScrolled(UMouse.Scaled.x, UMouse.Scaled.y, 0.0, delta / 120.0)
         //#endif
     }
@@ -582,6 +584,7 @@ abstract class UScreen(
     // Must be called with consistently scaled deltas on all mc/lwjgl versions.
     // This is to ensure a consistent scrolling experience across all versions.
     // See older function above this for further explanation.
+    @Deprecated(INPUTHANDLER_DEP_MSG)
     open fun onMouseScrolled(mouseX: Double, mouseY: Double, deltaHorizontal: Double, deltaVertical: Double) {
         //#if MC>=12002
         //$$ super.mouseScrolled(mouseX, mouseY, deltaHorizontal, deltaVertical)
@@ -687,11 +690,11 @@ abstract class UScreen(
         //#endif
     }
 
-    private fun superMouseScrolled(delta: Double): Boolean {
+    private fun superMouseScrolled(x: Double, y: Double, deltaHorizontal: Double, deltaVertical: Double): Boolean {
         //#if MC >= 1.20.2
-        //$$ return super.mouseScrolled(lastScrolledX, lastScrolledY, lastScrolledDX, delta)
+        //$$ return super.mouseScrolled(x, y, deltaHorizontal, deltaVertical)
         //#elseif MC >= 1.15.2
-        //$$ return super.mouseScrolled(lastScrolledX, lastScrolledY, delta)
+        //$$ return super.mouseScrolled(x, y, deltaVertical)
         //#else
         return false // No super
         //#endif
@@ -742,8 +745,8 @@ abstract class UScreen(
         override fun uMouseDragged(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers, offsetX: Double, offsetY: Double): Boolean =
             superMouseDragged(x, y, button, modifiers, offsetX, offsetY)
 
-        override fun uMouseScrolled(delta: Double): Boolean =
-            superMouseScrolled(delta)
+        override fun uMouseScrolled(x: Double, y: Double, deltaHorizontal: Double, deltaVertical: Double): Boolean =
+            superMouseScrolled(x, y, deltaHorizontal, deltaVertical)
 
         override fun uCharTyped(codepoint: Int, modifiers: UKeyboard.Modifiers): Boolean =
             superCharTyped(codepoint, modifiers)
@@ -774,8 +777,11 @@ abstract class UScreen(
         fun uMouseDragged(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers, offsetX: Double, offsetY: Double): Boolean =
             uSuperInputHandler().uMouseDragged(x, y, button, modifiers, offsetX, offsetY)
 
-        fun uMouseScrolled(delta: Double): Boolean =
-            uSuperInputHandler().uMouseScrolled(delta)
+        // Must be called with consistently scaled deltas on all mc/lwjgl versions.
+        // This is to ensure a consistent scrolling experience across all versions.
+        // See onMouseScrolled(Double) for further explanation.
+        fun uMouseScrolled(x: Double, y: Double, deltaHorizontal: Double, deltaVertical: Double): Boolean =
+            uSuperInputHandler().uMouseScrolled(x, y, deltaHorizontal, deltaVertical)
 
         fun uCharTyped(codepoint: Int, modifiers: UKeyboard.Modifiers): Boolean =
             uSuperInputHandler().uCharTyped(codepoint, modifiers)

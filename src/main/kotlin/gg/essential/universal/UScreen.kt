@@ -471,7 +471,6 @@ abstract class UScreen(
         onDrawScreen(mouseX, mouseY, partialTicks)
     }
 
-    // Merged keycode & character universal function for < 1.15 format compatibility, does not correlate to just 1 super call
     open fun onKeyPressed(keyCode: Int, typedChar: Char, modifiers: UKeyboard.Modifiers?) {
         //#if MC>=11502
         //$$ if (keyCode != 0) {
@@ -498,23 +497,61 @@ abstract class UScreen(
     }
 
     open fun onKeyReleased(keyCode: Int, typedChar: Char, modifiers: UKeyboard.Modifiers?) {
-        superKeyReleased(keyCode, 0 /* TODO */, modifiers)
+        //#if MC>=11502
+        //$$ if (keyCode != 0) {
+        //#if MC>=12109
+        //$$ super.keyReleased(KeyInput(keyCode, 0, modifiers.toInt()))
+        //#else
+        //$$ super.keyReleased(keyCode, 0, modifiers.toInt())
+        //#endif
+        //$$ }
+        //#endif
     }
 
     open fun onMouseClicked(mouseX: Double, mouseY: Double, mouseButton: Int) {
-        superMouseClicked(mouseX, mouseY, mouseButton, null /* TODO */)
+        //#if MC>=11502
+        //$$ if (mouseButton == 1)
+        //$$     lastClick = UMinecraft.getTime()
+        //#if MC>=12109
+        //$$ super.mouseClicked(Click(mouseX, mouseY, MouseInput(mouseButton, lastMouseInput?.modifiers ?: 0)), lastDoubled ?: false)
+        //#else
+        //$$ super.mouseClicked(mouseX, mouseY, mouseButton)
+        //#endif
+        //#else
+        try {
+            super.mouseClicked(mouseX.toInt(), mouseY.toInt(), mouseButton)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        //#endif
     }
 
     open fun onMouseReleased(mouseX: Double, mouseY: Double, state: Int) {
-        superMouseReleased(mouseX, mouseY, state, null /* TODO */)
+        //#if MC>=12109
+        //$$ super.mouseReleased(Click(mouseX, mouseY, MouseInput(state, lastMouseInput?.modifiers ?: 0)))
+        //#elseif MC>=11502
+        //$$ super.mouseReleased(mouseX, mouseY, state)
+        //#else
+        super.mouseReleased(mouseX.toInt(), mouseY.toInt(), state)
+        //#endif
     }
 
     open fun onMouseDragged(x: Double, y: Double, clickedButton: Int, timeSinceLastClick: Long) {
-        superMouseDragged(x, y, clickedButton, timeSinceLastClick, null /* TODO */)
+        //#if MC>=12109
+        //$$ super.mouseDragged(Click(x, y, MouseInput(clickedButton, lastMouseInput?.modifiers ?: 0)), lastDraggedDx, lastDraggedDy)
+        //#elseif MC>=11502
+        //$$ super.mouseDragged(x, y, clickedButton, lastDraggedDx, lastDraggedDy)
+        //#else
+        super.mouseClickMove(x.toInt(), y.toInt(), clickedButton, timeSinceLastClick)
+        //#endif
     }
 
     open fun onMouseScrolled(delta: Double) {
-        superMouseScrolled(delta)
+        //#if MC>=12002
+        //$$ super.mouseScrolled(lastScrolledX, lastScrolledY, lastScrolledDX, delta)
+        //#elseif MC>=11502
+        //$$ super.mouseScrolled(lastScrolledX, lastScrolledY, delta)
+        //#endif
     }
 
     open fun onTick() {

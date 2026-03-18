@@ -137,7 +137,7 @@ abstract class UScreen(
     //$$
     //#if MC>=12109
     //$$ final override fun keyPressed(input: KeyInput): Boolean {
-    //$$     consumableInputHandler?.let {
+    //$$     inputHandler?.let {
     //$$         return it.uKeyPressed(input.key, input.scancode, input.modifiers.toModifiers())
     //$$     }
     //$$
@@ -146,7 +146,7 @@ abstract class UScreen(
     //$$ }
     //$$
     //$$ final override fun keyReleased(input: KeyInput): Boolean {
-    //$$     consumableInputHandler?.let {
+    //$$     inputHandler?.let {
     //$$         return it.uKeyReleased(input.key, input.scancode, input.modifiers.toModifiers())
     //$$     }
     //$$
@@ -156,7 +156,7 @@ abstract class UScreen(
     //$$
     //$$ final override fun charTyped(input: CharInput): Boolean {
     //$$     val codepoint = input.codepoint
-    //$$     consumableInputHandler?.let {
+    //$$     inputHandler?.let {
     //$$         return it.uCharTyped(codepoint, input.modifiers.toModifiers())
     //$$     }
     //$$
@@ -177,7 +177,7 @@ abstract class UScreen(
     //$$     lastDoubled = doubled
     //$$     if (click.button() == 1) lastClick = UMinecraft.getTime()
     //$$
-    //$$     consumableInputHandler?.let {
+    //$$     inputHandler?.let {
     //$$         return it.uMouseClicked(click.x, click.y, click.button()).also {
     //$$             lastMouseInput = null
     //$$             lastDoubled = null
@@ -193,7 +193,7 @@ abstract class UScreen(
     //$$ final override fun mouseReleased(click: Click): Boolean {
     //$$     lastMouseInput = click.buttonInfo
     //$$
-    //$$     consumableInputHandler?.let {
+    //$$     inputHandler?.let {
     //$$         return it.uMouseReleased(click.x, click.y, click.button()).also {
     //$$             lastMouseInput = null
     //$$         }
@@ -209,7 +209,7 @@ abstract class UScreen(
     //$$     lastDraggedDx = offsetX
     //$$     lastDraggedDy = offsetY
     //$$
-    //$$     consumableInputHandler?.let {
+    //$$     inputHandler?.let {
     //$$         return it.uMouseDragged(click.x, click.y, click.button(), UMinecraft.getTime() - lastClick).also {
     //$$             lastMouseInput = null
     //$$         }
@@ -221,7 +221,7 @@ abstract class UScreen(
     //$$ }
     //#else
     //$$ final override fun keyPressed(keyCode: Int, scanCode: Int, modifierCode: Int): Boolean {
-    //$$     consumableInputHandler?.let {
+    //$$     inputHandler?.let {
     //$$         return it.uKeyPressed(keyCode, scanCode, modifierCode.toModifiers())
     //$$     }
     //$$
@@ -230,7 +230,7 @@ abstract class UScreen(
     //$$ }
     //$$
     //$$ final override fun keyReleased(keyCode: Int, scanCode: Int, modifierCode: Int): Boolean {
-    //$$     consumableInputHandler?.let {
+    //$$     inputHandler?.let {
     //$$         return it.uKeyReleased(keyCode, scanCode, modifierCode.toModifiers())
     //$$     }
     //$$
@@ -239,7 +239,7 @@ abstract class UScreen(
     //$$ }
     //$$
     //$$ final override fun charTyped(char: Char, modifierCode: Int): Boolean {
-    //$$     consumableInputHandler?.let {
+    //$$     inputHandler?.let {
     //$$         return it.uCharTyped(char.code, modifierCode.toModifiers())
     //$$     }
     //$$
@@ -251,7 +251,7 @@ abstract class UScreen(
     //$$     if (mouseButton == 1)
     //$$         lastClick = UMinecraft.getTime()
     //$$
-    //$$     consumableInputHandler?.let {
+    //$$     inputHandler?.let {
     //$$         return it.uMouseClicked(mouseX, mouseY, mouseButton)
     //$$     }
     //$$
@@ -260,7 +260,7 @@ abstract class UScreen(
     //$$ }
     //$$
     //$$ final override fun mouseReleased(mouseX: Double, mouseY: Double, mouseButton: Int): Boolean {
-    //$$     consumableInputHandler?.let {
+    //$$     inputHandler?.let {
     //$$         return it.uMouseReleased(mouseX, mouseY, mouseButton)
     //$$     }
     //$$
@@ -272,7 +272,7 @@ abstract class UScreen(
     //$$     lastDraggedDx = dx
     //$$     lastDraggedDy = dy
     //$$
-    //$$     consumableInputHandler?.let {
+    //$$     inputHandler?.let {
     //$$         return it.uMouseDragged(x, y, mouseButton, UMinecraft.getTime() - lastClick)
     //$$     }
     //$$
@@ -290,7 +290,7 @@ abstract class UScreen(
     //$$     lastScrolledX = mouseX
     //$$     lastScrolledY = mouseY
     //$$
-    //$$     consumableInputHandler?.let {
+    //$$     inputHandler?.let {
     //$$         return it.uMouseScrolled(delta)
     //$$     }
     //$$
@@ -679,7 +679,7 @@ abstract class UScreen(
         return false // No super
     }
 
-    @Suppress("unused") // Becomes used if the child class is an instance of [ConsumableInputHandler]
+    @Suppress("unused") // Becomes used if the child class is an instance of [inputHandler]
     fun uSuperInputHandler(): InputHandler = object : InputHandler {
         override fun uSuperInputHandler(): InputHandler = this
 
@@ -711,8 +711,8 @@ abstract class UScreen(
      * On versions below 1.16, the boolean returns are not passed to Minecraft as they are not used,
      * the interface still replaces and executes the same for consistency.
      *
-     * [UScreen] automatically handles this if it's subclass implements this interface. (via `consumableInputHandler`)
-     * To aid this, [UScreen] already implements `uSuperConsumableInputHandler()` itself which, by default, defers to the
+     * [UScreen] automatically handles this if it's subclass implements this interface. (via `inputHandler`)
+     * To aid this, [UScreen] already implements `uSuperinputHandler()` itself which, by default, defers to the
      * original non-returning functions. So you only need to override the functions you actually want to consume.
      */
     interface InputHandler {

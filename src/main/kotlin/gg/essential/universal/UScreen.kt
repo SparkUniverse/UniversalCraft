@@ -622,39 +622,39 @@ abstract class UScreen(
         onDrawBackground(tint)
     }
 
-    private fun superMouseClicked(mouseX: Double, mouseY: Double, mouseButton: Int, modifiers: UKeyboard.Modifiers?): Boolean {
+    private fun superMouseClicked(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers?): Boolean {
         //#if MC >= 1.15.2
-        //$$ if (mouseButton == 1)
+        //$$ if (button == 1)
         //$$     lastClick = UMinecraft.getTime()
         //#if MC >= 1.21.9
-        //$$ return super.mouseClicked(Click(mouseX, mouseY, MouseInput(mouseButton, modifiers.toInt())), lastDoubled ?: false)
+        //$$ return super.mouseClicked(Click(x, y, MouseInput(button, modifiers.toInt())), lastDoubled ?: false)
         //#else
-        //$$ return super.mouseClicked(mouseX, mouseY, mouseButton)
+        //$$ return super.mouseClicked(x, y, button)
         //#endif
         //#else
-        super.mouseClicked(mouseX.toInt(), mouseY.toInt(), mouseButton)
+        super.mouseClicked(x.toInt(), y.toInt(), button)
         return false
         //#endif
     }
 
-    private fun superMouseReleased(mouseX: Double, mouseY: Double, state: Int, modifiers: UKeyboard.Modifiers?): Boolean {
+    private fun superMouseReleased(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers?): Boolean {
         //#if MC >= 1.21.9
-        //$$ return super.mouseReleased(Click(mouseX, mouseY, MouseInput(state, modifiers.toInt())))
+        //$$ return super.mouseReleased(Click(x, y, MouseInput(button, modifiers.toInt())))
         //#elseif MC >= 1.15.2
-        //$$ return super.mouseReleased(mouseX, mouseY, state)
+        //$$ return super.mouseReleased(x, y, button)
         //#else
-        super.mouseReleased(mouseX.toInt(), mouseY.toInt(), state)
+        super.mouseReleased(x.toInt(), y.toInt(), button)
         return false
         //#endif
     }
 
-    private fun superMouseDragged(x: Double, y: Double, clickedButton: Int, modifiers: UKeyboard.Modifiers?, offsetX: Double, offsetY: Double): Boolean {
+    private fun superMouseDragged(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers?, offsetX: Double, offsetY: Double): Boolean {
         //#if MC >= 1.21.9
-        //$$ return super.mouseDragged(Click(x, y, MouseInput(clickedButton, modifiers.toInt())), offsetX, offsetY)
+        //$$ return super.mouseDragged(Click(x, y, MouseInput(button, modifiers.toInt())), offsetX, offsetY)
         //#elseif MC >= 1.15.2
-        //$$ return super.mouseDragged(x, y, clickedButton, offsetX, offsetY)
+        //$$ return super.mouseDragged(x, y, button, offsetX, offsetY)
         //#else
-        super.mouseClickMove(x.toInt(), y.toInt(), clickedButton, 0L)
+        super.mouseClickMove(x.toInt(), y.toInt(), button, 0L)
         return false
         //#endif
     }
@@ -680,22 +680,22 @@ abstract class UScreen(
         //#endif
     }
 
-    private fun superKeyPressed(keyCode: Int, scanCode: Int, modifiers: UKeyboard.Modifiers?): Boolean {
+    private fun superKeyPressed(key: Int, scanCode: Int, modifiers: UKeyboard.Modifiers?): Boolean {
         //#if MC >= 1.21.9
-        //$$ return super.keyPressed(KeyInput(keyCode, scanCode, modifiers.toInt()))
+        //$$ return super.keyPressed(KeyInput(key, scanCode, modifiers.toInt()))
         //#elseif MC >= 1.15.2
-        //$$ return super.keyPressed(keyCode, scanCode, modifiers.toInt())
+        //$$ return super.keyPressed(key, scanCode, modifiers.toInt())
         //#else
-        super.keyTyped(0.toChar(), keyCode)
+        super.keyTyped(0.toChar(), key)
         return false
         //#endif
     }
 
-    private fun superKeyReleased(keyCode: Int, scanCode: Int, modifiers: UKeyboard.Modifiers?): Boolean {
+    private fun superKeyReleased(key: Int, scanCode: Int, modifiers: UKeyboard.Modifiers?): Boolean {
         //#if MC >= 1.21.9
-        //$$ return super.keyReleased(KeyInput(keyCode, scanCode, modifiers.toInt()))
+        //$$ return super.keyReleased(KeyInput(key, scanCode, modifiers.toInt()))
         //#elseif MC >= 1.15.2
-        //$$ return super.keyReleased(keyCode, scanCode, modifiers.toInt())
+        //$$ return super.keyReleased(key, scanCode, modifiers.toInt())
         //#else
         return false // No super
         //#endif
@@ -705,14 +705,14 @@ abstract class UScreen(
     fun uSuperInputHandler(): InputHandler = object : InputHandler {
         override fun uSuperInputHandler(): InputHandler = this
 
-        override fun uMouseClicked(mouseX: Double, mouseY: Double, mouseButton: Int, modifiers: UKeyboard.Modifiers): Boolean =
-            superMouseClicked(mouseX, mouseY, mouseButton, modifiers)
+        override fun uMouseClicked(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers): Boolean =
+            superMouseClicked(x, y, button, modifiers)
 
-        override fun uMouseReleased(mouseX: Double, mouseY: Double, state: Int, modifiers: UKeyboard.Modifiers): Boolean =
-            superMouseReleased(mouseX, mouseY, state, modifiers)
+        override fun uMouseReleased(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers): Boolean =
+            superMouseReleased(x, y, button, modifiers)
 
-        override fun uMouseDragged(x: Double, y: Double, clickedButton: Int, modifiers: UKeyboard.Modifiers, offsetX: Double, offsetY: Double): Boolean =
-            superMouseDragged(x, y, clickedButton, modifiers, offsetX, offsetY)
+        override fun uMouseDragged(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers, offsetX: Double, offsetY: Double): Boolean =
+            superMouseDragged(x, y, button, modifiers, offsetX, offsetY)
 
         override fun uMouseScrolled(delta: Double): Boolean =
             superMouseScrolled(delta)
@@ -720,11 +720,11 @@ abstract class UScreen(
         override fun uCharTyped(codepoint: Int, modifiers: UKeyboard.Modifiers): Boolean =
             superCharTyped(codepoint, modifiers)
 
-        override fun uKeyPressed(keyCode: Int, scanCode: Int, modifiers: UKeyboard.Modifiers): Boolean =
-            superKeyPressed(keyCode, scanCode, modifiers)
+        override fun uKeyPressed(key: Int, scanCode: Int, modifiers: UKeyboard.Modifiers): Boolean =
+            superKeyPressed(key, scanCode, modifiers)
 
-        override fun uKeyReleased(keyCode: Int, scanCode: Int, modifiers: UKeyboard.Modifiers): Boolean =
-            superKeyReleased(keyCode, scanCode, modifiers)
+        override fun uKeyReleased(key: Int, scanCode: Int, modifiers: UKeyboard.Modifiers): Boolean =
+            superKeyReleased(key, scanCode, modifiers)
     }
 
     /** Interface to replace [UScreen]'s input handling functions with consumable alternatives.
@@ -740,14 +740,14 @@ abstract class UScreen(
     interface InputHandler {
         fun uSuperInputHandler(): InputHandler
 
-        fun uMouseClicked(mouseX: Double, mouseY: Double, mouseButton: Int, modifiers: UKeyboard.Modifiers): Boolean =
-            uSuperInputHandler().uMouseClicked(mouseX, mouseY, mouseButton, modifiers)
+        fun uMouseClicked(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers): Boolean =
+            uSuperInputHandler().uMouseClicked(x, y, button, modifiers)
 
-        fun uMouseReleased(mouseX: Double, mouseY: Double, state: Int, modifiers: UKeyboard.Modifiers): Boolean =
-            uSuperInputHandler().uMouseReleased(mouseX, mouseY, state, modifiers)
+        fun uMouseReleased(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers): Boolean =
+            uSuperInputHandler().uMouseReleased(x, y, button, modifiers)
 
-        fun uMouseDragged(x: Double, y: Double, clickedButton: Int, modifiers: UKeyboard.Modifiers, offsetX: Double, offsetY: Double): Boolean =
-            uSuperInputHandler().uMouseDragged(x, y, clickedButton, modifiers, offsetX, offsetY)
+        fun uMouseDragged(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers, offsetX: Double, offsetY: Double): Boolean =
+            uSuperInputHandler().uMouseDragged(x, y, button, modifiers, offsetX, offsetY)
 
         fun uMouseScrolled(delta: Double): Boolean =
             uSuperInputHandler().uMouseScrolled(delta)
@@ -755,11 +755,11 @@ abstract class UScreen(
         fun uCharTyped(codepoint: Int, modifiers: UKeyboard.Modifiers): Boolean =
             uSuperInputHandler().uCharTyped(codepoint, modifiers)
 
-        fun uKeyPressed(keyCode: Int, scanCode: Int, modifiers: UKeyboard.Modifiers): Boolean =
-            uSuperInputHandler().uKeyPressed(keyCode, scanCode, modifiers)
+        fun uKeyPressed(key: Int, scanCode: Int, modifiers: UKeyboard.Modifiers): Boolean =
+            uSuperInputHandler().uKeyPressed(key, scanCode, modifiers)
 
-        fun uKeyReleased(keyCode: Int, scanCode: Int, modifiers: UKeyboard.Modifiers): Boolean =
-            uSuperInputHandler().uKeyReleased(keyCode, scanCode, modifiers)
+        fun uKeyReleased(key: Int, scanCode: Int, modifiers: UKeyboard.Modifiers): Boolean =
+            uSuperInputHandler().uKeyReleased(key, scanCode, modifiers)
     }
 
     companion object {

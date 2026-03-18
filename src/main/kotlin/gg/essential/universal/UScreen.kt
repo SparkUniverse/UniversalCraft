@@ -156,18 +156,13 @@ abstract class UScreen(
     //$$
     //$$ final override fun charTyped(input: CharInput): Boolean {
     //$$     val codepoint = input.codepoint
-    //$$     if (Character.isBmpCodePoint(codepoint)) {
-    //$$         consumableInputHandler?.let {
-    //$$             return it.uCharTyped(input.codepoint.toChar(), input.modifiers.toModifiers())
-    //$$         }
+    //$$     consumableInputHandler?.let {
+    //$$         return it.uCharTyped(codepoint, input.modifiers.toModifiers())
+    //$$     }
     //$$
+    //$$     if (Character.isBmpCodePoint(codepoint)) {
     //$$         onKeyPressed(0, input.codepoint.toChar(), input.modifiers.toModifiers())
     //$$     } else if (Character.isValidCodePoint(codepoint)) {
-    //$$         consumableInputHandler?.let {
-    //$$             return it.uCharTyped(Character.highSurrogate(input.codepoint), input.modifiers.toModifiers()) or
-    //$$                     it.uCharTyped(Character.lowSurrogate(input.codepoint), input.modifiers.toModifiers())
-    //$$         }
-    //$$
     //$$         onKeyPressed(0, Character.highSurrogate(input.codepoint), input.modifiers.toModifiers())
     //$$         onKeyPressed(0, Character.lowSurrogate(input.codepoint), input.modifiers.toModifiers())
     //$$     }
@@ -245,7 +240,7 @@ abstract class UScreen(
     //$$
     //$$ final override fun charTyped(char: Char, modifierCode: Int): Boolean {
     //$$     consumableInputHandler?.let {
-    //$$         return it.uCharTyped(char, modifierCode.toModifiers())
+    //$$         return it.uCharTyped(char.code, modifierCode.toModifiers())
     //$$     }
     //$$
     //$$     onKeyPressed(0, char, modifierCode.toModifiers())
@@ -356,7 +351,7 @@ abstract class UScreen(
     final override fun keyTyped(typedChar: Char, keyCode: Int) {
         inputHandler?.let {
             val handled = it.uKeyPressed(keyCode, UKeyboard.KEY_NONE, UKeyboard.getModifiers())
-            if (!handled) it.uCharTyped(typedChar, UKeyboard.getModifiers())
+            if (!handled) it.uCharTyped(typedChar.code, UKeyboard.getModifiers())
         } ?: onKeyPressed(keyCode, typedChar, UKeyboard.getModifiers())
     }
 
@@ -637,16 +632,14 @@ abstract class UScreen(
         //#endif
     }
 
-    private fun superCharTyped(typedChar: Char, modifiers: UKeyboard.Modifiers?): Boolean {
-        if (typedChar.isISOControl()) return false
-
+    private fun superCharTyped(codepoint: Int, modifiers: UKeyboard.Modifiers?): Boolean {
         //#if MC >= 1.21.9
-        //$$ return super.charTyped(CharInput(typedChar.code, modifiers.toInt()))
+        //$$ return super.charTyped(CharInput(codepoint, modifiers.toInt()))
         //#elseif MC >= 1.15.2
-        //$$ return super.charTyped(typedChar, modifiers.toInt())
+        //$$ return super.charTyped(codepoint.toChar(), modifiers.toInt())
         //#else
         try {
-            super.keyTyped(typedChar, 0)
+            super.keyTyped(codepoint.toChar(), 0)
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -702,8 +695,8 @@ abstract class UScreen(
         override fun uMouseScrolled(delta: Double): Boolean =
             superMouseScrolled(delta)
 
-        override fun uCharTyped(typedChar: Char, modifiers: UKeyboard.Modifiers?): Boolean =
-            superCharTyped(typedChar, modifiers)
+        override fun uCharTyped(codepoint: Int, modifiers: UKeyboard.Modifiers?): Boolean =
+            superCharTyped(codepoint, modifiers)
 
         override fun uKeyPressed(keyCode: Int, scanCode: Int, modifiers: UKeyboard.Modifiers?): Boolean =
             superKeyPressed(keyCode, scanCode, modifiers)
@@ -737,8 +730,8 @@ abstract class UScreen(
         fun uMouseScrolled(delta: Double): Boolean =
             uSuperInputHandler().uMouseScrolled(delta)
 
-        fun uCharTyped(typedChar: Char, modifiers: UKeyboard.Modifiers?): Boolean =
-            uSuperInputHandler().uCharTyped(typedChar, modifiers)
+        fun uCharTyped(codepoint: Int, modifiers: UKeyboard.Modifiers?): Boolean =
+            uSuperInputHandler().uCharTyped(codepoint, modifiers)
 
         fun uKeyPressed(keyCode: Int, scanCode: Int, modifiers: UKeyboard.Modifiers?): Boolean =
             uSuperInputHandler().uKeyPressed(keyCode, scanCode, modifiers)

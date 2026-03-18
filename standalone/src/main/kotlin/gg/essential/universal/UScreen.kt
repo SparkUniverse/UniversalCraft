@@ -66,6 +66,10 @@ abstract class UScreen(
     open fun onMouseScrolled(delta: Double) {
     }
 
+    open fun onMouseScrolled(mouseX: Double, mouseY: Double, deltaHorizontal: Double, deltaVertical: Double) {
+        onMouseScrolled(deltaVertical)
+    }
+
     open fun onTick() {
     }
 

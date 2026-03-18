@@ -1,0 +1,6 @@
+net.minecraft.client.gui.GuiGraphicsExtractor net.minecraft.client.gui.DrawContext
+net.minecraft.client.gui.GuiGraphicsExtractor blit() drawTexture()
+net.minecraft.client.gui.GuiGraphicsExtractor nextStratum() createNewRootLayer()
+net.minecraft.client.gui.GuiGraphicsExtractor pose() getMatrices()
+net.minecraft.client.gui.components.Renderable extractRenderState() render()
+net.minecraft.client.gui.screens.Screen extractBackground() renderBackground()

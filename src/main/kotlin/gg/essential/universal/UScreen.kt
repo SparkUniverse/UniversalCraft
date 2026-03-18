@@ -158,15 +158,19 @@ abstract class UScreen(
     //$$
     //$$ final override fun charTyped(input: CharInput): Boolean {
     //$$     val codepoint = input.codepoint
+        //#if MC >= 26.1
+        //$$ val modifiers = 0.toModifiers()
+        //#else
+        //$$ val modifiers = input.modifiers.toModifiers()
+        //#endif
     //$$     inputHandler?.let {
-    //$$         return it.uCharTyped(codepoint, input.modifiers.toModifiers())
+    //$$         return it.uCharTyped(codepoint, modifiers)
     //$$     }
-    //$$
     //$$     if (Character.isBmpCodePoint(codepoint)) {
-    //$$         @Suppress("DEPRECATION") onKeyPressed(0, input.codepoint.toChar(), input.modifiers.toModifiers())
+    //$$         @Suppress("DEPRECATION") onKeyPressed(0, input.codepoint.toChar(), modifiers)
     //$$     } else if (Character.isValidCodePoint(codepoint)) {
-    //$$         @Suppress("DEPRECATION") onKeyPressed(0, Character.highSurrogate(input.codepoint), input.modifiers.toModifiers())
-    //$$         @Suppress("DEPRECATION") onKeyPressed(0, Character.lowSurrogate(input.codepoint), input.modifiers.toModifiers())
+    //$$         @Suppress("DEPRECATION") onKeyPressed(0, Character.highSurrogate(input.codepoint), modifiers)
+    //$$         @Suppress("DEPRECATION") onKeyPressed(0, Character.lowSurrogate(input.codepoint), modifiers)
     //$$     }
     //$$     return false
     //$$ }
@@ -488,7 +492,9 @@ abstract class UScreen(
             //#endif
         //$$ }
         //$$ if (typedChar != 0.toChar()) {
-            //#if MC>=12109
+            //#if MC >= 26.1
+            //$$ super.charTyped(CharacterEvent(typedChar.code))
+            //#elseif MC>=12109
             //$$ super.charTyped(CharInput(typedChar.code, modifiers.toInt()))
             //#else
             //$$ super.charTyped(typedChar, modifiers.toInt())
@@ -558,11 +564,29 @@ abstract class UScreen(
     }
 
     @Deprecated(INPUTHANDLER_DEP_MSG)
+    // This function receives the delta from both lwjgl 2 and lwjgl 3.
+    // The deltas obtained from lwjgl 2 are scaled by a constant factor and thus much higher than the ones provided by lwjgl 3.
+    @Deprecated("Provided `delta` values have different units depending on Minecraft versions.", ReplaceWith("onMouseScrolled(mouseX, mouseY, deltaHorizontal, deltaVertical)"))
     open fun onMouseScrolled(delta: Double) {
+        //#if MC>=11502
+        //$$ onMouseScrolled(lastScrolledX, lastScrolledY, lastScrolledDX, delta)
+        //#else
+        // Diving by 120 to revert the scaling which LWJGL 2 applies, so we get consistent deltas across all versions on the onMouseScrolled
+        // https://github.com/LWJGL/lwjgl/blob/master/src/java/org/lwjgl/opengl/LinuxMouse.java#L48
+        // https://github.com/LWJGL/lwjgl/blob/master/src/java/org/lwjgl/opengl/MacOSXNativeMouse.java#L53
+        // https://github.com/LWJGL/lwjgl/blob/master/src/java/org/lwjgl/opengl/MouseEventQueue.java#L52
+        onMouseScrolled(UMouse.Scaled.x, UMouse.Scaled.y, 0.0, delta / 120.0)
+        //#endif
+    }
+
+    // Must be called with consistently scaled deltas on all mc/lwjgl versions.
+    // This is to ensure a consistent scrolling experience across all versions.
+    // See older function above this for further explanation.
+    open fun onMouseScrolled(mouseX: Double, mouseY: Double, deltaHorizontal: Double, deltaVertical: Double) {
         //#if MC>=12002
-        //$$ super.mouseScrolled(lastScrolledX, lastScrolledY, lastScrolledDX, delta)
+        //$$ super.mouseScrolled(mouseX, mouseY, deltaHorizontal, deltaVertical)
         //#elseif MC>=11502
-        //$$ super.mouseScrolled(lastScrolledX, lastScrolledY, delta)
+        //$$ super.mouseScrolled(mouseX, mouseY, deltaVertical)
         //#endif
     }
 

@@ -22,7 +22,9 @@ object UPlayer {
 
     @JvmStatic
     fun sendClientSideMessage(message: IChatComponent) {
-        //#if MC>=12102
+        //#if MC >= 26.1
+        //$$ UMinecraft.getMinecraft().gui.chat.addClientSystemMessage(message)
+        //#elseif MC>=12102
         //$$ getPlayer()!!.sendMessage(message, false)
         //#elseif MC>=11900
         //$$ getPlayer()!!.sendMessage(message)

@@ -21,12 +21,20 @@ import net.minecraft.util.ResourceLocation
 //$$ import com.mojang.blaze3d.vertex.VertexFormatElement
 //$$ import com.mojang.blaze3d.pipeline.BlendFunction
 //$$ import com.mojang.blaze3d.pipeline.RenderPipeline
+//#if MC >= 26.1
+//$$ import com.mojang.blaze3d.pipeline.ColorTargetState
+//$$ import com.mojang.blaze3d.pipeline.DepthStencilState
+//$$ import com.mojang.blaze3d.platform.CompareOp
+//#else
 //$$ import com.mojang.blaze3d.platform.DepthTestFunction
 //$$ import com.mojang.blaze3d.platform.LogicOp
+//#endif
 //$$ import com.mojang.blaze3d.shaders.ShaderType
 //$$ import com.mojang.blaze3d.systems.RenderPass
 //$$ import gg.essential.universal.shader.ShaderTransformer
+//#if MC < 26.1
 //$$ import net.minecraft.client.gl.GlResourceManager
+//#endif
 //$$ import net.minecraft.client.gl.UniformType
 //$$ import net.minecraft.client.render.BuiltBuffer
 //$$ import org.apache.commons.codec.digest.DigestUtils
@@ -324,6 +332,7 @@ class URenderPipeline private constructor(
     interface BuilderProps {
         var depthTest: DepthTest
         var culling: Boolean
+        @Deprecated("Unsupported as of Minecraft 26.1")
         var colorLogic: ColorLogic
         var blendState: BlendState
         var colorMask: Pair</*rgb*/Boolean, /*alpha*/Boolean>
@@ -338,6 +347,7 @@ class URenderPipeline private constructor(
     private data class BuilderPropsImpl(
         override var depthTest: DepthTest,
         override var culling: Boolean,
+        @Deprecated("Unsupported as of Minecraft 26.1")
         override var colorLogic: ColorLogic,
         override var blendState: BlendState,
         override var colorMask: Pair<Boolean, Boolean>,
@@ -425,6 +435,18 @@ class URenderPipeline private constructor(
             //$$             shader.uniforms.forEach { withUniform(it.key, it.value) }
             //$$         }
             //$$     }
+            //#if MC >= 26.1
+            //$$     if (depthTest != DepthTest.Disabled) {
+            //$$         withDepthStencilState(DepthStencilState(when (depthTest) {
+            //$$             DepthTest.Disabled -> throw AssertionError("unreachable")
+            //$$             DepthTest.Always -> CompareOp.ALWAYS_PASS
+            //$$             DepthTest.Equal -> CompareOp.EQUAL
+            //$$             DepthTest.LessOrEqual -> CompareOp.LESS_THAN_OR_EQUAL
+            //$$             DepthTest.Less -> CompareOp.LESS_THAN
+            //$$             DepthTest.Greater -> CompareOp.GREATER_THAN
+            //$$         }, depthMask, polygonOffset.first, polygonOffset.second))
+            //$$     }
+            //#else
             //$$     withDepthTestFunction(when (depthTest) {
             //$$         DepthTest.Disabled -> DepthTestFunction.NO_DEPTH_TEST
             //$$         DepthTest.Always -> DepthTestFunction.NO_DEPTH_TEST // implemented via raw GlStateManager below
@@ -433,7 +455,29 @@ class URenderPipeline private constructor(
             //$$         DepthTest.Less -> DepthTestFunction.LESS_DEPTH_TEST
             //$$         DepthTest.Greater -> DepthTestFunction.GREATER_DEPTH_TEST
             //$$     })
+            //$$     withDepthWrite(depthMask)
+            //$$     polygonOffset.let { (factor, units) ->
+            //$$         withDepthBias(factor, units)
+            //$$     }
+            //#endif
             //$$     withCull(culling)
+            //#if MC >= 26.1
+            //$$     withColorTargetState(ColorTargetState(
+            //$$         java.util.Optional.ofNullable(if (blendState.enabled) BlendFunction(
+            //$$             blendState.srcRgb.mcSourceFactor,
+            //$$             blendState.dstRgb.mcDestFactor,
+            //$$             blendState.srcAlpha.mcSourceFactor,
+            //$$             blendState.dstAlpha.mcDestFactor,
+            //$$         ) else null),
+            //$$         colorMask.let { (colorMask, alphaMask) ->
+            //$$             var flags = 0
+            //$$             if (colorMask) flags += ColorTargetState.WRITE_COLOR
+            //$$             if (alphaMask) flags += ColorTargetState.WRITE_ALPHA
+            //$$             flags
+            //$$         }
+            //$$     ))
+            //#else
+            //$$     @Suppress("DEPRECATION")
             //$$     withColorLogic(when (colorLogic) {
             //$$         ColorLogic.None -> LogicOp.NONE
             //$$         ColorLogic.OrReverse -> LogicOp.OR_REVERSE
@@ -452,12 +496,10 @@ class URenderPipeline private constructor(
             //$$     colorMask.let { (colorMask, alphaMask) ->
             //$$         withColorWrite(colorMask, alphaMask)
             //$$     }
-            //$$     withDepthWrite(depthMask)
-            //$$     polygonOffset.let { (factor, units) ->
-            //$$         withDepthBias(factor, units)
-            //$$     }
+            //#endif
             //$$ }.build()
             //$$
+            //#if MC < 26.1
             //$$ if (depthTest == DepthTest.Always) {
             //$$     abstract class CustomRenderPipeline(inner: RenderPipeline) : RenderPipeline(
             //$$         inner.location, inner.vertexShader, inner.fragmentShader, inner.shaderDefines, inner.samplers, inner.uniforms, inner.blendFunction, inner.depthTestFunction, inner.polygonMode, inner.isCull, inner.isWriteColor, inner.isWriteAlpha, inner.isWriteDepth, inner.colorLogic, inner.vertexFormat, inner.vertexFormatMode, inner.depthBiasScaleFactor, inner.depthBiasConstant,
@@ -476,6 +518,7 @@ class URenderPipeline private constructor(
             //$$         }
             //$$     }
             //$$ }
+            //#endif
             //$$
             //$$ return URenderPipeline(
             //$$     id,
@@ -502,8 +545,8 @@ class URenderPipeline private constructor(
                         DepthTest.Greater -> GL11.GL_GREATER
                     },
                     culling = culling,
-                    colorLogicOp = colorLogic != ColorLogic.None,
-                    colorLogicOpMode = when (colorLogic) {
+                    colorLogicOp = @Suppress("DEPRECATION") colorLogic != ColorLogic.None,
+                    colorLogicOpMode = @Suppress("DEPRECATION") when (colorLogic) {
                         ColorLogic.None -> GL11.GL_COPY
                         ColorLogic.OrReverse -> GL11.GL_OR_REVERSE
                     },
@@ -603,7 +646,13 @@ class URenderPipeline private constructor(
             //$$     ?: throw IllegalArgumentException("No default shader for $format.")
             //#if MC>=12105
             //$$ val shaderId = Identifier.ofVanilla(shader)
-            //$$ val samplers = List(format.mc.elements.count { it.usage == VertexFormatElement.Usage.UV }) { i -> "Sampler$i" }
+            //$$ val samplers = List(format.mc.elements.count {
+                //#if MC >= 26.1
+                //$$ it == VertexFormatElement.UV0 || it == VertexFormatElement.UV1 || it == VertexFormatElement.UV2
+                //#else
+                //$$ it.usage == VertexFormatElement.Usage.UV
+                //#endif
+            //$$ }) { i -> "Sampler$i" }
             //$$ val uniforms = mapOf(
                 //#if MC>=12106
                 //$$ "DynamicTransforms" to UniformType.UNIFORM_BUFFER,

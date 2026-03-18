@@ -69,7 +69,7 @@ internal class TemporaryTextureAllocator(
 
         var texture = gpuDevice.createTexture(
             { "Pre-rendered texture" },
-            GpuTexture.USAGE_RENDER_ATTACHMENT or GpuTexture.USAGE_TEXTURE_BINDING,
+            GpuTexture.USAGE_COPY_DST or GpuTexture.USAGE_COPY_SRC or GpuTexture.USAGE_RENDER_ATTACHMENT or GpuTexture.USAGE_TEXTURE_BINDING,
             TextureFormat.RGBA8,
             width,
             height,
@@ -82,7 +82,7 @@ internal class TemporaryTextureAllocator(
         }
         var depthTexture = gpuDevice.createTexture(
             { "Pre-rendered depth texture" },
-            GpuTexture.USAGE_RENDER_ATTACHMENT,
+            GpuTexture.USAGE_COPY_DST or GpuTexture.USAGE_COPY_SRC or GpuTexture.USAGE_RENDER_ATTACHMENT,
             TextureFormat.DEPTH32,
             width,
             height,

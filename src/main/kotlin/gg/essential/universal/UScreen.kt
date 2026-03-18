@@ -53,7 +53,7 @@ abstract class UScreen(
     private var guiScaleToRestore = -1
     private var restoringGuiScale = false
     private val screenToRestore: GuiScreen? = if (restoreCurrentGuiOnClose) currentScreen else null
-    protected var consumableInputHandler: ConsumableInputHandler? = this as? ConsumableInputHandler
+    protected var inputHandler: InputHandler? = this as? InputHandler
     //#if MC>=12106
     //$$ // Background is now draw from the final `renderWithTooltip` method, before we ever get control, so we need
     //$$ // to suppress by default and can only allow during `onDrawScreen`.
@@ -354,24 +354,24 @@ abstract class UScreen(
     }
 
     final override fun keyTyped(typedChar: Char, keyCode: Int) {
-        consumableInputHandler?.let {
+        inputHandler?.let {
             val handled = it.uKeyPressed(keyCode, UKeyboard.getModifiers())
             if (!handled) it.uCharTyped(typedChar, UKeyboard.getModifiers())
         } ?: onKeyPressed(keyCode, typedChar, UKeyboard.getModifiers())
     }
 
     final override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
-        consumableInputHandler?.uMouseClicked(mouseX.toDouble(), mouseY.toDouble(), mouseButton)
+        inputHandler?.uMouseClicked(mouseX.toDouble(), mouseY.toDouble(), mouseButton)
             ?: onMouseClicked(mouseX.toDouble(), mouseY.toDouble(), mouseButton)
     }
 
     final override fun mouseReleased(mouseX: Int, mouseY: Int, state: Int) {
-        consumableInputHandler?.uMouseReleased(mouseX.toDouble(), mouseY.toDouble(), state)
+        inputHandler?.uMouseReleased(mouseX.toDouble(), mouseY.toDouble(), state)
             ?: onMouseReleased(mouseX.toDouble(), mouseY.toDouble(), state)
     }
 
     final override fun mouseClickMove(mouseX: Int, mouseY: Int, clickedMouseButton: Int, timeSinceLastClick: Long) {
-        consumableInputHandler?.uMouseDragged(mouseX.toDouble(), mouseY.toDouble(), clickedMouseButton, timeSinceLastClick)
+        inputHandler?.uMouseDragged(mouseX.toDouble(), mouseY.toDouble(), clickedMouseButton, timeSinceLastClick)
             ?: onMouseDragged(mouseX.toDouble(), mouseY.toDouble(), clickedMouseButton, timeSinceLastClick)
     }
 
@@ -379,7 +379,7 @@ abstract class UScreen(
         super.handleMouseInput()
         val scrollDelta = Mouse.getEventDWheel()
         if (scrollDelta != 0) {
-            consumableInputHandler?.uMouseScrolled(scrollDelta.toDouble())
+            inputHandler?.uMouseScrolled(scrollDelta.toDouble())
                 ?: onMouseScrolled(scrollDelta.toDouble())
         }
     }
@@ -687,8 +687,8 @@ abstract class UScreen(
     }
 
     @Suppress("unused") // Becomes used if the child class is an instance of [ConsumableInputHandler]
-    fun uSuperConsumableInputHandler(): ConsumableInputHandler = object : ConsumableInputHandler {
-        override fun uSuperConsumableInputHandler(): ConsumableInputHandler = this
+    fun uSuperInputHandler(): InputHandler = object : InputHandler {
+        override fun uSuperInputHandler(): InputHandler = this
 
         override fun uMouseClicked(mouseX: Double, mouseY: Double, mouseButton: Int): Boolean =
             superMouseClicked(mouseX, mouseY, mouseButton)
@@ -722,29 +722,29 @@ abstract class UScreen(
      * To aid this, [UScreen] already implements `uSuperConsumableInputHandler()` itself which, by default, defers to the
      * original non-returning functions. So you only need to override the functions you actually want to consume.
      */
-    interface ConsumableInputHandler {
-        fun uSuperConsumableInputHandler(): ConsumableInputHandler
+    interface InputHandler {
+        fun uSuperInputHandler(): InputHandler
 
         fun uMouseClicked(mouseX: Double, mouseY: Double, mouseButton: Int): Boolean =
-            uSuperConsumableInputHandler().uMouseClicked(mouseX, mouseY, mouseButton)
+            uSuperInputHandler().uMouseClicked(mouseX, mouseY, mouseButton)
 
         fun uMouseReleased(mouseX: Double, mouseY: Double, state: Int): Boolean =
-            uSuperConsumableInputHandler().uMouseReleased(mouseX, mouseY, state)
+            uSuperInputHandler().uMouseReleased(mouseX, mouseY, state)
 
         fun uMouseDragged(x: Double, y: Double, clickedButton: Int, timeSinceLastClick: Long): Boolean =
-            uSuperConsumableInputHandler().uMouseDragged(x, y, clickedButton, timeSinceLastClick)
+            uSuperInputHandler().uMouseDragged(x, y, clickedButton, timeSinceLastClick)
 
         fun uMouseScrolled(delta: Double): Boolean =
-            uSuperConsumableInputHandler().uMouseScrolled(delta)
+            uSuperInputHandler().uMouseScrolled(delta)
 
         fun uCharTyped(typedChar: Char, modifiers: UKeyboard.Modifiers?): Boolean =
-            uSuperConsumableInputHandler().uCharTyped(typedChar, modifiers)
+            uSuperInputHandler().uCharTyped(typedChar, modifiers)
 
         fun uKeyPressed(keyCode: Int, modifiers: UKeyboard.Modifiers?): Boolean =
-            uSuperConsumableInputHandler().uKeyPressed(keyCode, modifiers)
+            uSuperInputHandler().uKeyPressed(keyCode, modifiers)
 
         fun uKeyReleased(keyCode: Int, modifiers: UKeyboard.Modifiers?): Boolean =
-            uSuperConsumableInputHandler().uKeyReleased(keyCode, modifiers)
+            uSuperInputHandler().uKeyReleased(keyCode, modifiers)
     }
 
     companion object {

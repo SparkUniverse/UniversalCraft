@@ -701,7 +701,9 @@ abstract class UScreen(
     }
 
     private fun superCharTyped(codepoint: Int, modifiers: UKeyboard.Modifiers?): Boolean {
-        //#if MC >= 1.21.9
+        //#if MC >= 26.1
+        //$$ return super.charTyped(CharacterEvent(codepoint))
+        //#elseif MC >= 1.21.9
         //$$ return super.charTyped(CharInput(codepoint, modifiers.toInt()))
         //#elseif MC >= 1.15.2
         //$$ return super.charTyped(codepoint.toChar(), modifiers.toInt())

@@ -178,7 +178,7 @@ abstract class UScreen(
     //$$     if (click.button() == 1) lastClick = UMinecraft.getTime()
     //$$
     //$$     inputHandler?.let {
-    //$$         return it.uMouseClicked(click.x, click.y, click.button()).also {
+    //$$         return it.uMouseClicked(click.x, click.y, click.button(), click.modifiers().toModifiers()).also {
     //$$             lastMouseInput = null
     //$$             lastDoubled = null
     //$$         }
@@ -194,7 +194,7 @@ abstract class UScreen(
     //$$     lastMouseInput = click.buttonInfo
     //$$
     //$$     inputHandler?.let {
-    //$$         return it.uMouseReleased(click.x, click.y, click.button()).also {
+    //$$         return it.uMouseReleased(click.x, click.y, click.button(), click.modifiers().toModifiers()).also {
     //$$             lastMouseInput = null
     //$$         }
     //$$     }
@@ -210,7 +210,7 @@ abstract class UScreen(
     //$$     lastDraggedDy = offsetY
     //$$
     //$$     inputHandler?.let {
-    //$$         return it.uMouseDragged(click.x, click.y, click.button(), UMinecraft.getTime() - lastClick).also {
+    //$$         return it.uMouseDragged(click.x, click.y, click.button(), UMinecraft.getTime() - lastClick, click.modifiers().toModifiers()).also {
     //$$             lastMouseInput = null
     //$$         }
     //$$     }
@@ -252,7 +252,7 @@ abstract class UScreen(
     //$$         lastClick = UMinecraft.getTime()
     //$$
     //$$     inputHandler?.let {
-    //$$         return it.uMouseClicked(mouseX, mouseY, mouseButton)
+    //$$         return it.uMouseClicked(mouseX, mouseY, mouseButton, null)
     //$$     }
     //$$
     //$$     onMouseClicked(mouseX, mouseY, mouseButton)
@@ -261,7 +261,7 @@ abstract class UScreen(
     //$$
     //$$ final override fun mouseReleased(mouseX: Double, mouseY: Double, mouseButton: Int): Boolean {
     //$$     inputHandler?.let {
-    //$$         return it.uMouseReleased(mouseX, mouseY, mouseButton)
+    //$$         return it.uMouseReleased(mouseX, mouseY, mouseButton, null)
     //$$     }
     //$$
     //$$     onMouseReleased(mouseX, mouseY, mouseButton)
@@ -273,7 +273,7 @@ abstract class UScreen(
     //$$     lastDraggedDy = dy
     //$$
     //$$     inputHandler?.let {
-    //$$         return it.uMouseDragged(x, y, mouseButton, UMinecraft.getTime() - lastClick)
+    //$$         return it.uMouseDragged(x, y, mouseButton, UMinecraft.getTime() - lastClick, null)
     //$$     }
     //$$
     //$$     onMouseDragged(x, y, mouseButton, UMinecraft.getTime() - lastClick)
@@ -356,17 +356,17 @@ abstract class UScreen(
     }
 
     final override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
-        inputHandler?.uMouseClicked(mouseX.toDouble(), mouseY.toDouble(), mouseButton)
+        inputHandler?.uMouseClicked(mouseX.toDouble(), mouseY.toDouble(), mouseButton, null)
             ?: onMouseClicked(mouseX.toDouble(), mouseY.toDouble(), mouseButton)
     }
 
     final override fun mouseReleased(mouseX: Int, mouseY: Int, state: Int) {
-        inputHandler?.uMouseReleased(mouseX.toDouble(), mouseY.toDouble(), state)
+        inputHandler?.uMouseReleased(mouseX.toDouble(), mouseY.toDouble(), state, null)
             ?: onMouseReleased(mouseX.toDouble(), mouseY.toDouble(), state)
     }
 
     final override fun mouseClickMove(mouseX: Int, mouseY: Int, clickedMouseButton: Int, timeSinceLastClick: Long) {
-        inputHandler?.uMouseDragged(mouseX.toDouble(), mouseY.toDouble(), clickedMouseButton, timeSinceLastClick)
+        inputHandler?.uMouseDragged(mouseX.toDouble(), mouseY.toDouble(), clickedMouseButton, timeSinceLastClick, null)
             ?: onMouseDragged(mouseX.toDouble(), mouseY.toDouble(), clickedMouseButton, timeSinceLastClick)
     }
 
@@ -498,19 +498,19 @@ abstract class UScreen(
     }
 
     open fun onKeyReleased(keyCode: Int, typedChar: Char, modifiers: UKeyboard.Modifiers?) {
-        superKeyReleased(keyCode, 0 /* temp */, modifiers)
+        superKeyReleased(keyCode, 0 /* TODO */, modifiers)
     }
 
     open fun onMouseClicked(mouseX: Double, mouseY: Double, mouseButton: Int) {
-        superMouseClicked(mouseX, mouseY, mouseButton)
+        superMouseClicked(mouseX, mouseY, mouseButton, null /* TODO */)
     }
 
     open fun onMouseReleased(mouseX: Double, mouseY: Double, state: Int) {
-        superMouseReleased(mouseX, mouseY, state)
+        superMouseReleased(mouseX, mouseY, state, null /* TODO */)
     }
 
     open fun onMouseDragged(x: Double, y: Double, clickedButton: Int, timeSinceLastClick: Long) {
-        superMouseDragged(x, y, clickedButton, timeSinceLastClick)
+        superMouseDragged(x, y, clickedButton, timeSinceLastClick, null /* TODO */)
     }
 
     open fun onMouseScrolled(delta: Double) {
@@ -581,12 +581,12 @@ abstract class UScreen(
         onDrawBackground(tint)
     }
 
-    private fun superMouseClicked(mouseX: Double, mouseY: Double, mouseButton: Int): Boolean {
+    private fun superMouseClicked(mouseX: Double, mouseY: Double, mouseButton: Int, modifiers: UKeyboard.Modifiers?): Boolean {
         //#if MC >= 1.15.2
         //$$ if (mouseButton == 1)
         //$$     lastClick = UMinecraft.getTime()
         //#if MC >= 1.21.9
-        //$$ return super.mouseClicked(Click(mouseX, mouseY, MouseInput(mouseButton, lastMouseInput?.modifiers ?: 0)), lastDoubled ?: false)
+        //$$ return super.mouseClicked(Click(mouseX, mouseY, MouseInput(mouseButton, modifiers.toInt())), lastDoubled ?: false)
         //#else
         //$$ return super.mouseClicked(mouseX, mouseY, mouseButton)
         //#endif
@@ -600,9 +600,9 @@ abstract class UScreen(
         //#endif
     }
 
-    private fun superMouseReleased(mouseX: Double, mouseY: Double, state: Int): Boolean {
+    private fun superMouseReleased(mouseX: Double, mouseY: Double, state: Int, modifiers: UKeyboard.Modifiers?): Boolean {
         //#if MC >= 1.21.9
-        //$$ return super.mouseReleased(Click(mouseX, mouseY, MouseInput(state, lastMouseInput?.modifiers ?: 0)))
+        //$$ return super.mouseReleased(Click(mouseX, mouseY, MouseInput(state, modifiers.toInt())))
         //#elseif MC >= 1.15.2
         //$$ return super.mouseReleased(mouseX, mouseY, state)
         //#else
@@ -611,9 +611,9 @@ abstract class UScreen(
         //#endif
     }
 
-    private fun superMouseDragged(x: Double, y: Double, clickedButton: Int, timeSinceLastClick: Long): Boolean {
+    private fun superMouseDragged(x: Double, y: Double, clickedButton: Int, timeSinceLastClick: Long, modifiers: UKeyboard.Modifiers?): Boolean {
         //#if MC >= 1.21.9
-        //$$ return super.mouseDragged(Click(x, y, MouseInput(clickedButton, lastMouseInput?.modifiers ?: 0)), lastDraggedDx, lastDraggedDy)
+        //$$ return super.mouseDragged(Click(x, y, MouseInput(clickedButton, modifiers.toInt())), lastDraggedDx, lastDraggedDy)
         //#elseif MC >= 1.15.2
         //$$ return super.mouseDragged(x, y, clickedButton, lastDraggedDx, lastDraggedDy)
         //#else
@@ -683,14 +683,14 @@ abstract class UScreen(
     fun uSuperInputHandler(): InputHandler = object : InputHandler {
         override fun uSuperInputHandler(): InputHandler = this
 
-        override fun uMouseClicked(mouseX: Double, mouseY: Double, mouseButton: Int): Boolean =
-            superMouseClicked(mouseX, mouseY, mouseButton)
+        override fun uMouseClicked(mouseX: Double, mouseY: Double, mouseButton: Int, modifiers: UKeyboard.Modifiers?): Boolean =
+            superMouseClicked(mouseX, mouseY, mouseButton, modifiers)
 
-        override fun uMouseReleased(mouseX: Double, mouseY: Double, state: Int): Boolean =
-            superMouseReleased(mouseX, mouseY, state)
+        override fun uMouseReleased(mouseX: Double, mouseY: Double, state: Int, modifiers: UKeyboard.Modifiers?): Boolean =
+            superMouseReleased(mouseX, mouseY, state, modifiers)
 
-        override fun uMouseDragged(x: Double, y: Double, clickedButton: Int, timeSinceLastClick: Long): Boolean =
-            superMouseDragged(x, y, clickedButton, timeSinceLastClick)
+        override fun uMouseDragged(x: Double, y: Double, clickedButton: Int, timeSinceLastClick: Long, modifiers: UKeyboard.Modifiers?): Boolean =
+            superMouseDragged(x, y, clickedButton, timeSinceLastClick, modifiers)
 
         override fun uMouseScrolled(delta: Double): Boolean =
             superMouseScrolled(delta)
@@ -718,14 +718,14 @@ abstract class UScreen(
     interface InputHandler {
         fun uSuperInputHandler(): InputHandler
 
-        fun uMouseClicked(mouseX: Double, mouseY: Double, mouseButton: Int): Boolean =
-            uSuperInputHandler().uMouseClicked(mouseX, mouseY, mouseButton)
+        fun uMouseClicked(mouseX: Double, mouseY: Double, mouseButton: Int, modifiers: UKeyboard.Modifiers?): Boolean =
+            uSuperInputHandler().uMouseClicked(mouseX, mouseY, mouseButton, modifiers)
 
-        fun uMouseReleased(mouseX: Double, mouseY: Double, state: Int): Boolean =
-            uSuperInputHandler().uMouseReleased(mouseX, mouseY, state)
+        fun uMouseReleased(mouseX: Double, mouseY: Double, state: Int, modifiers: UKeyboard.Modifiers?): Boolean =
+            uSuperInputHandler().uMouseReleased(mouseX, mouseY, state, modifiers)
 
-        fun uMouseDragged(x: Double, y: Double, clickedButton: Int, timeSinceLastClick: Long): Boolean =
-            uSuperInputHandler().uMouseDragged(x, y, clickedButton, timeSinceLastClick)
+        fun uMouseDragged(x: Double, y: Double, clickedButton: Int, timeSinceLastClick: Long, modifiers: UKeyboard.Modifiers?): Boolean =
+            uSuperInputHandler().uMouseDragged(x, y, clickedButton, timeSinceLastClick, modifiers)
 
         fun uMouseScrolled(delta: Double): Boolean =
             uSuperInputHandler().uMouseScrolled(delta)

@@ -529,11 +529,11 @@ abstract class UScreen(
     open fun onKeyReleased(keyCode: Int, typedChar: Char, modifiers: UKeyboard.Modifiers?) {
         //#if MC>=11502
         //$$ if (keyCode != 0) {
-        //#if MC>=12109
-        //$$ super.keyReleased(KeyInput(keyCode, 0, modifiers.toInt()))
-        //#else
-        //$$ super.keyReleased(keyCode, 0, modifiers.toInt())
-        //#endif
+            //#if MC>=12109
+            //$$ super.keyReleased(KeyInput(keyCode, 0, modifiers.toInt()))
+            //#else
+            //$$ super.keyReleased(keyCode, 0, modifiers.toInt())
+            //#endif
         //$$ }
         //#endif
     }

@@ -371,7 +371,7 @@ abstract class UScreen(
     final override fun keyTyped(typedChar: Char, keyCode: Int) {
         inputHandler?.let {
             val handled = if (keyCode != 0) false else {
-                it.uKeyPressed(keyCode, UKeyboard.KEY_NONE, UKeyboard.getModifiers())
+                it.uKeyPressed(keyCode, 0, UKeyboard.getModifiers())
             }
             if (!handled && !typedChar.isISOControl()) {
                 it.uCharTyped(typedChar.code)

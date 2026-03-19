@@ -169,7 +169,7 @@ abstract class UScreen(
         //$$ charModifiers = input.modifiers
         //#endif
     //$$     inputHandler?.let {
-    //$$         return it.uCharTyped(codepoint, modifiers).also {
+    //$$         return it.uCharTyped(codepoint).also {
                  //#if MC < 26.1
                  //$$ charModifiers = 0
                  //#endif
@@ -259,7 +259,7 @@ abstract class UScreen(
     //$$ final override fun charTyped(char: Char, modifierCode: Int): Boolean {
     //$$     charModifiers = modifierCode
     //$$     inputHandler?.let {
-    //$$         return it.uCharTyped(char.code, modifierCode.toModifiers()).also { charModifiers = 0 }
+    //$$         return it.uCharTyped(char.code).also { charModifiers = 0 }
     //$$     }
     //$$
     //$$     @Suppress("DEPRECATION") onKeyPressed(0, char, modifierCode.toModifiers())

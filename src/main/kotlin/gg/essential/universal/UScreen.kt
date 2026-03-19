@@ -704,11 +704,11 @@ abstract class UScreen(
         //#endif
     }
 
-    private fun superMouseScrolled(x: Double, y: Double, deltaHorizontal: Double, deltaVertical: Double): Boolean {
+    private fun superMouseScrolled(x: Double, y: Double, scrollX: Double, scrollY: Double): Boolean {
         //#if MC >= 1.20.2
-        //$$ return super.mouseScrolled(x, y, deltaHorizontal, deltaVertical)
+        //$$ return super.mouseScrolled(x, y, scrollX, scrollY)
         //#elseif MC >= 1.15.2
-        //$$ return super.mouseScrolled(x, y, deltaVertical)
+        //$$ return super.mouseScrolled(x, y, scrollY)
         //#else
         return false // No super
         //#endif
@@ -761,8 +761,8 @@ abstract class UScreen(
         override fun uMouseDragged(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers): Boolean =
             superMouseDragged(x, y, button, modifiers)
 
-        override fun uMouseScrolled(x: Double, y: Double, deltaHorizontal: Double, deltaVertical: Double): Boolean =
-            superMouseScrolled(x, y, deltaHorizontal, deltaVertical)
+        override fun uMouseScrolled(x: Double, y: Double, scrollX: Double, scrollY: Double): Boolean =
+            superMouseScrolled(x, y, scrollX, scrollY)
 
         override fun uCharTyped(codepoint: Int): Boolean =
             superCharTyped(codepoint)
@@ -793,11 +793,11 @@ abstract class UScreen(
         fun uMouseDragged(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers): Boolean =
             uSuperInputHandler().uMouseDragged(x, y, button, modifiers)
 
-        // Must be called with consistently scaled deltas on all mc/lwjgl versions.
+        // Must be called with consistently scaled scroll deltas on all mc/lwjgl versions.
         // This is to ensure a consistent scrolling experience across all versions.
         // See onMouseScrolled(Double) for further explanation.
-        fun uMouseScrolled(x: Double, y: Double, deltaHorizontal: Double, deltaVertical: Double): Boolean =
-            uSuperInputHandler().uMouseScrolled(x, y, deltaHorizontal, deltaVertical)
+        fun uMouseScrolled(x: Double, y: Double, scrollX: Double, scrollY: Double): Boolean =
+            uSuperInputHandler().uMouseScrolled(x, y, scrollX, scrollY)
 
         fun uCharTyped(codepoint: Int): Boolean =
             uSuperInputHandler().uCharTyped(codepoint)

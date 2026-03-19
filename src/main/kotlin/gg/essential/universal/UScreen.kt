@@ -671,6 +671,7 @@ abstract class UScreen(
         onDrawBackground(tint)
     }
 
+    @Suppress("unused")
     private fun superMouseClicked(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers): Boolean {
         //#if MC >= 1.21.9
         //$$ return super.mouseClicked(Click(x, y, MouseInput(button, modifiers.toInt())), lastDoubled ?: false)
@@ -682,6 +683,7 @@ abstract class UScreen(
         //#endif
     }
 
+    @Suppress("unused")
     private fun superMouseReleased(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers): Boolean {
         //#if MC >= 1.21.9
         //$$ return super.mouseReleased(Click(x, y, MouseInput(button, modifiers.toInt())))
@@ -693,6 +695,7 @@ abstract class UScreen(
         //#endif
     }
 
+    @Suppress("unused")
     private fun superMouseDragged(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers): Boolean {
         //#if MC >= 1.21.9
         //$$ return super.mouseDragged(Click(x, y, MouseInput(button, modifiers.toInt())), lastDraggedDx, lastDraggedDy)
@@ -704,6 +707,7 @@ abstract class UScreen(
         //#endif
     }
 
+    @Suppress("unused")
     private fun superMouseScrolled(x: Double, y: Double, scrollX: Double, scrollY: Double): Boolean {
         //#if MC >= 1.20.2
         //$$ return super.mouseScrolled(x, y, scrollX, scrollY)
@@ -727,6 +731,7 @@ abstract class UScreen(
         //#endif
     }
 
+    @Suppress("unused")
     private fun superKeyPressed(key: Int, scanCode: Int, modifiers: UKeyboard.Modifiers): Boolean {
         //#if MC >= 1.21.9
         //$$ return super.keyPressed(KeyInput(key, scanCode, modifiers.toInt()))
@@ -738,6 +743,7 @@ abstract class UScreen(
         //#endif
     }
 
+    @Suppress("unused")
     private fun superKeyReleased(key: Int, scanCode: Int, modifiers: UKeyboard.Modifiers): Boolean {
         //#if MC >= 1.21.9
         //$$ return super.keyReleased(KeyInput(key, scanCode, modifiers.toInt()))

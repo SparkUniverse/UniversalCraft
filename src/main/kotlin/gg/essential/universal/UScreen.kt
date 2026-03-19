@@ -671,7 +671,7 @@ abstract class UScreen(
         onDrawBackground(tint)
     }
 
-    private fun superMouseClicked(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers?): Boolean {
+    private fun superMouseClicked(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers): Boolean {
         //#if MC >= 1.21.9
         //$$ return super.mouseClicked(Click(x, y, MouseInput(button, modifiers.toInt())), lastDoubled ?: false)
         //#elseif MC >= 1.15.2
@@ -682,7 +682,7 @@ abstract class UScreen(
         //#endif
     }
 
-    private fun superMouseReleased(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers?): Boolean {
+    private fun superMouseReleased(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers): Boolean {
         //#if MC >= 1.21.9
         //$$ return super.mouseReleased(Click(x, y, MouseInput(button, modifiers.toInt())))
         //#elseif MC >= 1.15.2
@@ -693,7 +693,7 @@ abstract class UScreen(
         //#endif
     }
 
-    private fun superMouseDragged(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers?): Boolean {
+    private fun superMouseDragged(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers): Boolean {
         //#if MC >= 1.21.9
         //$$ return super.mouseDragged(Click(x, y, MouseInput(button, modifiers.toInt())), lastDraggedDx, lastDraggedDy)
         //#elseif MC >= 1.15.2
@@ -727,7 +727,7 @@ abstract class UScreen(
         //#endif
     }
 
-    private fun superKeyPressed(key: Int, scanCode: Int, modifiers: UKeyboard.Modifiers?): Boolean {
+    private fun superKeyPressed(key: Int, scanCode: Int, modifiers: UKeyboard.Modifiers): Boolean {
         //#if MC >= 1.21.9
         //$$ return super.keyPressed(KeyInput(key, scanCode, modifiers.toInt()))
         //#elseif MC >= 1.15.2
@@ -738,7 +738,7 @@ abstract class UScreen(
         //#endif
     }
 
-    private fun superKeyReleased(key: Int, scanCode: Int, modifiers: UKeyboard.Modifiers?): Boolean {
+    private fun superKeyReleased(key: Int, scanCode: Int, modifiers: UKeyboard.Modifiers): Boolean {
         //#if MC >= 1.21.9
         //$$ return super.keyReleased(KeyInput(key, scanCode, modifiers.toInt()))
         //#elseif MC >= 1.15.2

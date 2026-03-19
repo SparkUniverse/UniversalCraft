@@ -748,7 +748,7 @@ abstract class UScreen(
         //#endif
     }
 
-    @Suppress("unused") // Becomes used if the child class is an instance of [inputHandler]
+    @Suppress("unused") // Becomes used if the child class is an instance of [InputHandler]
     fun uSuperInputHandler(): InputHandler = object : InputHandler {
         override fun uSuperInputHandler(): InputHandler = this
 
@@ -775,8 +775,8 @@ abstract class UScreen(
     }
 
     /** Usually you can simply have your screen implement this interface, [UScreen] will then use it automatically.
-     * If you require more control, you can instead also manually set the [consumableInputHandler] property.
-     * [UScreen] provides a [uSuperConsumableInputHandler] implementation you can call from your handler.
+     * If you require more control, you can instead also manually set the [inputHandler] property.
+     * [UScreen] provides a [uSuperInputHandler] implementation you can call from your handler.
      *
      * On versions below 1.16, the boolean returns are not passed to Minecraft as they are not used,
      * the interface still replaces and executes the same for consistency.

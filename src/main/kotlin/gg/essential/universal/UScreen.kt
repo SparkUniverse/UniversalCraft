@@ -583,6 +583,7 @@ abstract class UScreen(
     // The deltas obtained from lwjgl 2 are scaled by a constant factor and thus much higher than the ones provided by lwjgl 3.
     @Deprecated("Provided `delta` values have different units depending on Minecraft versions.", ReplaceWith("onMouseScrolled(mouseX, mouseY, deltaHorizontal, deltaVertical)"))
     open fun onMouseScrolled(delta: Double) {
+        @Suppress("DEPRECATION")
         //#if MC>=11502
         //$$ onMouseScrolled(lastScrolledX, lastScrolledY, lastScrolledDX, delta)
         //#else
@@ -590,7 +591,6 @@ abstract class UScreen(
         // https://github.com/LWJGL/lwjgl/blob/master/src/java/org/lwjgl/opengl/LinuxMouse.java#L48
         // https://github.com/LWJGL/lwjgl/blob/master/src/java/org/lwjgl/opengl/MacOSXNativeMouse.java#L53
         // https://github.com/LWJGL/lwjgl/blob/master/src/java/org/lwjgl/opengl/MouseEventQueue.java#L52
-        @Suppress("DEPRECATION")
         onMouseScrolled(UMouse.Scaled.x, UMouse.Scaled.y, 0.0, delta / 120.0)
         //#endif
     }

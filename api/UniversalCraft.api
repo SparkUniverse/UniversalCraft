@@ -1090,11 +1090,11 @@ public final class gg/essential/universal/UScreen$Companion {
 }
 
 public abstract interface class gg/essential/universal/UScreen$InputHandler {
-	public fun uCharTyped (ILgg/essential/universal/UKeyboard$Modifiers;)Z
+	public fun uCharTyped (I)Z
 	public fun uKeyPressed (IILgg/essential/universal/UKeyboard$Modifiers;)Z
 	public fun uKeyReleased (IILgg/essential/universal/UKeyboard$Modifiers;)Z
 	public fun uMouseClicked (DDILgg/essential/universal/UKeyboard$Modifiers;)Z
-	public fun uMouseDragged (DDILgg/essential/universal/UKeyboard$Modifiers;DD)Z
+	public fun uMouseDragged (DDILgg/essential/universal/UKeyboard$Modifiers;)Z
 	public fun uMouseReleased (DDILgg/essential/universal/UKeyboard$Modifiers;)Z
 	public fun uMouseScrolled (DDDD)Z
 	public abstract fun uSuperInputHandler ()Lgg/essential/universal/UScreen$InputHandler;

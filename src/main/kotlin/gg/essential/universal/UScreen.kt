@@ -170,9 +170,9 @@ abstract class UScreen(
         //#endif
     //$$     inputHandler?.let {
     //$$         return it.uCharTyped(codepoint).also {
-                 //#if MC < 26.1
-                 //$$ charModifiers = 0
-                 //#endif
+                //#if MC < 26.1
+                //$$ charModifiers = 0
+                //#endif
     //$$         }
     //$$     }
     //$$     if (Character.isBmpCodePoint(codepoint)) {
@@ -181,9 +181,9 @@ abstract class UScreen(
     //$$         @Suppress("DEPRECATION") onKeyPressed(0, Character.highSurrogate(input.codepoint), modifiers)
     //$$         @Suppress("DEPRECATION") onKeyPressed(0, Character.lowSurrogate(input.codepoint), modifiers)
     //$$     }
-         //#if MC < 26.1
-         //$$ charModifiers = 0
-         //#endif
+        //#if MC < 26.1
+        //$$ charModifiers = 0
+        //#endif
     //$$     return false
     //$$ }
     //$$

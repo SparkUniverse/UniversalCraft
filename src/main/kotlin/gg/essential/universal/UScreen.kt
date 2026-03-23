@@ -257,13 +257,12 @@ abstract class UScreen(
     //$$ }
     //$$
     //$$ final override fun charTyped(char: Char, modifierCode: Int): Boolean {
-    //$$     charModifiers = modifierCode
     //$$     inputHandler?.let {
+    //$$         charModifiers = modifierCode
     //$$         return it.uCharTyped(char.code).also { charModifiers = 0 }
     //$$     }
     //$$
     //$$     @Suppress("DEPRECATION") onKeyPressed(0, char, modifierCode.toModifiers())
-    //$$     charModifiers = 0
     //$$     return false
     //$$ }
     //$$

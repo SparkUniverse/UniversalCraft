@@ -139,7 +139,7 @@ abstract class UScreen(
     //$$
     //#if MC < 26.1 && MC >= 1.15.2
     //$$ // Smuggle this value for use in super calls, where intermediate functions have dropped it to match 26.1+
-    //$$ private var charModifiers = 0
+    //$$ private var lastCharModifiers = 0
     //#endif
     //#if MC>=12109
     //$$ final override fun keyPressed(input: KeyInput): Boolean {
@@ -166,12 +166,12 @@ abstract class UScreen(
         //$$ val modifiers = 0.toModifiers()
         //#else
         //$$ val modifiers = input.modifiers.toModifiers()
-        //$$ charModifiers = input.modifiers
+        //$$ lastCharModifiers = input.modifiers
         //#endif
     //$$     inputHandler?.let {
     //$$         return it.uCharTyped(codepoint).also {
                 //#if MC < 26.1
-                //$$ charModifiers = 0
+                //$$ lastCharModifiers = 0
                 //#endif
     //$$         }
     //$$     }
@@ -182,7 +182,7 @@ abstract class UScreen(
     //$$         @Suppress("DEPRECATION") onKeyPressed(0, Character.lowSurrogate(input.codepoint), modifiers)
     //$$     }
         //#if MC < 26.1
-        //$$ charModifiers = 0
+        //$$ lastCharModifiers = 0
         //#endif
     //$$     return false
     //$$ }
@@ -258,8 +258,8 @@ abstract class UScreen(
     //$$
     //$$ final override fun charTyped(char: Char, modifierCode: Int): Boolean {
     //$$     inputHandler?.let {
-    //$$         charModifiers = modifierCode
-    //$$         return it.uCharTyped(char.code).also { charModifiers = 0 }
+    //$$         lastCharModifiers = modifierCode
+    //$$         return it.uCharTyped(char.code).also { lastCharModifiers = 0 }
     //$$     }
     //$$
     //$$     @Suppress("DEPRECATION") onKeyPressed(0, char, modifierCode.toModifiers())
@@ -721,9 +721,9 @@ abstract class UScreen(
         //#if MC >= 26.1
         //$$ return super.charTyped(CharacterEvent(codepoint))
         //#elseif MC >= 1.21.9
-        //$$ return super.charTyped(CharInput(codepoint, charModifiers))
+        //$$ return super.charTyped(CharInput(codepoint, lastCharModifiers))
         //#elseif MC >= 1.15.2
-        //$$ return super.charTyped(codepoint.toChar(), charModifiers)
+        //$$ return super.charTyped(codepoint.toChar(), lastCharModifiers)
         //#else
         super.keyTyped(codepoint.toChar(), 0)
         return false

@@ -166,9 +166,9 @@ abstract class UScreen(
         //$$ val modifiers = 0.toModifiers()
         //#else
         //$$ val modifiers = input.modifiers.toModifiers()
-        //$$ lastCharModifiers = input.modifiers
         //#endif
     //$$     inputHandler?.let {
+    //$$         lastCharModifiers = input.modifiers
     //$$         return it.uCharTyped(codepoint).also {
                 //#if MC < 26.1
                 //$$ lastCharModifiers = 0
@@ -181,9 +181,6 @@ abstract class UScreen(
     //$$         @Suppress("DEPRECATION") onKeyPressed(0, Character.highSurrogate(input.codepoint), modifiers)
     //$$         @Suppress("DEPRECATION") onKeyPressed(0, Character.lowSurrogate(input.codepoint), modifiers)
     //$$     }
-        //#if MC < 26.1
-        //$$ lastCharModifiers = 0
-        //#endif
     //$$     return false
     //$$ }
     //$$

@@ -39,17 +39,27 @@ class UCWindow(val glfwWindow: GlfwWindow, val uiScope: CoroutineScope) {
             }
         }
 
-        GLFW.glfwSetMouseButtonCallback(glfwWindow.glfwId) { _, button, action, _ ->
+        GLFW.glfwSetMouseButtonCallback(glfwWindow.glfwId) { _, button, action, modifiers ->
             uiScope.launch {
                 when (action) {
                     GLFW.GLFW_PRESS -> {
                         UKeyboard.keysDown.add(button)
-                        UScreen.currentScreen?.onMouseClicked(UMouse.Scaled.x, UMouse.Scaled.y, button)
+                        UScreen.currentScreen?.run {
+                            standaloneGetInputHandler()
+                                ?.uMouseClicked(UMouse.Scaled.x, UMouse.Scaled.y, button, modifiers.toModifiers())
+                                ?: onMouseClicked(UMouse.Scaled.x, UMouse.Scaled.y, button)
+                        }
+
+
                     }
 
                     GLFW.GLFW_RELEASE -> {
                         UKeyboard.keysDown.remove(button)
-                        UScreen.currentScreen?.onMouseReleased(UMouse.Scaled.x, UMouse.Scaled.y, button)
+                        UScreen.currentScreen?.run {
+                            standaloneGetInputHandler()
+                                ?.uMouseReleased(UMouse.Scaled.x, UMouse.Scaled.y, button, modifiers.toModifiers())
+                                ?: onMouseReleased(UMouse.Scaled.x, UMouse.Scaled.y, button)
+                        }
                     }
                 }
             }
@@ -57,29 +67,44 @@ class UCWindow(val glfwWindow: GlfwWindow, val uiScope: CoroutineScope) {
 
         GLFW.glfwSetScrollCallback(glfwWindow.glfwId) { _, x, y ->
             uiScope.launch {
-                UScreen.currentScreen?.onMouseScrolled(UMouse.Scaled.x, UMouse.Scaled.y, x, y)
+                UScreen.currentScreen?.run {
+                    standaloneGetInputHandler()
+                        ?.uMouseScrolled(UMouse.Scaled.x, UMouse.Scaled.y, x, y)
+                        ?: onMouseScrolled(UMouse.Scaled.x, UMouse.Scaled.y, x, y)
+                }
             }
         }
 
         GLFW.glfwSetCharModsCallback(glfwWindow.glfwId) { _, codepoint, modifiers ->
             uiScope.launch {
                 for (char in Character.toChars(codepoint)) {
-                    UScreen.currentScreen?.onKeyPressed(0, char, modifiers.toModifiers())
+                    UScreen.currentScreen?.run {
+                        standaloneGetInputHandler()
+                            ?.uCharTyped(codepoint)
+                            ?: onKeyPressed(0, char, modifiers.toModifiers())
                 }
             }
         }
 
-        GLFW.glfwSetKeyCallback(glfwWindow.glfwId) { _, key, _, action, modifiers ->
+        GLFW.glfwSetKeyCallback(glfwWindow.glfwId) { _, key, scancode, action, modifiers ->
             uiScope.launch {
                 when (action) {
                     GLFW.GLFW_PRESS, GLFW.GLFW_REPEAT -> {
                         UKeyboard.keysDown.add(key)
-                        UScreen.currentScreen?.onKeyPressed(key, 0.toChar(), modifiers.toModifiers())
+                        UScreen.currentScreen?.run {
+                            standaloneGetInputHandler()
+                                ?.uKeyPressed(key, scancode, modifiers.toModifiers())
+                                ?: onKeyPressed(key, 0.toChar(), modifiers.toModifiers())
+                        }
                     }
 
                     GLFW.GLFW_RELEASE -> {
                         UKeyboard.keysDown.remove(key)
-                        UScreen.currentScreen?.onKeyReleased(key, 0.toChar(), modifiers.toModifiers())
+                        UScreen.currentScreen?.run {
+                            standaloneGetInputHandler()
+                                ?.uKeyReleased(key, scancode, modifiers.toModifiers())
+                                ?: onKeyReleased(key, 0.toChar(), modifiers.toModifiers())
+                        }
                     }
                 }
             }

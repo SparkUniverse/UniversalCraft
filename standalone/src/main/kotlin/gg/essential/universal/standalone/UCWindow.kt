@@ -49,8 +49,6 @@ class UCWindow(val glfwWindow: GlfwWindow, val uiScope: CoroutineScope) {
                                 ?.uMouseClicked(UMouse.Scaled.x, UMouse.Scaled.y, button, modifiers.toModifiers())
                                 ?: onMouseClicked(UMouse.Scaled.x, UMouse.Scaled.y, button)
                         }
-
-
                     }
 
                     GLFW.GLFW_RELEASE -> {
@@ -82,6 +80,7 @@ class UCWindow(val glfwWindow: GlfwWindow, val uiScope: CoroutineScope) {
                         standaloneGetInputHandler()
                             ?.uCharTyped(codepoint)
                             ?: onKeyPressed(0, char, modifiers.toModifiers())
+                    }
                 }
             }
         }

@@ -1,4 +1,5 @@
 import gg.essential.gradle.util.*
+import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
@@ -11,7 +12,7 @@ plugins {
 group = "gg.essential"
 
 java.withSourcesJar()
-tasks.compileKotlin.setJvmDefault("all")
+kotlin.compilerOptions.jvmDefault.set(JvmDefaultMode.NO_COMPATIBILITY)
 loom.noServerRunConfigs()
 
 dependencies {

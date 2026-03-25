@@ -29,3 +29,13 @@ preprocess {
     vars.put("STANDALONE", 0)
     vars.put("!STANDALONE", 1)
 }
+
+tasks.jar {
+    if (platform.isModLauncher) {
+        manifest {
+            // `GAMELIBRARY` is required to access Minecraft classes from ModLauncher 9 and higher.
+            val modType = if (platform.mcVersion >= 11700) "GAMELIBRARY" else "LIBRARY"
+            attributes(mapOf("FMLModType" to modType))
+        }
+    }
+}

@@ -45,7 +45,7 @@ class UCWindow(val glfwWindow: GlfwWindow, val uiScope: CoroutineScope) {
                     GLFW.GLFW_PRESS -> {
                         UKeyboard.keysDown.add(button)
                         UScreen.currentScreen?.run {
-                            standaloneGetInputHandler()
+                            inputHandlerInternal
                                 ?.uMouseClicked(UMouse.Scaled.x, UMouse.Scaled.y, button, modifiers.toModifiers())
                                 ?: onMouseClicked(UMouse.Scaled.x, UMouse.Scaled.y, button)
                         }
@@ -54,7 +54,7 @@ class UCWindow(val glfwWindow: GlfwWindow, val uiScope: CoroutineScope) {
                     GLFW.GLFW_RELEASE -> {
                         UKeyboard.keysDown.remove(button)
                         UScreen.currentScreen?.run {
-                            standaloneGetInputHandler()
+                            inputHandlerInternal
                                 ?.uMouseReleased(UMouse.Scaled.x, UMouse.Scaled.y, button, modifiers.toModifiers())
                                 ?: onMouseReleased(UMouse.Scaled.x, UMouse.Scaled.y, button)
                         }
@@ -66,7 +66,7 @@ class UCWindow(val glfwWindow: GlfwWindow, val uiScope: CoroutineScope) {
         GLFW.glfwSetScrollCallback(glfwWindow.glfwId) { _, x, y ->
             uiScope.launch {
                 UScreen.currentScreen?.run {
-                    standaloneGetInputHandler()
+                    inputHandlerInternal
                         ?.uMouseScrolled(UMouse.Scaled.x, UMouse.Scaled.y, x, y)
                         ?: onMouseScrolled(UMouse.Scaled.x, UMouse.Scaled.y, x, y)
                 }
@@ -77,7 +77,7 @@ class UCWindow(val glfwWindow: GlfwWindow, val uiScope: CoroutineScope) {
             uiScope.launch {
                 for (char in Character.toChars(codepoint)) {
                     UScreen.currentScreen?.run {
-                        standaloneGetInputHandler()
+                        inputHandlerInternal
                             ?.uCharTyped(codepoint)
                             ?: onKeyPressed(0, char, modifiers.toModifiers())
                     }
@@ -91,7 +91,7 @@ class UCWindow(val glfwWindow: GlfwWindow, val uiScope: CoroutineScope) {
                     GLFW.GLFW_PRESS, GLFW.GLFW_REPEAT -> {
                         UKeyboard.keysDown.add(key)
                         UScreen.currentScreen?.run {
-                            standaloneGetInputHandler()
+                            inputHandlerInternal
                                 ?.uKeyPressed(key, scancode, modifiers.toModifiers())
                                 ?: onKeyPressed(key, 0.toChar(), modifiers.toModifiers())
                         }
@@ -100,7 +100,7 @@ class UCWindow(val glfwWindow: GlfwWindow, val uiScope: CoroutineScope) {
                     GLFW.GLFW_RELEASE -> {
                         UKeyboard.keysDown.remove(key)
                         UScreen.currentScreen?.run {
-                            standaloneGetInputHandler()
+                            inputHandlerInternal
                                 ?.uKeyReleased(key, scancode, modifiers.toModifiers())
                                 ?: onKeyReleased(key, 0.toChar(), modifiers.toModifiers())
                         }

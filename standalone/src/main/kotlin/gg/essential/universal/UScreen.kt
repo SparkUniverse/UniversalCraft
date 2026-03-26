@@ -15,7 +15,8 @@ abstract class UScreen(
     private val screenToRestore: UScreen? = if (restoreCurrentGuiOnClose) currentScreen else null
     protected var inputHandler: InputHandler? = this as? InputHandler
 
-    fun standaloneGetInputHandler(): InputHandler? = inputHandler
+    internal val inputHandlerInternal: InputHandler?
+        get() = inputHandler
 
     fun initGui() {
         updateGuiScale()

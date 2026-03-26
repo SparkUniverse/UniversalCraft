@@ -168,9 +168,9 @@ abstract class UScreen(
         //$$ val modifiers = input.modifiers.toModifiers()
         //#endif
     //$$     inputHandler?.let {
-                 //#if MC < 26.1
-                 //$$ lastCharModifiers = input.modifiers
-                 //#endif
+            //#if MC < 26.1
+            //$$ lastCharModifiers = input.modifiers
+            //#endif
     //$$         return it.uCharTyped(codepoint).also {
                 //#if MC < 26.1
                 //$$ lastCharModifiers = 0

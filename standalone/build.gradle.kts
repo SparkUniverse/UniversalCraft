@@ -1,5 +1,5 @@
 import com.replaymod.gradle.preprocess.PreprocessTask
-import gg.essential.gradle.util.setJvmDefault
+import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
 
 plugins {
     kotlin("jvm")
@@ -15,7 +15,7 @@ base.archivesName = "universalcraft-standalone"
 kotlin.compilerOptions.moduleName = "universalcraft-standalone"
 publishing.publications.named<MavenPublication>("maven") { artifactId = "universalcraft-standalone" }
 java.withSourcesJar()
-tasks.compileKotlin.setJvmDefault("all")
+kotlin.compilerOptions.jvmDefault.set(JvmDefaultMode.NO_COMPATIBILITY)
 kotlin.jvmToolchain(8)
 
 dependencies {

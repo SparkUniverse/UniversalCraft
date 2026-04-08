@@ -32,7 +32,6 @@ import java.util.regex.Pattern;
 //#else
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -45,6 +44,11 @@ import org.lwjgl.opengl.GL11;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_BINDING_2D;
 import static org.lwjgl.opengl.GL13.GL_ACTIVE_TEXTURE;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+
+//#if MC >= 26.2
+//#else
+import net.minecraft.client.renderer.Tessellator;
+//#endif
 
 //#if MC>=12111
 //$$ import com.mojang.blaze3d.textures.FilterMode;
@@ -191,11 +195,7 @@ public class UGraphics {
     //#endif
 
     //#if MC>=12100
-    //$$ /**
-    //$$  * A buffer to use for storing sorted quad vertex indices. The buffer will automatically grow as needed,
-    //$$  * the specified size is not a hard cap.
-    //$$  */
-    //$$ private static final BufferAllocator SORTED_QUADS_ALLOCATOR = new BufferAllocator(65536);
+    //$$ private static final BufferAllocator ALLOCATOR = new BufferAllocator(65536);
     //#endif
 
     public UGraphics(WorldRenderer instance) {
@@ -258,7 +258,7 @@ public class UGraphics {
     }
     //#endif
 
-    //#if !STANDALONE
+    //#if MC < 26.2
     public static Tessellator getTessellator() {
         return Tessellator.getInstance();
     }
@@ -729,7 +729,11 @@ public class UGraphics {
     //$$             flush();
     //$$             pipeline = drawable.getPipeline();
     //$$             texture = drawable.textureView();
-    //$$             bufferBuilder = Tessellator.getInstance().begin(pipeline.getVertexFormatMode(), pipeline.getVertexFormat());
+                //#if MC >= 26.2
+                //$$ bufferBuilder = new BufferBuilder(ALLOCATOR, pipeline.getVertexFormatMode(), pipeline.getVertexFormat());
+                //#else
+                //$$ bufferBuilder = Tessellator.getInstance().begin(pipeline.getVertexFormatMode(), pipeline.getVertexFormat());
+                //#endif
     //$$         }
     //$$         drawable.render(matrix, bufferBuilder, light, false);
     //$$     }
@@ -1196,7 +1200,9 @@ public class UGraphics {
     }
     private UGraphics beginInternal(DrawMode mode, VertexFormat format) {
         vertexFormat = format;
-        //#if MC>=12100
+        //#if MC >= 26.2
+        //$$ instance = new BufferBuilder(ALLOCATOR, mode.mcMode, format);
+        //#elseif MC>=12100
         //$$ instance = getTessellator().begin(mode.mcMode, format);
         //#else
         instance.begin(mode.mcMode, format);
@@ -1351,9 +1357,9 @@ public class UGraphics {
         //$$ BuiltBuffer builtBuffer = instance.endNullable();
         //$$ if (builtBuffer == null) return;
         //#if MC>=12102
-        //$$ builtBuffer.sortQuads(SORTED_QUADS_ALLOCATOR, RenderSystem.getProjectionType().getVertexSorter());
+        //$$ builtBuffer.sortQuads(ALLOCATOR, RenderSystem.getProjectionType().getVertexSorter());
         //#else
-        //$$ builtBuffer.sortQuads(SORTED_QUADS_ALLOCATOR, RenderSystem.getVertexSorting());
+        //$$ builtBuffer.sortQuads(ALLOCATOR, RenderSystem.getVertexSorting());
         //#endif
         //#endif
         //#if MC>=11600

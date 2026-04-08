@@ -101,7 +101,12 @@ object UMinecraft {
     //#if FORGELIKE
     @Suppress("UNNECESSARY_SAFE_CALL") // Forge adds inappropriate NonNullByDefault
     //#endif
-    fun getChatGUI(): GuiNewChat? = getMinecraft().ingameGUI?.chatGUI
+    fun getChatGUI(): GuiNewChat? =
+        //#if MC >= 26.2
+        //$$ getMinecraft().gui.hud.chat
+        //#else
+        getMinecraft().ingameGUI?.chatGUI
+        //#endif
 
     @JvmStatic
     fun getSettings(): GameSettings = getMinecraft().gameSettings
@@ -112,6 +117,9 @@ object UMinecraft {
         //#if STANDALONE
         //$$ get() = UScreen.currentScreen
         //$$ set(value) = UScreen.displayScreen(value as UScreen?)
+        //#elseif MC >= 26.2
+        //$$ get() = getMinecraft().gui.screen()
+        //$$ set(value) = getMinecraft().gui.setScreen(value as Screen?)
         //#else
         get() = getMinecraft().currentScreen
         set(value) {

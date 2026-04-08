@@ -574,14 +574,11 @@ abstract class UScreen(
     companion object {
         @JvmStatic
         val currentScreen: GuiScreen?
-            get() = UMinecraft.getMinecraft().currentScreen
+            get() = UMinecraft.currentScreenObj as? GuiScreen?
 
         @JvmStatic
         fun displayScreen(screen: GuiScreen?) {
-            //#if MC<11200
-            @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-            //#endif
-            UMinecraft.getMinecraft().displayGuiScreen(screen)
+            UMinecraft.currentScreenObj = screen
         }
     }
 }

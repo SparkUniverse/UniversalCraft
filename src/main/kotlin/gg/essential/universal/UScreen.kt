@@ -372,7 +372,10 @@ abstract class UScreen(
             val handled = if (keyCode != 0) false else {
                 it.uKeyPressed(keyCode, 0, UKeyboard.getModifiers())
             }
-            if (!handled && !typedChar.isISOControl()) {
+            if (!handled
+                && !typedChar.isISOControl() // Block control code characters. E.G. the 'CTRL + A' character. https://en.wikipedia.org/wiki/Control_character
+                && typedChar !in CharCategory.PRIVATE_USE // Block PUA characters. Known to be incorrectly sent by macOS + LWJGL2. https://en.wikipedia.org/wiki/Private_Use_Areas
+            ) {
                 it.uCharTyped(typedChar.code)
             }
         } ?: @Suppress("DEPRECATION") onKeyPressed(keyCode, typedChar, UKeyboard.getModifiers())

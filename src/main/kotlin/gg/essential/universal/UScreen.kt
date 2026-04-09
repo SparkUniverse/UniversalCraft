@@ -166,9 +166,11 @@ abstract class UScreen(
         //$$ val modifiers = 0.toModifiers()
         //#else
         //$$ val modifiers = input.modifiers.toModifiers()
-        //$$ lastCharModifiers = input.modifiers
         //#endif
     //$$     inputHandler?.let {
+            //#if MC < 26.1
+            //$$ lastCharModifiers = input.modifiers
+            //#endif
     //$$         return it.uCharTyped(codepoint).also {
                 //#if MC < 26.1
                 //$$ lastCharModifiers = 0
@@ -181,9 +183,6 @@ abstract class UScreen(
     //$$         @Suppress("DEPRECATION") onKeyPressed(0, Character.highSurrogate(input.codepoint), modifiers)
     //$$         @Suppress("DEPRECATION") onKeyPressed(0, Character.lowSurrogate(input.codepoint), modifiers)
     //$$     }
-        //#if MC < 26.1
-        //$$ lastCharModifiers = 0
-        //#endif
     //$$     return false
     //$$ }
     //$$
@@ -382,17 +381,17 @@ abstract class UScreen(
     }
 
     final override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
-        inputHandler?.uMouseClicked(mouseX.toDouble(), mouseY.toDouble(), mouseButton, UKeyboard.getModifiers())
+        inputHandler?.uMouseClicked(UMouse.Scaled.x, UMouse.Scaled.y, mouseButton, UKeyboard.getModifiers())
             ?: @Suppress("DEPRECATION") onMouseClicked(mouseX.toDouble(), mouseY.toDouble(), mouseButton)
     }
 
     final override fun mouseReleased(mouseX: Int, mouseY: Int, state: Int) {
-        inputHandler?.uMouseReleased(mouseX.toDouble(), mouseY.toDouble(), state, UKeyboard.getModifiers())
+        inputHandler?.uMouseReleased(UMouse.Scaled.x, UMouse.Scaled.y, state, UKeyboard.getModifiers())
             ?: @Suppress("DEPRECATION") onMouseReleased(mouseX.toDouble(), mouseY.toDouble(), state)
     }
 
     final override fun mouseClickMove(mouseX: Int, mouseY: Int, clickedMouseButton: Int, timeSinceLastClick: Long) {
-        inputHandler?.uMouseDragged(mouseX.toDouble(), mouseY.toDouble(), clickedMouseButton, UKeyboard.getModifiers())
+        inputHandler?.uMouseDragged(UMouse.Scaled.x, UMouse.Scaled.y, clickedMouseButton, UKeyboard.getModifiers())
             ?: @Suppress("DEPRECATION") onMouseDragged(mouseX.toDouble(), mouseY.toDouble(), clickedMouseButton, timeSinceLastClick)
     }
 

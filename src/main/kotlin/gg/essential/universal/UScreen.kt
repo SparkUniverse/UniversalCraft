@@ -28,6 +28,7 @@ import net.minecraft.client.gui.GuiScreen
 //#else
 import org.lwjgl.input.Mouse
 import java.io.IOException
+import kotlin.math.floor
 
 //#endif
 
@@ -381,19 +382,24 @@ abstract class UScreen(
     }
 
     final override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
-        inputHandler?.uMouseClicked(UMouse.Scaled.x, UMouse.Scaled.y, mouseButton, UKeyboard.getModifiers())
+        inputHandler?.uMouseClicked(mouseX.restoreFrac(UMouse.Scaled.x), mouseY.restoreFrac(UMouse.Scaled.y), mouseButton, UKeyboard.getModifiers())
             ?: @Suppress("DEPRECATION") onMouseClicked(mouseX.toDouble(), mouseY.toDouble(), mouseButton)
     }
 
     final override fun mouseReleased(mouseX: Int, mouseY: Int, state: Int) {
-        inputHandler?.uMouseReleased(UMouse.Scaled.x, UMouse.Scaled.y, state, UKeyboard.getModifiers())
+        inputHandler?.uMouseReleased(mouseX.restoreFrac(UMouse.Scaled.x), mouseY.restoreFrac(UMouse.Scaled.y), state, UKeyboard.getModifiers())
             ?: @Suppress("DEPRECATION") onMouseReleased(mouseX.toDouble(), mouseY.toDouble(), state)
     }
 
     final override fun mouseClickMove(mouseX: Int, mouseY: Int, clickedMouseButton: Int, timeSinceLastClick: Long) {
-        inputHandler?.uMouseDragged(UMouse.Scaled.x, UMouse.Scaled.y, clickedMouseButton, UKeyboard.getModifiers())
+        inputHandler?.uMouseDragged(mouseX.restoreFrac(UMouse.Scaled.x), mouseY.restoreFrac(UMouse.Scaled.y), clickedMouseButton, UKeyboard.getModifiers())
             ?: @Suppress("DEPRECATION") onMouseDragged(mouseX.toDouble(), mouseY.toDouble(), clickedMouseButton, timeSinceLastClick)
     }
+
+    // We want to restore the fractional part of the mouse click, but not outright override the mouse pos with the real one
+    // as the input mouse Int may have been modified by another mod.
+    private fun Int.restoreFrac(realMouseScaled: Double): Double =
+        this + (realMouseScaled - floor(realMouseScaled))
 
     final override fun handleMouseInput() {
         super.handleMouseInput()

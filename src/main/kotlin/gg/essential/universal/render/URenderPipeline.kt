@@ -656,6 +656,7 @@ class URenderPipeline private constructor(
             //$$ val uniforms = mapOf(
                 //#if MC>=12106
                 //$$ "DynamicTransforms" to UniformType.UNIFORM_BUFFER,
+                //$$ "Projection" to UniformType.UNIFORM_BUFFER,
                 //#else
                 //$$ "ModelViewMat" to UniformType.MATRIX4X4,
                 //$$ "ProjMat" to UniformType.MATRIX4X4,

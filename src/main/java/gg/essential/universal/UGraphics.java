@@ -1,6 +1,10 @@
 package gg.essential.universal;
 
 import gg.essential.universal.render.ScissorState;
+import gg.essential.universal.render.UGpuDevice;
+import gg.essential.universal.render.UGpuDeviceImpl;
+import gg.essential.universal.render.UGpuPlatformAdapter;
+import gg.essential.universal.render.UGpuPlatformAdapterImpl;
 import gg.essential.universal.shader.BlendState;
 import gg.essential.universal.utils.ReleasedDynamicTexture;
 import gg.essential.universal.vertex.UVertexConsumer;
@@ -219,6 +223,14 @@ public class UGraphics {
         //#else
         return new UGraphics(getTessellator().getWorldRenderer());
         //#endif
+    }
+
+    public static UGpuPlatformAdapter getPlatformAdapter() {
+        return UGpuPlatformAdapterImpl.INSTANCE;
+    }
+
+    public static UGpuDevice getDevice() {
+        return UGpuDeviceImpl.INSTANCE;
     }
 
     //#if MC<11700

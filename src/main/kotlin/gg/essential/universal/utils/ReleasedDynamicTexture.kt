@@ -1,6 +1,10 @@
 package gg.essential.universal.utils
 
 import gg.essential.universal.UGraphics
+import gg.essential.universal.render.UGpuFormat
+import gg.essential.universal.render.UGpuTexture
+import gg.essential.universal.render.UGpuTextureView
+import gg.essential.universal.render.impl
 
 //#if STANDALONE
 //$$ import org.lwjgl.BufferUtils
@@ -94,10 +98,16 @@ class ReleasedDynamicTexture private constructor(
 
     fun uploadTexture() {
         if (!uploaded) {
+            val texture = UGraphics.getDevice().createTexture(
+                null,
+                UGpuTexture.Usage.TEXTURE_BINDING + UGpuTexture.Usage.COPY_SRC + UGpuTexture.Usage.COPY_DST,
+                UGpuFormat.DEFAULT_RGBA,
+                width,
+                height,
+            ).impl
+
             //#if STANDALONE
-            //$$ val glId = GL20C.glGenTextures()
-            //$$
-            //$$ GL20C.glBindTexture(GL20C.GL_TEXTURE_2D, glId)
+            //$$ GL20C.glBindTexture(GL20C.GL_TEXTURE_2D, texture.glId)
             //$$
             //$$ GL20C.glTexParameteri(GL20C.GL_TEXTURE_2D, GL20C.GL_TEXTURE_MIN_FILTER, GL20C.GL_LINEAR)
             //$$ GL20C.glTexParameteri(GL20C.GL_TEXTURE_2D, GL20C.GL_TEXTURE_MAG_FILTER, GL20C.GL_NEAREST)
@@ -118,74 +128,70 @@ class ReleasedDynamicTexture private constructor(
             //$$     GL20C.GL_UNSIGNED_BYTE,
             //$$     nativeBuffer
             //$$ )
-            //$$ textureData = IntArray(0)
-            //$$
-            //$$ uploaded = true
-            //$$ resources.glId = glId
             //#elseif MC>=12105
             //$$ val device = RenderSystem.getDevice()
-            //#if MC>=12106
-            //$$ val usage = GpuTexture.USAGE_TEXTURE_BINDING or GpuTexture.USAGE_COPY_SRC or GpuTexture.USAGE_COPY_DST
-            //$$ val texture = device.createTexture(null as String?, usage, TextureFormat.RGBA8, width, height, 1, 1)
-            //#else
-            //$$ val texture = device.createTexture(null as String?, TextureFormat.RGBA8, width, height, 1)
-            //#endif
             //#if MC>=12111
             //$$ sampler = RenderSystem.getSamplerCache().get(AddressMode.REPEAT, AddressMode.REPEAT, FilterMode.LINEAR, FilterMode.NEAREST, true);
             //#else
-            //$$ texture.setTextureFilter(FilterMode.NEAREST, true)
-            //$$ UGraphics.configureTexture((texture as GlTexture).glId) {
+            //$$ texture.mc.setTextureFilter(FilterMode.NEAREST, true)
+            //$$ UGraphics.configureTexture((texture.mc as GlTexture).glId) {
                 //#if MC>=12106
-                //$$ texture.checkDirty(GL11.GL_TEXTURE_2D)
+                //$$ texture.mc.checkDirty(GL11.GL_TEXTURE_2D)
                 //#else
-                //$$ texture.checkDirty()
+                //$$ texture.mc.checkDirty()
                 //#endif
             //$$ }
             //#endif
-            //$$ device.createCommandEncoder().writeToTexture(texture, textureData!!)
-            //$$ textureData = null
-            //$$ uploaded = true
-            //$$ resources.gpuTexture = texture
-            //$$ this.glTexture = texture
-            //#if MC>=12106
-            //$$ val view = device.createTextureView(texture)
-            //$$ resources.gpuTextureView = view
-            //$$ this.glTextureView = view
-            //#endif
+            //$$ device.createCommandEncoder().writeToTexture(texture.mc, textureData!!)
+            //$$ this.glTexture = texture.mc
             //#else
-            TextureUtil.allocateTexture(allocGlId(), width, height)
-
             //#if MC>=11400
-            //$$ UGraphics.configureTexture(allocGlId()) {
+            //$$ UGraphics.configureTexture(texture.glId) {
             //$$     textureData?.uploadTextureSub(0, 0, 0, false)
             //$$     GlStateManager.texParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST)
             //$$     GlStateManager.texParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST)
             //$$ }
-            //$$ textureData = null
             //#else
             TextureUtil.uploadTexture(
-                super.getGlTextureId(), textureData,
+                texture.glId, textureData,
                 width, height
             )
+            //#endif
+            glTextureId = texture.glId
+            //#endif
+
+            val textureView = UGraphics.getDevice().createTextureView(texture)
+            resources.gpuTextureView = textureView
+            //#if MC>=12106 && !STANDALONE
+            //$$ this.glTextureView = textureView.impl.mc
+            //#endif
+
+            //#if MC>=11400 && !STANDALONE
+            //$$ textureData = null
+            //#else
             textureData = IntArray(0)
             //#endif
+
             uploaded = true
 
-            resources.glId = allocGlId()
-            //#endif
             Resources.drainCleanupQueue()
         }
     }
 
-    //#if MC<12105
-    private fun allocGlId() = super.getGlTextureId()
-    //#endif
+    val gpuTexture: UGpuTexture
+        get() = gpuTextureView.texture
+
+    val gpuTextureView: UGpuTextureView
+        get() {
+            uploadTexture()
+            return resources.gpuTextureView ?: throw IllegalStateException("Texture has been closed.")
+        }
 
     val dynamicGlId: Int
         //#if MC>=12105 && !STANDALONE
         //$$ get() {
         //$$     uploadTexture()
-        //$$     return (resources.gpuTexture as GlTexture?)?.glId ?: -1
+        //$$     return (resources.gpuTextureView?.texture?.impl?.mc as GlTexture?)?.glId ?: -1
         //$$ }
         //#else
         get() = getGlTextureId()
@@ -194,12 +200,11 @@ class ReleasedDynamicTexture private constructor(
     //#if STANDALONE
     //$$ fun getGlTextureId(): Int {
     //$$     uploadTexture()
-    //$$     return resources.glId
+    //$$     return resources.gpuTextureView?.texture?.impl?.glId ?: -1
     //$$ }
     //$$
     //$$ fun deleteGlTexture() {
-    //$$     UGraphics.deleteTexture(resources.glId)
-    //$$     resources.glId = -1
+    //$$     resources.gpuTextureView = null
     //$$ }
     //#elseif MC>=12105
     //#if MC>=12106
@@ -240,7 +245,7 @@ class ReleasedDynamicTexture private constructor(
 
     override fun deleteGlTexture() {
         super.deleteGlTexture()
-        resources.glId = -1
+        resources.gpuTextureView = null
     }
     //#endif
 
@@ -258,23 +263,12 @@ class ReleasedDynamicTexture private constructor(
     //#endif
 
     private class Resources(referent: ReleasedDynamicTexture) : PhantomReference<ReleasedDynamicTexture>(referent, referenceQueue), Closeable {
-        //#if MC>=12105 && !STANDALONE
-        //$$ var gpuTexture: GpuTexture? = null
-        //$$    set(value) {
-        //$$        field?.close()
-        //$$        field = value
-        //$$    }
-        //$$
-        //#if MC>=12106
-        //$$ var gpuTextureView: GpuTextureView? = null
-        //$$     set(value) {
-        //$$         field?.close()
-        //$$         field = value
-        //$$     }
-        //#endif
-        //#else
-        var glId: Int = -1
-        //#endif
+        var gpuTextureView: UGpuTextureView? = null
+           set(value) {
+               field?.texture?.close()
+               field?.close()
+               field = value
+           }
 
         //#if MC>=11400 && !STANDALONE
         //$$ var textureData: NativeImage? = null
@@ -291,17 +285,7 @@ class ReleasedDynamicTexture private constructor(
         override fun close() {
             toBeCleanedUp.remove(this)
 
-            //#if MC>=12105 && !STANDALONE
-            //$$ gpuTexture = null
-            //#if MC>=12106
-            //$$ gpuTextureView = null
-            //#endif
-            //#else
-            if (glId != -1) {
-                UGraphics.deleteTexture(glId)
-                glId = -1
-            }
-            //#endif
+            gpuTextureView = null
 
             //#if MC>=11400 && !STANDALONE
             //$$ textureData = null

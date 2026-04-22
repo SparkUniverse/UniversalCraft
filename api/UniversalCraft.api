@@ -1194,8 +1194,11 @@ public final class gg/essential/universal/render/URenderPipeline$DepthTest : jav
 	public static final field Disabled Lgg/essential/universal/render/URenderPipeline$DepthTest;
 	public static final field Equal Lgg/essential/universal/render/URenderPipeline$DepthTest;
 	public static final field Greater Lgg/essential/universal/render/URenderPipeline$DepthTest;
+	public static final field GreaterOrEqual Lgg/essential/universal/render/URenderPipeline$DepthTest;
 	public static final field Less Lgg/essential/universal/render/URenderPipeline$DepthTest;
 	public static final field LessOrEqual Lgg/essential/universal/render/URenderPipeline$DepthTest;
+	public static final field Never Lgg/essential/universal/render/URenderPipeline$DepthTest;
+	public static final field NotEqual Lgg/essential/universal/render/URenderPipeline$DepthTest;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lgg/essential/universal/render/URenderPipeline$DepthTest;
 	public static fun values ()[Lgg/essential/universal/render/URenderPipeline$DepthTest;

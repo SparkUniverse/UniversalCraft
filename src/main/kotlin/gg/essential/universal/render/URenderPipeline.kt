@@ -261,6 +261,25 @@ class URenderPipeline private constructor(
         LessOrEqual,
         Less,
         Greater,
+        GreaterOrEqual,
+        NotEqual,
+        Never,
+        ;
+
+        //#if MC < 26.1 || STANDALONE
+        internal val glConst: Int
+            get() = when (this) {
+                Disabled -> GL11.GL_LESS
+                Always -> GL11.GL_ALWAYS
+                Equal -> GL11.GL_EQUAL
+                LessOrEqual -> GL11.GL_LEQUAL
+                Less -> GL11.GL_LESS
+                Greater -> GL11.GL_GREATER
+                GreaterOrEqual -> GL11.GL_GEQUAL
+                NotEqual -> GL11.GL_NOTEQUAL
+                Never -> GL11.GL_NEVER
+            }
+        //#endif
     }
 
     enum class ColorLogic {
@@ -444,11 +463,17 @@ class URenderPipeline private constructor(
             //$$             DepthTest.LessOrEqual -> CompareOp.LESS_THAN_OR_EQUAL
             //$$             DepthTest.Less -> CompareOp.LESS_THAN
             //$$             DepthTest.Greater -> CompareOp.GREATER_THAN
+            //$$             DepthTest.GreaterOrEqual -> CompareOp.GREATER_THAN_OR_EQUAL
+            //$$             DepthTest.NotEqual -> CompareOp.NOT_EQUAL
+            //$$             DepthTest.Never -> CompareOp.NEVER_PASS
             //$$         }, depthMask, polygonOffset.first, polygonOffset.second))
             //$$     }
             //#else
             //$$     withDepthTestFunction(when (depthTest) {
             //$$         DepthTest.Disabled -> DepthTestFunction.NO_DEPTH_TEST
+            //$$         DepthTest.Never,
+            //$$         DepthTest.NotEqual,
+            //$$         DepthTest.GreaterOrEqual,
             //$$         DepthTest.Always -> DepthTestFunction.NO_DEPTH_TEST // implemented via raw GlStateManager below
             //$$         DepthTest.Equal -> DepthTestFunction.EQUAL_DEPTH_TEST
             //$$         DepthTest.LessOrEqual -> DepthTestFunction.LEQUAL_DEPTH_TEST
@@ -500,7 +525,7 @@ class URenderPipeline private constructor(
             //$$ }.build()
             //$$
             //#if MC < 26.1
-            //$$ if (depthTest == DepthTest.Always) {
+            //$$ if (depthTest == DepthTest.Always || depthTest == DepthTest.Never || depthTest == DepthTest.NotEqual || depthTest == DepthTest.GreaterOrEqual) {
             //$$     abstract class CustomRenderPipeline(inner: RenderPipeline) : RenderPipeline(
             //$$         inner.location, inner.vertexShader, inner.fragmentShader, inner.shaderDefines, inner.samplers, inner.uniforms, inner.blendFunction, inner.depthTestFunction, inner.polygonMode, inner.isCull, inner.isWriteColor, inner.isWriteAlpha, inner.isWriteDepth, inner.colorLogic, inner.vertexFormat, inner.vertexFormatMode, inner.depthBiasScaleFactor, inner.depthBiasConstant,
                     //#if MC>=12106
@@ -512,7 +537,7 @@ class URenderPipeline private constructor(
             //$$         override fun isCull(): Boolean {
             //$$             if (stackWalker.callerClass == GlResourceManager::class.java) {
             //$$                 GlStateManager._enableDepthTest()
-            //$$                 GlStateManager._depthFunc(GL11.GL_ALWAYS)
+            //$$                 GlStateManager._depthFunc(depthTest.glConst)
             //$$             }
             //$$             return super.isCull()
             //$$         }
@@ -536,14 +561,7 @@ class URenderPipeline private constructor(
                 shader,
                 ManagedGlState(
                     depthTest = depthTest != DepthTest.Disabled,
-                    depthFunc = when (depthTest) {
-                        DepthTest.Disabled -> GL11.GL_LESS
-                        DepthTest.Always -> GL11.GL_ALWAYS
-                        DepthTest.Equal -> GL11.GL_EQUAL
-                        DepthTest.LessOrEqual -> GL11.GL_LEQUAL
-                        DepthTest.Less -> GL11.GL_LESS
-                        DepthTest.Greater -> GL11.GL_GREATER
-                    },
+                    depthFunc = depthTest.glConst,
                     culling = culling,
                     colorLogicOp = @Suppress("DEPRECATION") colorLogic != ColorLogic.None,
                     colorLogicOpMode = @Suppress("DEPRECATION") when (colorLogic) {

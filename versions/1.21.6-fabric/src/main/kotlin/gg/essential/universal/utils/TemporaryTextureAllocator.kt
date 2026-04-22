@@ -30,16 +30,7 @@ internal class TemporaryTextureAllocator(
         }
 
         val device = RenderSystem.getDevice()
-        device.createCommandEncoder().clearColorAndDepthTextures(
-            texture.texture,
-            0,
-            texture.depthTexture,
-            //#if MC >= 26.2
-            //$$ 0.0,
-            //#else
-            1.0,
-            //#endif
-        )
+        device.createCommandEncoder().clearColorAndDepthTextures(texture.texture, 0, texture.depthTexture, 1.0)
 
         usedAllocations.add(texture)
 

@@ -425,6 +425,9 @@ object UKeyboard {
         val isAlt: Boolean,
         val isSuper: Boolean,
     ) {
+        @Deprecated("Old constructor")
+        constructor(isCtrl: Boolean, isShift: Boolean, isAlt: Boolean) :
+                this(isCtrl, isShift, isAlt, isSuper = isCommandKeyDown())
 
         /**
          * Checks the OS specific modifier key (Ctrl on Windows/Linux, Command (super) on Mac).

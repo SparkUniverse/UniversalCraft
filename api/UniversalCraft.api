@@ -529,6 +529,7 @@ public final class gg/essential/universal/UKeyboard {
 	public static final field KEY_Y I
 	public static final field KEY_Z I
 	public static final fun allowRepeatEvents (Z)V
+	public static final fun getKeyModifiers ()Lgg/essential/universal/UKeyboard$Modifiers;
 	public static final fun getKeyName (I)Ljava/lang/String;
 	public static final fun getKeyName (II)Ljava/lang/String;
 	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
@@ -541,6 +542,8 @@ public final class gg/essential/universal/UKeyboard {
 	public static final fun getKeyName (Lnet/minecraft/client/settings/KeyBinding;)Ljava/lang/String;
 	public static final fun getModifiers ()Lgg/essential/universal/UKeyboard$Modifiers;
 	public static final fun isAltKeyDown ()Z
+	public static final fun isCommandKeyDown ()Z
+	public static final fun isControlKeyDown ()Z
 	public static final fun isCtrlKeyDown ()Z
 	public static final fun isEnterKey (I)Z
 	public static final fun isKeyComboCtrlA (I)Z
@@ -551,21 +554,26 @@ public final class gg/essential/universal/UKeyboard {
 	public static final fun isKeyComboCtrlY (I)Z
 	public static final fun isKeyComboCtrlZ (I)Z
 	public static final fun isKeyDown (I)Z
+	public static final fun isOSModifierKeyDown ()Z
 	public static final fun isShiftKeyDown ()Z
 }
 
 public final class gg/essential/universal/UKeyboard$Modifiers {
 	public fun <init> (ZZZ)V
+	public fun <init> (ZZZZ)V
 	public final fun component1 ()Z
 	public final fun component2 ()Z
 	public final fun component3 ()Z
-	public final fun copy (ZZZ)Lgg/essential/universal/UKeyboard$Modifiers;
-	public static synthetic fun copy$default (Lgg/essential/universal/UKeyboard$Modifiers;ZZZILjava/lang/Object;)Lgg/essential/universal/UKeyboard$Modifiers;
+	public final fun component4 ()Z
+	public final fun copy (ZZZZ)Lgg/essential/universal/UKeyboard$Modifiers;
+	public static synthetic fun copy$default (Lgg/essential/universal/UKeyboard$Modifiers;ZZZZILjava/lang/Object;)Lgg/essential/universal/UKeyboard$Modifiers;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public final fun isAlt ()Z
 	public final fun isCtrl ()Z
+	public final fun isOSModifier ()Z
 	public final fun isShift ()Z
+	public final fun isSuper ()Z
 	public fun toString ()Ljava/lang/String;
 }
 

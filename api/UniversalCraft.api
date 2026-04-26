@@ -571,7 +571,7 @@ public final class gg/essential/universal/UKeyboard$Modifiers {
 	public fun hashCode ()I
 	public final fun isAlt ()Z
 	public final fun isCtrl ()Z
-	public final fun isOSModifier ()Z
+	public final fun isPlatformModifierActive ()Z
 	public final fun isShift ()Z
 	public final fun isSuper ()Z
 	public fun toString ()Ljava/lang/String;

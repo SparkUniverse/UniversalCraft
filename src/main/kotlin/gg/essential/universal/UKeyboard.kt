@@ -430,9 +430,11 @@ object UKeyboard {
                 this(isCtrl, isShift, isAlt, isSuper = isCommandKeyDown())
 
         /**
-         * Checks the OS specific modifier key (Ctrl on Windows/Linux, Command (super) on Mac).
+         * Checks that only the OS specific modifier key is active (Ctrl on Windows/Linux, Command (super) on Mac).
          */
-        val isOSModifier = if (UMinecraft.isRunningOnMac) isSuper else isCtrl
+        fun isPlatformModifierActive() =
+            if (UMinecraft.isRunningOnMac) isSuper && !isShift && !isAlt && !isCtrl
+            else isCtrl && !isShift && !isAlt && !isSuper
 
     }
 

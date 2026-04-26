@@ -277,20 +277,25 @@ object UKeyboard {
         isKeyDown(KEY_LMETA) || isKeyDown(KEY_RMETA)
     } else isKeyDown(KEY_LCONTROL) || isKeyDown(KEY_RCONTROL)
 
+    @Deprecated("If using from a key event, use the provided modifiers instead of calling this method.")
     @JvmStatic
     fun isOSModifierKeyDown(): Boolean =
         if (UMinecraft.isRunningOnMac) isCommandKeyDown()
         else isControlKeyDown()
 
+    @Deprecated("If using from a key event, use the provided modifiers instead of calling this method.")
     @JvmStatic
     fun isCommandKeyDown(): Boolean = isKeyDown(KEY_LMETA) || isKeyDown(KEY_RMETA)
 
+    @Deprecated("If using from a key event, use the provided modifiers instead of calling this method.")
     @JvmStatic
     fun isControlKeyDown(): Boolean = isKeyDown(KEY_LCONTROL) || isKeyDown(KEY_RCONTROL)
 
+    @Deprecated("If using from a key event, use the provided modifiers instead of calling this method.")
     @JvmStatic
     fun isShiftKeyDown(): Boolean = isKeyDown(KEY_LSHIFT) || isKeyDown(KEY_RSHIFT)
 
+    @Deprecated("If using from a key event, use the provided modifiers instead of calling this method.")
     @JvmStatic
     fun isAltKeyDown(): Boolean = isKeyDown(KEY_LMENU) || isKeyDown(KEY_RMENU)
 
@@ -301,24 +306,31 @@ object UKeyboard {
     @JvmStatic
     fun getKeyModifiers(): Modifiers = Modifiers(isControlKeyDown(), isShiftKeyDown(), isAltKeyDown(), isCommandKeyDown())
 
+    @Deprecated("If using from a key event, use the provided modifiers instead of calling this method.")
     @JvmStatic
     fun isKeyComboCtrlA(key: Int): Boolean = key == KEY_A && isOSModifierKeyDown() && !isShiftKeyDown() && !isAltKeyDown()
 
+    @Deprecated("If using from a key event, use the provided modifiers instead of calling this method.")
     @JvmStatic
     fun isKeyComboCtrlC(key: Int): Boolean = key == KEY_C && isOSModifierKeyDown() && !isShiftKeyDown() && !isAltKeyDown()
 
+    @Deprecated("If using from a key event, use the provided modifiers instead of calling this method.")
     @JvmStatic
     fun isKeyComboCtrlV(key: Int): Boolean = key == KEY_V && isOSModifierKeyDown() && !isShiftKeyDown() && !isAltKeyDown()
 
+    @Deprecated("If using from a key event, use the provided modifiers instead of calling this method.")
     @JvmStatic
     fun isKeyComboCtrlX(key: Int): Boolean = key == KEY_X && isOSModifierKeyDown() && !isShiftKeyDown() && !isAltKeyDown()
 
+    @Deprecated("If using from a key event, use the provided modifiers instead of calling this method.")
     @JvmStatic
     fun isKeyComboCtrlY(key: Int): Boolean = key == KEY_Y && isOSModifierKeyDown() && !isShiftKeyDown() && !isAltKeyDown()
 
+    @Deprecated("If using from a key event, use the provided modifiers instead of calling this method.")
     @JvmStatic
     fun isKeyComboCtrlZ(key: Int): Boolean = key == KEY_Z && isOSModifierKeyDown() && !isShiftKeyDown() && !isAltKeyDown()
 
+    @Deprecated("If using from a key event, use the provided modifiers instead of calling this method.")
     @JvmStatic
     fun isKeyComboCtrlShiftZ(key: Int): Boolean = key == KEY_Z && isOSModifierKeyDown() && isShiftKeyDown() && !isAltKeyDown()
 

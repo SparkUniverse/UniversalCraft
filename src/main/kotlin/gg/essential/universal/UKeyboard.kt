@@ -270,10 +270,23 @@ object UKeyboard {
         //#endif
     }
 
+    @Deprecated("Use isOSModifierKeyDown() instead if you want the platform-appropriate modifier key (Ctrl on Windows/Linux, Command on Mac). " +
+            "Alternatively use isControlKeyDown() or isCommandKeyDown() if you specifically want to check for Ctrl or Command respectively.")
     @JvmStatic
     fun isCtrlKeyDown(): Boolean = if (UMinecraft.isRunningOnMac) {
         isKeyDown(KEY_LMETA) || isKeyDown(KEY_RMETA)
     } else isKeyDown(KEY_LCONTROL) || isKeyDown(KEY_RCONTROL)
+
+    @JvmStatic
+    fun isOSModifierKeyDown(): Boolean =
+        if (UMinecraft.isRunningOnMac) isCommandKeyDown()
+        else isControlKeyDown()
+
+    @JvmStatic
+    fun isCommandKeyDown(): Boolean = isKeyDown(KEY_LMETA) || isKeyDown(KEY_RMETA)
+
+    @JvmStatic
+    fun isControlKeyDown(): Boolean = isKeyDown(KEY_LCONTROL) || isKeyDown(KEY_RCONTROL)
 
     @JvmStatic
     fun isShiftKeyDown(): Boolean = isKeyDown(KEY_LSHIFT) || isKeyDown(KEY_RSHIFT)
@@ -281,29 +294,33 @@ object UKeyboard {
     @JvmStatic
     fun isAltKeyDown(): Boolean = isKeyDown(KEY_LMENU) || isKeyDown(KEY_RMENU)
 
+    @Deprecated("Inconsistent ctrl modifier behaviour depending on OS and MC versions", replaceWith = ReplaceWith("getKeyModifiers()"))
     @JvmStatic
-    fun getModifiers(): Modifiers = Modifiers(isCtrlKeyDown(), isShiftKeyDown(), isAltKeyDown())
+    fun getModifiers(): Modifiers = Modifiers(isCtrlKeyDown(), isShiftKeyDown(), isAltKeyDown(), isCommandKeyDown())
 
     @JvmStatic
-    fun isKeyComboCtrlA(key: Int): Boolean = key == KEY_A && isCtrlKeyDown() && !isShiftKeyDown() && !isAltKeyDown()
+    fun getKeyModifiers(): Modifiers = Modifiers(isControlKeyDown(), isShiftKeyDown(), isAltKeyDown(), isCommandKeyDown())
 
     @JvmStatic
-    fun isKeyComboCtrlC(key: Int): Boolean = key == KEY_C && isCtrlKeyDown() && !isShiftKeyDown() && !isAltKeyDown()
+    fun isKeyComboCtrlA(key: Int): Boolean = key == KEY_A && isOSModifierKeyDown() && !isShiftKeyDown() && !isAltKeyDown()
 
     @JvmStatic
-    fun isKeyComboCtrlV(key: Int): Boolean = key == KEY_V && isCtrlKeyDown() && !isShiftKeyDown() && !isAltKeyDown()
+    fun isKeyComboCtrlC(key: Int): Boolean = key == KEY_C && isOSModifierKeyDown() && !isShiftKeyDown() && !isAltKeyDown()
 
     @JvmStatic
-    fun isKeyComboCtrlX(key: Int): Boolean = key == KEY_X && isCtrlKeyDown() && !isShiftKeyDown() && !isAltKeyDown()
+    fun isKeyComboCtrlV(key: Int): Boolean = key == KEY_V && isOSModifierKeyDown() && !isShiftKeyDown() && !isAltKeyDown()
 
     @JvmStatic
-    fun isKeyComboCtrlY(key: Int): Boolean = key == KEY_Y && isCtrlKeyDown() && !isShiftKeyDown() && !isAltKeyDown()
+    fun isKeyComboCtrlX(key: Int): Boolean = key == KEY_X && isOSModifierKeyDown() && !isShiftKeyDown() && !isAltKeyDown()
 
     @JvmStatic
-    fun isKeyComboCtrlZ(key: Int): Boolean = key == KEY_Z && isCtrlKeyDown() && !isShiftKeyDown() && !isAltKeyDown()
+    fun isKeyComboCtrlY(key: Int): Boolean = key == KEY_Y && isOSModifierKeyDown() && !isShiftKeyDown() && !isAltKeyDown()
 
     @JvmStatic
-    fun isKeyComboCtrlShiftZ(key: Int): Boolean = key == KEY_Z && isCtrlKeyDown() && isShiftKeyDown() && !isAltKeyDown()
+    fun isKeyComboCtrlZ(key: Int): Boolean = key == KEY_Z && isOSModifierKeyDown() && !isShiftKeyDown() && !isAltKeyDown()
+
+    @JvmStatic
+    fun isKeyComboCtrlShiftZ(key: Int): Boolean = key == KEY_Z && isOSModifierKeyDown() && isShiftKeyDown() && !isAltKeyDown()
 
     //#if STANDALONE
     //$$ internal val keysDown = mutableSetOf<Int>()
@@ -390,19 +407,33 @@ object UKeyboard {
     @JvmStatic
     fun getKeyName(keyCode: Int): String? = getKeyName(keyCode, -1)
 
-    data class Modifiers(val isCtrl: Boolean, val isShift: Boolean, val isAlt: Boolean)
+    data class Modifiers(
+        val isCtrl: Boolean,
+        val isShift: Boolean,
+        val isAlt: Boolean,
+        val isSuper: Boolean,
+    ) {
+
+        /**
+         * Checks the OS specific modifier key (Ctrl on Windows/Linux, Command (super) on Mac).
+         */
+        val isOSModifier = if (UMinecraft.isRunningOnMac) isSuper else isCtrl
+
+    }
 
     //#if MC>=11502
     //$$ internal fun Modifiers?.toInt() = listOf(
     //$$     this?.isCtrl to GLFW.GLFW_MOD_CONTROL,
     //$$     this?.isShift to GLFW.GLFW_MOD_SHIFT,
     //$$     this?.isAlt to GLFW.GLFW_MOD_ALT,
+    //$$     this?.isCmd to GLFW.GLFW_MOD_SUPER,
     //$$ ).sumOf { (modifier, value) -> if (modifier == true) value else 0 }
     //$$
     //$$ internal fun Int.toModifiers() = Modifiers(
     //$$     isCtrl = (this and GLFW.GLFW_MOD_CONTROL) != 0,
     //$$     isShift = (this and GLFW.GLFW_MOD_SHIFT) != 0,
     //$$     isAlt = (this and GLFW.GLFW_MOD_ALT) != 0,
+    //$$     isCmd = (this and GLFW.GLFW_MOD_SUPER) != 0,
     //$$ )
     //#endif
 }

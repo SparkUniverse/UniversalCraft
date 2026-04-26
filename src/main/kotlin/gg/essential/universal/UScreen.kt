@@ -370,7 +370,7 @@ abstract class UScreen(
     final override fun keyTyped(typedChar: Char, keyCode: Int) {
         inputHandler?.let {
             val handled = if (keyCode != 0) false else {
-                it.uKeyPressed(keyCode, 0, UKeyboard.getModifiers())
+                it.uKeyPressed(keyCode, 0, UKeyboard.getKeyModifiers())
             }
             if (!handled
                 && !typedChar.isISOControl() // Block control code characters. E.G. the 'CTRL + A' character. https://en.wikipedia.org/wiki/Control_character
@@ -378,21 +378,21 @@ abstract class UScreen(
             ) {
                 it.uCharTyped(typedChar.code)
             }
-        } ?: @Suppress("DEPRECATION") onKeyPressed(keyCode, typedChar, UKeyboard.getModifiers())
+        } ?: @Suppress("DEPRECATION") onKeyPressed(keyCode, typedChar, UKeyboard.getKeyModifiers())
     }
 
     final override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
-        inputHandler?.uMouseClicked(mouseX.restoreFrac(UMouse.Scaled.x), mouseY.restoreFrac(UMouse.Scaled.y), mouseButton, UKeyboard.getModifiers())
+        inputHandler?.uMouseClicked(mouseX.restoreFrac(UMouse.Scaled.x), mouseY.restoreFrac(UMouse.Scaled.y), mouseButton, UKeyboard.getKeyModifiers())
             ?: @Suppress("DEPRECATION") onMouseClicked(mouseX.toDouble(), mouseY.toDouble(), mouseButton)
     }
 
     final override fun mouseReleased(mouseX: Int, mouseY: Int, state: Int) {
-        inputHandler?.uMouseReleased(mouseX.restoreFrac(UMouse.Scaled.x), mouseY.restoreFrac(UMouse.Scaled.y), state, UKeyboard.getModifiers())
+        inputHandler?.uMouseReleased(mouseX.restoreFrac(UMouse.Scaled.x), mouseY.restoreFrac(UMouse.Scaled.y), state, UKeyboard.getKeyModifiers())
             ?: @Suppress("DEPRECATION") onMouseReleased(mouseX.toDouble(), mouseY.toDouble(), state)
     }
 
     final override fun mouseClickMove(mouseX: Int, mouseY: Int, clickedMouseButton: Int, timeSinceLastClick: Long) {
-        inputHandler?.uMouseDragged(mouseX.restoreFrac(UMouse.Scaled.x), mouseY.restoreFrac(UMouse.Scaled.y), clickedMouseButton, UKeyboard.getModifiers())
+        inputHandler?.uMouseDragged(mouseX.restoreFrac(UMouse.Scaled.x), mouseY.restoreFrac(UMouse.Scaled.y), clickedMouseButton, UKeyboard.getKeyModifiers())
             ?: @Suppress("DEPRECATION") onMouseDragged(mouseX.toDouble(), mouseY.toDouble(), clickedMouseButton, timeSinceLastClick)
     }
 

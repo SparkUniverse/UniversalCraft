@@ -438,14 +438,14 @@ object UKeyboard {
     //$$     this?.isCtrl to GLFW.GLFW_MOD_CONTROL,
     //$$     this?.isShift to GLFW.GLFW_MOD_SHIFT,
     //$$     this?.isAlt to GLFW.GLFW_MOD_ALT,
-    //$$     this?.isCmd to GLFW.GLFW_MOD_SUPER,
+    //$$     this?.isSuper to GLFW.GLFW_MOD_SUPER,
     //$$ ).sumOf { (modifier, value) -> if (modifier == true) value else 0 }
     //$$
     //$$ internal fun Int.toModifiers() = Modifiers(
     //$$     isCtrl = (this and GLFW.GLFW_MOD_CONTROL) != 0,
     //$$     isShift = (this and GLFW.GLFW_MOD_SHIFT) != 0,
     //$$     isAlt = (this and GLFW.GLFW_MOD_ALT) != 0,
-    //$$     isCmd = (this and GLFW.GLFW_MOD_SUPER) != 0,
+    //$$     isSuper = (this and GLFW.GLFW_MOD_SUPER) != 0,
     //$$ )
     //#endif
 }

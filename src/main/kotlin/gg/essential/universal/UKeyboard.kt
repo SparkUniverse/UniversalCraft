@@ -432,7 +432,9 @@ object UKeyboard {
         /**
          * Checks that only the OS specific modifier key is active (Ctrl on Windows/Linux, Command (super) on Mac).
          */
-        fun isPlatformModifierActive() =
+        fun isPlatformModifierActive() = if (UMinecraft.isRunningOnMac) isSuper else isCtrl
+
+        fun isOnlyPlatformModifierActive() =
             if (UMinecraft.isRunningOnMac) isSuper && !isShift && !isAlt && !isCtrl
             else isCtrl && !isShift && !isAlt && !isSuper
 

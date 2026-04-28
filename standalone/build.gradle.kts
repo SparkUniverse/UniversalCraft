@@ -84,7 +84,7 @@ fun setupPreprocessor() {
             ".kt" to PreprocessTask.DEFAULT_KEYWORDS,
         )
         vars = mapOf(
-            "MC" to 99999,
+            "MC" to 99_99_99,
             "FABRIC" to 1,
             "FORGE" to 0,
             "NEOFORGE" to 0,

@@ -1,0 +1,3 @@
+com.mojang.blaze3d.GpuFormat com.mojang.blaze3d.textures.TextureFormat
+com.mojang.blaze3d.GpuFormat RGBA8_UNORM:Lcom/mojang/blaze3d/GpuFormat; RGBA8
+com.mojang.blaze3d.GpuFormat D32_FLOAT:Lcom/mojang/blaze3d/GpuFormat; DEPTH32

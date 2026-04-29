@@ -88,7 +88,7 @@ public final class gg/essential/universal/UDesktop {
 }
 
 public class gg/essential/universal/UGraphics {
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public static field EMPTY_WITH_FONT_ID Lnet/minecraft/network/chat/Style;
 	@1.16.2-forge
 	public static field EMPTY_WITH_FONT_ID Lnet/minecraft/util/text/Style;
@@ -97,7 +97,7 @@ public class gg/essential/universal/UGraphics {
 	public static field ZERO_TEXT_ALPHA I
 	@1.8.9-forge
 	public fun <init> (Lnet/minecraft/client/renderer/WorldRenderer;)V
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public fun <init> (Lcom/mojang/blaze3d/vertex/BufferBuilder;)V
 	@1.16.2-fabric,1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.11-fabric,1.21.3-fabric,1.21.4-fabric,1.21.5-fabric,1.21.6-fabric,1.21.7-fabric,1.21.9-fabric
 	public fun <init> (Lnet/minecraft/client/render/BufferBuilder;)V
@@ -107,10 +107,10 @@ public class gg/essential/universal/UGraphics {
 	public static fun alphaFunc (IF)V
 	public static fun areShadersSupported ()Z
 	public fun asUVertexConsumer ()Lgg/essential/universal/vertex/UVertexConsumer;
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.2-fabric
 	public fun begin (ILcom/mojang/blaze3d/vertex/VertexFormat;)Lgg/essential/universal/UGraphics;
 	public fun begin (ILgg/essential/universal/UGraphics$CommonVertexFormats;)Lgg/essential/universal/UGraphics;
-	@26.1-fabric
+	@26.1-fabric,26.2-fabric
 	public fun beginRenderLayer (Lnet/minecraft/client/renderer/rendertype/RenderType;)Lgg/essential/universal/UGraphics;
 	@1.16.2-fabric,1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.3-fabric,1.21.4-fabric
 	public fun begin (ILnet/minecraft/client/render/VertexFormat;)Lgg/essential/universal/UGraphics;
@@ -120,10 +120,10 @@ public class gg/essential/universal/UGraphics {
 	public fun begin (ILnet/minecraft/client/renderer/vertex/VertexFormat;)Lgg/essential/universal/UGraphics;
 	@1.16.2-forge,1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge
 	public fun beginRenderLayer (Lnet/minecraft/client/renderer/RenderType;)Lgg/essential/universal/UGraphics;
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.2-fabric
 	public fun beginWithActiveShader (Lgg/essential/universal/UGraphics$DrawMode;Lcom/mojang/blaze3d/vertex/VertexFormat;)Lgg/essential/universal/UGraphics;
 	public fun beginWithActiveShader (Lgg/essential/universal/UGraphics$DrawMode;Lgg/essential/universal/UGraphics$CommonVertexFormats;)Lgg/essential/universal/UGraphics;
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.2-fabric
 	public fun beginWithDefaultShader (Lgg/essential/universal/UGraphics$DrawMode;Lcom/mojang/blaze3d/vertex/VertexFormat;)Lgg/essential/universal/UGraphics;
 	@1.16.2-fabric,1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.3-fabric,1.21.4-fabric
 	public fun beginWithActiveShader (Lgg/essential/universal/UGraphics$DrawMode;Lnet/minecraft/client/render/VertexFormat;)Lgg/essential/universal/UGraphics;
@@ -136,9 +136,9 @@ public class gg/essential/universal/UGraphics {
 	public fun beginWithDefaultShader (Lgg/essential/universal/UGraphics$DrawMode;Lnet/minecraft/client/renderer/vertex/VertexFormat;)Lgg/essential/universal/UGraphics;
 	public static fun bindTexture (I)V
 	public static fun bindTexture (II)V
-	@26.1-fabric
+	@26.1-fabric,26.2-fabric
 	public static fun bindTexture (ILnet/minecraft/resources/Identifier;)V
-	@26.1-fabric
+	@26.1-fabric,26.2-fabric
 	public static fun bindTexture (Lnet/minecraft/resources/Identifier;)V
 	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge
 	public static fun bindTexture (ILnet/minecraft/resources/ResourceLocation;)V
@@ -257,7 +257,7 @@ public final class gg/essential/universal/UGraphics$CommonVertexFormats : java/l
 	public static final field POSITION_TEXTURE_COLOR_LIGHT Lgg/essential/universal/UGraphics$CommonVertexFormats;
 	public static final field POSITION_TEXTURE_COLOR_NORMAL Lgg/essential/universal/UGraphics$CommonVertexFormats;
 	public static final field POSITION_TEXTURE_LIGHT_COLOR Lgg/essential/universal/UGraphics$CommonVertexFormats;
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.2-fabric
 	public final field mc Lcom/mojang/blaze3d/vertex/VertexFormat;
 	@1.16.2-fabric,1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.3-fabric,1.21.4-fabric
 	public final field mc Lnet/minecraft/client/render/VertexFormat;
@@ -277,14 +277,14 @@ public final class gg/essential/universal/UGraphics$DrawMode : java/lang/Enum {
 	public final field glMode I
 	@1.21.11-fabric,1.21.5-fabric,1.21.6-fabric,1.21.7-fabric,1.21.9-fabric
 	public final field mcMode Lcom/mojang/blaze3d/vertex/VertexFormat$DrawMode;
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public final field mcMode Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;
 	@1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.3-fabric,1.21.4-fabric
 	public final field mcMode Lnet/minecraft/client/render/VertexFormat$DrawMode;
 	@1.12.2-forge,1.16.2-fabric,1.16.2-forge,1.8.9-forge
 	public final field mcMode I
 	public static fun fromGl (I)Lgg/essential/universal/UGraphics$DrawMode;
-	@26.1-fabric
+	@26.1-fabric,26.2-fabric
 	public static fun fromRenderLayer (Lnet/minecraft/client/renderer/rendertype/RenderType;)Lgg/essential/universal/UGraphics$DrawMode;
 	@1.16.2-forge,1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge
 	public static fun fromRenderLayer (Lnet/minecraft/client/renderer/RenderType;)Lgg/essential/universal/UGraphics$DrawMode;
@@ -358,9 +358,9 @@ public class gg/essential/universal/UGraphics$Globals {
 
 public final class gg/essential/universal/UGuiButton {
 	public static final field INSTANCE Lgg/essential/universal/UGuiButton;
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public static final fun getX (Lnet/minecraft/client/gui/components/AbstractWidget;)I
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public static final fun getY (Lnet/minecraft/client/gui/components/AbstractWidget;)I
 	@1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.11-fabric,1.21.3-fabric,1.21.4-fabric,1.21.5-fabric,1.21.6-fabric,1.21.7-fabric,1.21.9-fabric
 	public static final fun getX (Lnet/minecraft/client/gui/widget/ClickableWidget;)I
@@ -387,7 +387,7 @@ public final class gg/essential/universal/UI18n {
 
 public final class gg/essential/universal/UImage {
 	public static final field Companion Lgg/essential/universal/UImage$Companion;
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public fun <init> (Lcom/mojang/blaze3d/platform/NativeImage;)V
 	@1.16.2-forge
 	public fun <init> (Lnet/minecraft/client/renderer/texture/NativeImage;)V
@@ -398,7 +398,7 @@ public final class gg/essential/universal/UImage {
 	public final fun copy ()Lgg/essential/universal/UImage;
 	public final fun copyFrom (Lgg/essential/universal/UImage;)V
 	public final fun getHeight ()I
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public final fun getNativeImage ()Lcom/mojang/blaze3d/platform/NativeImage;
 	@1.16.2-forge
 	public final fun getNativeImage ()Lnet/minecraft/client/renderer/texture/NativeImage;
@@ -531,7 +531,7 @@ public final class gg/essential/universal/UKeyboard {
 	public static final fun allowRepeatEvents (Z)V
 	public static final fun getKeyName (I)Ljava/lang/String;
 	public static final fun getKeyName (II)Ljava/lang/String;
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public static final fun getKeyName (Lnet/minecraft/client/KeyMapping;)Ljava/lang/String;
 	@1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.11-fabric,1.21.3-fabric,1.21.4-fabric,1.21.5-fabric,1.21.6-fabric,1.21.7-fabric,1.21.9-fabric
 	public static final fun getKeyName (Lnet/minecraft/client/option/KeyBinding;)Ljava/lang/String;
@@ -581,9 +581,9 @@ public final class gg/essential/universal/UMatrixStack {
 	public static final field Companion Lgg/essential/universal/UMatrixStack$Companion;
 	public static final field UNIT Lgg/essential/universal/UMatrixStack;
 	public fun <init> ()V
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public fun <init> (Lcom/mojang/blaze3d/vertex/PoseStack$Pose;)V
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public fun <init> (Lcom/mojang/blaze3d/vertex/PoseStack;)V
 	@1.16.2-forge
 	public fun <init> (Lcom/mojang/blaze3d/matrix/MatrixStack$Entry;)V
@@ -593,12 +593,12 @@ public final class gg/essential/universal/UMatrixStack {
 	public fun <init> (Lnet/minecraft/client/util/math/MatrixStack$Entry;)V
 	@1.16.2-fabric,1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.11-fabric,1.21.3-fabric,1.21.4-fabric,1.21.5-fabric,1.21.6-fabric,1.21.7-fabric,1.21.9-fabric
 	public fun <init> (Lnet/minecraft/client/util/math/MatrixStack;)V
-	@1.21.11-fabric,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric
+	@1.21.11-fabric,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.2-fabric
 	public fun <init> (Lorg/joml/Matrix3x2f;)V
 	public final fun applyToGlobalState ()V
 	public final fun fork ()Lgg/essential/universal/UMatrixStack;
 	public final fun isEmpty ()Z
-	@1.19.3-fabric,1.19.3-forge,1.19.4-fabric,1.19.4-forge,1.20-fabric,1.20.1-fabric,1.20.1-forge,1.20.2-fabric,1.20.2-forge,1.20.4-fabric,1.20.4-forge,1.20.4-neoforge,1.20.6-fabric,1.20.6-forge,1.20.6-neoforge,1.21-fabric,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-fabric,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric
+	@1.19.3-fabric,1.19.3-forge,1.19.4-fabric,1.19.4-forge,1.20-fabric,1.20.1-fabric,1.20.1-forge,1.20.2-fabric,1.20.2-forge,1.20.4-fabric,1.20.4-forge,1.20.4-neoforge,1.20.6-fabric,1.20.6-forge,1.20.6-neoforge,1.21-fabric,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-fabric,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.2-fabric
 	public final fun multiply (Lorg/joml/Quaternionf;)V
 	@1.17.1-forge,1.18.1-forge,1.19.2-forge
 	public final fun multiply (Lcom/mojang/math/Quaternion;)V
@@ -621,11 +621,11 @@ public final class gg/essential/universal/UMatrixStack {
 	public final fun runWithGlobalState (Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
 	public final fun scale (DDD)V
 	public final fun scale (FFF)V
-	@1.21.11-fabric,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric
+	@1.21.11-fabric,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.2-fabric
 	public final fun to3x2Joml (Lorg/joml/Matrix3x2f;)Lorg/joml/Matrix3x2f;
-	@1.21.11-fabric,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric
+	@1.21.11-fabric,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.2-fabric
 	public static synthetic fun to3x2Joml$default (Lgg/essential/universal/UMatrixStack;Lorg/joml/Matrix3x2f;ILjava/lang/Object;)Lorg/joml/Matrix3x2f;
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public final fun toMC ()Lcom/mojang/blaze3d/vertex/PoseStack;
 	@1.16.2-forge
 	public final fun toMC ()Lcom/mojang/blaze3d/matrix/MatrixStack;
@@ -646,15 +646,15 @@ public final class gg/essential/universal/UMatrixStack$Compat {
 }
 
 public final class gg/essential/universal/UMatrixStack$Entry {
-	@1.19.3-fabric,1.19.3-forge,1.19.4-fabric,1.19.4-forge,1.20-fabric,1.20.1-fabric,1.20.1-forge,1.20.2-fabric,1.20.2-forge,1.20.4-fabric,1.20.4-forge,1.20.4-neoforge,1.20.6-fabric,1.20.6-forge,1.20.6-neoforge,1.21-fabric,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-fabric,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric
+	@1.19.3-fabric,1.19.3-forge,1.19.4-fabric,1.19.4-forge,1.20-fabric,1.20.1-fabric,1.20.1-forge,1.20.2-fabric,1.20.2-forge,1.20.4-fabric,1.20.4-forge,1.20.4-neoforge,1.20.6-fabric,1.20.6-forge,1.20.6-neoforge,1.21-fabric,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-fabric,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.2-fabric
 	public fun <init> (Lorg/joml/Matrix4f;Lorg/joml/Matrix3f;)V
-	@1.19.3-fabric,1.19.3-forge,1.19.4-fabric,1.19.4-forge,1.20-fabric,1.20.1-fabric,1.20.1-forge,1.20.2-fabric,1.20.2-forge,1.20.4-fabric,1.20.4-forge,1.20.4-neoforge,1.20.6-fabric,1.20.6-forge,1.20.6-neoforge,1.21-fabric,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-fabric,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric
+	@1.19.3-fabric,1.19.3-forge,1.19.4-fabric,1.19.4-forge,1.20-fabric,1.20.1-fabric,1.20.1-forge,1.20.2-fabric,1.20.2-forge,1.20.4-fabric,1.20.4-forge,1.20.4-neoforge,1.20.6-fabric,1.20.6-forge,1.20.6-neoforge,1.21-fabric,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-fabric,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.2-fabric
 	public final fun component1 ()Lorg/joml/Matrix4f;
-	@1.19.3-fabric,1.19.3-forge,1.19.4-fabric,1.19.4-forge,1.20-fabric,1.20.1-fabric,1.20.1-forge,1.20.2-fabric,1.20.2-forge,1.20.4-fabric,1.20.4-forge,1.20.4-neoforge,1.20.6-fabric,1.20.6-forge,1.20.6-neoforge,1.21-fabric,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-fabric,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric
+	@1.19.3-fabric,1.19.3-forge,1.19.4-fabric,1.19.4-forge,1.20-fabric,1.20.1-fabric,1.20.1-forge,1.20.2-fabric,1.20.2-forge,1.20.4-fabric,1.20.4-forge,1.20.4-neoforge,1.20.6-fabric,1.20.6-forge,1.20.6-neoforge,1.21-fabric,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-fabric,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.2-fabric
 	public final fun component2 ()Lorg/joml/Matrix3f;
-	@1.19.3-fabric,1.19.3-forge,1.19.4-fabric,1.19.4-forge,1.20-fabric,1.20.1-fabric,1.20.1-forge,1.20.2-fabric,1.20.2-forge,1.20.4-fabric,1.20.4-forge,1.20.4-neoforge,1.20.6-fabric,1.20.6-forge,1.20.6-neoforge,1.21-fabric,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-fabric,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric
+	@1.19.3-fabric,1.19.3-forge,1.19.4-fabric,1.19.4-forge,1.20-fabric,1.20.1-fabric,1.20.1-forge,1.20.2-fabric,1.20.2-forge,1.20.4-fabric,1.20.4-forge,1.20.4-neoforge,1.20.6-fabric,1.20.6-forge,1.20.6-neoforge,1.21-fabric,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-fabric,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.2-fabric
 	public final fun copy (Lorg/joml/Matrix4f;Lorg/joml/Matrix3f;)Lgg/essential/universal/UMatrixStack$Entry;
-	@1.19.3-fabric,1.19.3-forge,1.19.4-fabric,1.19.4-forge,1.20-fabric,1.20.1-fabric,1.20.1-forge,1.20.2-fabric,1.20.2-forge,1.20.4-fabric,1.20.4-forge,1.20.4-neoforge,1.20.6-fabric,1.20.6-forge,1.20.6-neoforge,1.21-fabric,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-fabric,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric
+	@1.19.3-fabric,1.19.3-forge,1.19.4-fabric,1.19.4-forge,1.20-fabric,1.20.1-fabric,1.20.1-forge,1.20.2-fabric,1.20.2-forge,1.20.4-fabric,1.20.4-forge,1.20.4-neoforge,1.20.6-fabric,1.20.6-forge,1.20.6-neoforge,1.21-fabric,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-fabric,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.2-fabric
 	public static synthetic fun copy$default (Lgg/essential/universal/UMatrixStack$Entry;Lorg/joml/Matrix4f;Lorg/joml/Matrix3f;ILjava/lang/Object;)Lgg/essential/universal/UMatrixStack$Entry;
 	@1.17.1-forge,1.18.1-forge,1.19.2-forge
 	public fun <init> (Lcom/mojang/math/Matrix4f;Lcom/mojang/math/Matrix3f;)V
@@ -698,7 +698,7 @@ public final class gg/essential/universal/UMatrixStack$Entry {
 	public static synthetic fun copy$default (Lgg/essential/universal/UMatrixStack$Entry;Lorg/lwjgl/util/vector/Matrix4f;Lorg/lwjgl/util/vector/Matrix3f;ILjava/lang/Object;)Lgg/essential/universal/UMatrixStack$Entry;
 	public final fun deepCopy ()Lgg/essential/universal/UMatrixStack$Entry;
 	public fun equals (Ljava/lang/Object;)Z
-	@1.19.3-fabric,1.19.3-forge,1.19.4-fabric,1.19.4-forge,1.20-fabric,1.20.1-fabric,1.20.1-forge,1.20.2-fabric,1.20.2-forge,1.20.4-fabric,1.20.4-forge,1.20.4-neoforge,1.20.6-fabric,1.20.6-forge,1.20.6-neoforge,1.21-fabric,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-fabric,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric
+	@1.19.3-fabric,1.19.3-forge,1.19.4-fabric,1.19.4-forge,1.20-fabric,1.20.1-fabric,1.20.1-forge,1.20.2-fabric,1.20.2-forge,1.20.4-fabric,1.20.4-forge,1.20.4-neoforge,1.20.6-fabric,1.20.6-forge,1.20.6-neoforge,1.21-fabric,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-fabric,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.2-fabric
 	public final fun getModel ()Lorg/joml/Matrix4f;
 	@1.17.1-forge,1.18.1-forge,1.19.2-forge
 	public final fun getModel ()Lcom/mojang/math/Matrix4f;
@@ -709,7 +709,7 @@ public final class gg/essential/universal/UMatrixStack$Entry {
 	@1.12.2-forge,1.8.9-forge
 	public final fun getModel ()Lorg/lwjgl/util/vector/Matrix4f;
 	public final fun getModelAsArray ()[F
-	@1.19.3-fabric,1.19.3-forge,1.19.4-fabric,1.19.4-forge,1.20-fabric,1.20.1-fabric,1.20.1-forge,1.20.2-fabric,1.20.2-forge,1.20.4-fabric,1.20.4-forge,1.20.4-neoforge,1.20.6-fabric,1.20.6-forge,1.20.6-neoforge,1.21-fabric,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-fabric,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric
+	@1.19.3-fabric,1.19.3-forge,1.19.4-fabric,1.19.4-forge,1.20-fabric,1.20.1-fabric,1.20.1-forge,1.20.2-fabric,1.20.2-forge,1.20.4-fabric,1.20.4-forge,1.20.4-neoforge,1.20.6-fabric,1.20.6-forge,1.20.6-neoforge,1.21-fabric,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-fabric,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.2-fabric
 	public final fun getNormal ()Lorg/joml/Matrix3f;
 	@1.17.1-forge,1.18.1-forge,1.19.2-forge
 	public final fun getNormal ()Lcom/mojang/math/Matrix3f;
@@ -720,7 +720,7 @@ public final class gg/essential/universal/UMatrixStack$Entry {
 	@1.12.2-forge,1.8.9-forge
 	public final fun getNormal ()Lorg/lwjgl/util/vector/Matrix3f;
 	public fun hashCode ()I
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public final fun toMCStack ()Lcom/mojang/blaze3d/vertex/PoseStack;
 	@1.16.2-forge
 	public final fun toMCStack ()Lcom/mojang/blaze3d/matrix/MatrixStack;
@@ -732,7 +732,7 @@ public final class gg/essential/universal/UMatrixStack$Entry {
 public final class gg/essential/universal/UMinecraft {
 	public static final field INSTANCE Lgg/essential/universal/UMinecraft;
 	public static final field isRunningOnMac Z
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public static final fun getChatGUI ()Lnet/minecraft/client/gui/components/ChatComponent;
 	@1.16.2-forge
 	public static final fun getChatGUI ()Lnet/minecraft/client/gui/NewChatGui;
@@ -741,7 +741,7 @@ public final class gg/essential/universal/UMinecraft {
 	@1.12.2-forge,1.8.9-forge
 	public static final fun getChatGUI ()Lnet/minecraft/client/gui/GuiNewChat;
 	public static final fun getCurrentScreenObj ()Ljava/lang/Object;
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public static final fun getFontRenderer ()Lnet/minecraft/client/gui/Font;
 	@1.16.2-fabric,1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.11-fabric,1.21.3-fabric,1.21.4-fabric,1.21.5-fabric,1.21.6-fabric,1.21.7-fabric,1.21.9-fabric
 	public static final fun getFontRenderer ()Lnet/minecraft/client/font/TextRenderer;
@@ -758,13 +758,13 @@ public final class gg/essential/universal/UMinecraft {
 	public static final fun getSettings ()Lnet/minecraft/client/option/GameOptions;
 	@1.16.2-fabric
 	public static final fun getSettings ()Lnet/minecraft/client/options/GameOptions;
-	@1.12.2-forge,1.16.2-forge,1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,1.8.9-forge,26.1-fabric
+	@1.12.2-forge,1.16.2-forge,1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,1.8.9-forge,26.1-fabric,26.2-fabric
 	public static final fun getMinecraft ()Lnet/minecraft/client/Minecraft;
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public static final fun getNetHandler ()Lnet/minecraft/client/multiplayer/ClientPacketListener;
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public static final fun getPlayer ()Lnet/minecraft/client/player/LocalPlayer;
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public static final fun getSettings ()Lnet/minecraft/client/Options;
 	@1.16.2-forge
 	public static final fun getNetHandler ()Lnet/minecraft/client/network/play/ClientPlayNetHandler;
@@ -779,7 +779,7 @@ public final class gg/essential/universal/UMinecraft {
 	@1.12.2-forge,1.8.9-forge
 	public static final fun getSettings ()Lnet/minecraft/client/settings/GameSettings;
 	public static final fun getTime ()J
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public static final fun getWorld ()Lnet/minecraft/client/multiplayer/ClientLevel;
 	@1.16.2-fabric,1.16.2-forge,1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.11-fabric,1.21.3-fabric,1.21.4-fabric,1.21.5-fabric,1.21.6-fabric,1.21.7-fabric,1.21.9-fabric
 	public static final fun getWorld ()Lnet/minecraft/client/world/ClientWorld;
@@ -816,7 +816,7 @@ public final class gg/essential/universal/UPacket {
 	public static final fun sendActionBarMessage (Lgg/essential/universal/wrappers/message/UTextComponent;)V
 	@1.8.9-forge
 	public static final fun sendActionBarMessage (Lnet/minecraft/util/IChatComponent;)V
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public static final fun sendActionBarMessage (Lnet/minecraft/network/chat/Component;)V
 	@1.16.2-fabric,1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.11-fabric,1.21.3-fabric,1.21.4-fabric,1.21.5-fabric,1.21.6-fabric,1.21.7-fabric,1.21.9-fabric
 	public static final fun sendActionBarMessage (Lnet/minecraft/text/Text;)V
@@ -826,7 +826,7 @@ public final class gg/essential/universal/UPacket {
 	public static final fun sendChatMessage (Lgg/essential/universal/wrappers/message/UTextComponent;)V
 	@1.8.9-forge
 	public static final fun sendChatMessage (Lnet/minecraft/util/IChatComponent;)V
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public static final fun sendChatMessage (Lnet/minecraft/network/chat/Component;)V
 	@1.16.2-fabric,1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.11-fabric,1.21.3-fabric,1.21.4-fabric,1.21.5-fabric,1.21.6-fabric,1.21.7-fabric,1.21.9-fabric
 	public static final fun sendChatMessage (Lnet/minecraft/text/Text;)V
@@ -845,7 +845,7 @@ public final class gg/essential/universal/UResolution {
 	public static final fun getWindowWidth ()I
 }
 
-@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 public abstract class gg/essential/universal/UScreen : net/minecraft/client/gui/screens/Screen {
 	public static final field Companion Lgg/essential/universal/UScreen$Companion;
 	public fun <init> ()V
@@ -855,14 +855,14 @@ public abstract class gg/essential/universal/UScreen : net/minecraft/client/gui/
 	public fun <init> (ZILjava/lang/String;)V
 	public synthetic fun <init> (ZILjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (ZLgg/essential/universal/GuiScale;)V
-	@26.1-fabric
+	@26.1-fabric,26.2-fabric
 	public final fun charTyped (Lnet/minecraft/client/input/CharacterEvent;)Z
 	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge
 	public final fun charTyped (CI)Z
 	public static final fun displayScreen (Lnet/minecraft/client/gui/screens/Screen;)V
-	@26.1-fabric
+	@26.1-fabric,26.2-fabric
 	public final fun extractBackground (Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIF)V
-	@26.1-fabric
+	@26.1-fabric,26.2-fabric
 	public final fun extractRenderState (Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIF)V
 	public static final fun getCurrentScreen ()Lnet/minecraft/client/gui/screens/Screen;
 	public fun getNewGuiScale ()I
@@ -871,15 +871,15 @@ public abstract class gg/essential/universal/UScreen : net/minecraft/client/gui/
 	public fun getUnlocalizedName ()Ljava/lang/String;
 	protected final fun init ()V
 	public fun initScreen (II)V
-	@26.1-fabric
+	@26.1-fabric,26.2-fabric
 	public final fun keyPressed (Lnet/minecraft/client/input/KeyEvent;)Z
-	@26.1-fabric
+	@26.1-fabric,26.2-fabric
 	public final fun keyReleased (Lnet/minecraft/client/input/KeyEvent;)Z
-	@26.1-fabric
+	@26.1-fabric,26.2-fabric
 	public final fun mouseClicked (Lnet/minecraft/client/input/MouseButtonEvent;Z)Z
-	@26.1-fabric
+	@26.1-fabric,26.2-fabric
 	public fun mouseDragged (Lnet/minecraft/client/input/MouseButtonEvent;DD)Z
-	@26.1-fabric
+	@26.1-fabric,26.2-fabric
 	public final fun mouseReleased (Lnet/minecraft/client/input/MouseButtonEvent;)Z
 	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge
 	public final fun keyPressed (III)Z
@@ -891,7 +891,7 @@ public abstract class gg/essential/universal/UScreen : net/minecraft/client/gui/
 	public final fun mouseDragged (DDIDD)Z
 	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge
 	public final fun mouseReleased (DDI)Z
-	@1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public fun mouseScrolled (DDDD)Z
 	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge
 	public final fun mouseScrolled (DDD)Z
@@ -1066,9 +1066,9 @@ public abstract class gg/essential/universal/UScreen : net/minecraft/client/gui/
 }
 
 public final class gg/essential/universal/UScreen$Companion {
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public final fun displayScreen (Lnet/minecraft/client/gui/screens/Screen;)V
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public final fun getCurrentScreen ()Lnet/minecraft/client/gui/screens/Screen;
 	@1.16.2-fabric,1.16.2-forge,1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.11-fabric,1.21.3-fabric,1.21.4-fabric,1.21.5-fabric,1.21.6-fabric,1.21.7-fabric,1.21.9-fabric
 	public final fun displayScreen (Lnet/minecraft/client/gui/screen/Screen;)V
@@ -1090,11 +1090,11 @@ public final class gg/essential/universal/USound {
 	public final fun playPlingSound ()V
 	@1.8.9-forge
 	public final fun playSoundStatic (Lnet/minecraft/util/ResourceLocation;FF)V
-	@1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public final fun playSoundStatic (Lnet/minecraft/core/Holder;FF)V
 	@1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.11-fabric,1.21.3-fabric,1.21.4-fabric,1.21.5-fabric,1.21.6-fabric,1.21.7-fabric,1.21.9-fabric
 	public final fun playSoundStatic (Lnet/minecraft/registry/entry/RegistryEntry;FF)V
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public final fun playSoundStatic (Lnet/minecraft/sounds/SoundEvent;FF)V
 	@1.16.2-fabric,1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.11-fabric,1.21.3-fabric,1.21.4-fabric,1.21.5-fabric,1.21.6-fabric,1.21.7-fabric,1.21.9-fabric
 	public final fun playSoundStatic (Lnet/minecraft/sound/SoundEvent;FF)V
@@ -1113,7 +1113,7 @@ public abstract interface class gg/essential/universal/render/DrawCallBuilder {
 
 public final class gg/essential/universal/render/URenderPipeline {
 	public static final field Companion Lgg/essential/universal/render/URenderPipeline$Companion;
-	@26.1-fabric
+	@26.1-fabric,26.2-fabric
 	public synthetic fun <init> (Lnet/minecraft/resources/Identifier;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/shaders/ShaderSource;Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	@1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge
 	public synthetic fun <init> (Lnet/minecraft/resources/ResourceLocation;Lcom/mojang/blaze3d/vertex/VertexFormat;Ljava/util/function/BiFunction;Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -1128,7 +1128,7 @@ public final class gg/essential/universal/render/URenderPipeline {
 	@1.12.2-forge,1.16.2-forge,1.8.9-forge
 	public synthetic fun <init> (Lnet/minecraft/util/ResourceLocation;Lnet/minecraft/client/renderer/vertex/VertexFormat;Lgg/essential/universal/render/URenderPipeline$ShaderSupplier;Lgg/essential/universal/render/ManagedGlState;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun toString ()Ljava/lang/String;
-	@1.21.11-fabric,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric
+	@1.21.11-fabric,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.2-fabric
 	public static final fun wrap (Lcom/mojang/blaze3d/pipeline/RenderPipeline;)Lgg/essential/universal/render/URenderPipeline;
 }
 
@@ -1162,7 +1162,7 @@ public final class gg/essential/universal/render/URenderPipeline$ColorLogic : ja
 }
 
 public final class gg/essential/universal/render/URenderPipeline$Companion {
-	@26.1-fabric
+	@26.1-fabric,26.2-fabric
 	public final fun builder (Lnet/minecraft/resources/Identifier;Lgg/essential/universal/UGraphics$DrawMode;Lcom/mojang/blaze3d/vertex/VertexFormat;Lnet/minecraft/resources/Identifier;Lnet/minecraft/resources/Identifier;Ljava/util/List;Ljava/util/Map;)Lgg/essential/universal/render/URenderPipeline$Builder;
 	@1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge
 	public final fun builder (Lnet/minecraft/resources/ResourceLocation;Lgg/essential/universal/UGraphics$DrawMode;Lcom/mojang/blaze3d/vertex/VertexFormat;Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/resources/ResourceLocation;Ljava/util/List;Ljava/util/Map;)Lgg/essential/universal/render/URenderPipeline$Builder;
@@ -1177,7 +1177,7 @@ public final class gg/essential/universal/render/URenderPipeline$Companion {
 	@1.21.3-fabric,1.21.4-fabric
 	public final fun builder (Lnet/minecraft/util/Identifier;Lgg/essential/universal/UGraphics$DrawMode;Lnet/minecraft/client/render/VertexFormat;Lnet/minecraft/client/gl/ShaderProgramKey;)Lgg/essential/universal/render/URenderPipeline$Builder;
 	public final fun builderWithDefaultShader (Ljava/lang/String;Lgg/essential/universal/UGraphics$DrawMode;Lgg/essential/universal/UGraphics$CommonVertexFormats;)Lgg/essential/universal/render/URenderPipeline$Builder;
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.2-fabric
 	public final fun builderWithLegacyShader (Ljava/lang/String;Lgg/essential/universal/UGraphics$DrawMode;Lcom/mojang/blaze3d/vertex/VertexFormat;Ljava/lang/String;Ljava/lang/String;)Lgg/essential/universal/render/URenderPipeline$Builder;
 	public final fun builderWithLegacyShader (Ljava/lang/String;Lgg/essential/universal/UGraphics$DrawMode;Lgg/essential/universal/UGraphics$CommonVertexFormats;Ljava/lang/String;Ljava/lang/String;)Lgg/essential/universal/render/URenderPipeline$Builder;
 	@1.16.2-fabric,1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.3-fabric,1.21.4-fabric
@@ -1185,7 +1185,7 @@ public final class gg/essential/universal/render/URenderPipeline$Companion {
 	@1.12.2-forge,1.16.2-forge,1.8.9-forge
 	public final fun builderWithLegacyShader (Ljava/lang/String;Lgg/essential/universal/UGraphics$DrawMode;Lnet/minecraft/client/renderer/vertex/VertexFormat;Ljava/lang/String;Ljava/lang/String;)Lgg/essential/universal/render/URenderPipeline$Builder;
 	public final fun isRequired ()Z
-	@1.21.11-fabric,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric
+	@1.21.11-fabric,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.2-fabric
 	public final fun wrap (Lcom/mojang/blaze3d/pipeline/RenderPipeline;)Lgg/essential/universal/render/URenderPipeline;
 }
 
@@ -1410,12 +1410,12 @@ public final class gg/essential/universal/shader/UShader$DefaultImpls {
 	public static fun getSamplerUniform (Lgg/essential/universal/shader/UShader;Ljava/lang/String;)Lgg/essential/universal/shader/SamplerUniform;
 }
 
-@1.12.2-forge,1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,1.8.9-forge,26.1-fabric
+@1.12.2-forge,1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,1.8.9-forge,26.1-fabric,26.2-fabric
 public final class gg/essential/universal/utils/ReleasedDynamicTexture : net/minecraft/client/renderer/texture/AbstractTexture {
 	public fun <init> (II)V
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public fun <init> (Lcom/mojang/blaze3d/platform/NativeImage;)V
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public fun close ()V
 	@1.12.2-forge,1.8.9-forge
 	public fun <init> (Ljava/awt/image/BufferedImage;)V
@@ -1425,9 +1425,9 @@ public final class gg/essential/universal/utils/ReleasedDynamicTexture : net/min
 	@1.12.2-forge,1.8.9-forge
 	public fun getGlTextureId ()I
 	public final fun getHeight ()I
-	@1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public fun getTexture ()Lcom/mojang/blaze3d/textures/GpuTexture;
-	@1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public fun getTextureView ()Lcom/mojang/blaze3d/textures/GpuTextureView;
 	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge
 	public fun getId ()I
@@ -1459,9 +1459,9 @@ public final class gg/essential/universal/utils/TextUtilsKt {
 	public static final fun toFormattedString (Lnet/minecraft/util/IChatComponent;)Ljava/lang/String;
 	@1.8.9-forge
 	public static final fun toUnformattedString (Lnet/minecraft/util/IChatComponent;)Ljava/lang/String;
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public static final fun toFormattedString (Lnet/minecraft/network/chat/Component;)Ljava/lang/String;
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public static final fun toUnformattedString (Lnet/minecraft/network/chat/Component;)Ljava/lang/String;
 	@1.16.2-fabric,1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.11-fabric,1.21.3-fabric,1.21.4-fabric,1.21.5-fabric,1.21.6-fabric,1.21.7-fabric,1.21.9-fabric
 	public static final fun toFormattedString (Lnet/minecraft/text/Text;)Ljava/lang/String;
@@ -1476,7 +1476,7 @@ public final class gg/essential/universal/utils/TextUtilsKt {
 public abstract interface class gg/essential/universal/vertex/UBufferBuilder : gg/essential/universal/vertex/UVertexConsumer {
 	public static final field Companion Lgg/essential/universal/vertex/UBufferBuilder$Companion;
 	public abstract fun build ()Lgg/essential/universal/vertex/UBuiltBuffer;
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.2-fabric
 	public static fun create (Lgg/essential/universal/UGraphics$DrawMode;Lcom/mojang/blaze3d/vertex/VertexFormat;)Lgg/essential/universal/vertex/UBufferBuilder;
 	public static fun create (Lgg/essential/universal/UGraphics$DrawMode;Lgg/essential/universal/UGraphics$CommonVertexFormats;)Lgg/essential/universal/vertex/UBufferBuilder;
 	@1.16.2-fabric,1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.3-fabric,1.21.4-fabric
@@ -1486,7 +1486,7 @@ public abstract interface class gg/essential/universal/vertex/UBufferBuilder : g
 }
 
 public final class gg/essential/universal/vertex/UBufferBuilder$Companion {
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.2-fabric
 	public final fun create (Lgg/essential/universal/UGraphics$DrawMode;Lcom/mojang/blaze3d/vertex/VertexFormat;)Lgg/essential/universal/vertex/UBufferBuilder;
 	public final fun create (Lgg/essential/universal/UGraphics$DrawMode;Lgg/essential/universal/UGraphics$CommonVertexFormats;)Lgg/essential/universal/vertex/UBufferBuilder;
 	@1.16.2-fabric,1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.3-fabric,1.21.4-fabric
@@ -1498,7 +1498,7 @@ public final class gg/essential/universal/vertex/UBufferBuilder$Companion {
 public abstract interface class gg/essential/universal/vertex/UBuiltBuffer : java/lang/AutoCloseable {
 	public static final field Companion Lgg/essential/universal/vertex/UBuiltBuffer$Companion;
 	public fun draw (Lgg/essential/universal/render/URenderPipeline;Lkotlin/jvm/functions/Function1;)V
-	@26.1-fabric
+	@26.1-fabric,26.2-fabric
 	public fun draw (Lnet/minecraft/client/renderer/rendertype/RenderType;)V
 	@1.16.2-forge,1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge
 	public fun draw (Lnet/minecraft/client/renderer/RenderType;)V
@@ -1506,7 +1506,7 @@ public abstract interface class gg/essential/universal/vertex/UBuiltBuffer : jav
 	public fun draw (Lnet/minecraft/client/render/RenderLayer;)V
 	public static synthetic fun draw$default (Lgg/essential/universal/vertex/UBuiltBuffer;Lgg/essential/universal/render/URenderPipeline;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 	public fun drawAndClose (Lgg/essential/universal/render/URenderPipeline;Lkotlin/jvm/functions/Function1;)V
-	@26.1-fabric
+	@26.1-fabric,26.2-fabric
 	public fun drawAndClose (Lnet/minecraft/client/renderer/rendertype/RenderType;)V
 	@1.16.2-forge,1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge
 	public fun drawAndClose (Lnet/minecraft/client/renderer/RenderType;)V
@@ -1515,7 +1515,7 @@ public abstract interface class gg/essential/universal/vertex/UBuiltBuffer : jav
 	public static synthetic fun drawAndClose$default (Lgg/essential/universal/vertex/UBuiltBuffer;Lgg/essential/universal/render/URenderPipeline;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 	@1.8.9-forge
 	public static fun wrap (Lnet/minecraft/client/renderer/WorldRenderer;)Lgg/essential/universal/vertex/UBuiltBuffer;
-	@1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public static fun wrap (Lcom/mojang/blaze3d/vertex/MeshData;)Lgg/essential/universal/vertex/UBuiltBuffer;
 	@1.21-fabric,1.21.11-fabric,1.21.3-fabric,1.21.4-fabric,1.21.5-fabric,1.21.6-fabric,1.21.7-fabric,1.21.9-fabric
 	public static fun wrap (Lnet/minecraft/client/render/BuiltBuffer;)Lgg/essential/universal/vertex/UBuiltBuffer;
@@ -1534,7 +1534,7 @@ public abstract interface class gg/essential/universal/vertex/UBuiltBuffer : jav
 public final class gg/essential/universal/vertex/UBuiltBuffer$Companion {
 	@1.8.9-forge
 	public final fun wrap (Lnet/minecraft/client/renderer/WorldRenderer;)Lgg/essential/universal/vertex/UBuiltBuffer;
-	@1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public final fun wrap (Lcom/mojang/blaze3d/vertex/MeshData;)Lgg/essential/universal/vertex/UBuiltBuffer;
 	@1.21-fabric,1.21.11-fabric,1.21.3-fabric,1.21.4-fabric,1.21.5-fabric,1.21.6-fabric,1.21.7-fabric,1.21.9-fabric
 	public final fun wrap (Lnet/minecraft/client/render/BuiltBuffer;)Lgg/essential/universal/vertex/UBuiltBuffer;
@@ -1560,7 +1560,7 @@ public abstract interface class gg/essential/universal/vertex/UVertexConsumer {
 	public abstract fun norm (Lgg/essential/universal/UMatrixStack;FFF)Lgg/essential/universal/vertex/UVertexConsumer;
 	@1.8.9-forge
 	public static fun of (Lnet/minecraft/client/renderer/WorldRenderer;)Lgg/essential/universal/vertex/UVertexConsumer;
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public static fun of (Lcom/mojang/blaze3d/vertex/VertexConsumer;)Lgg/essential/universal/vertex/UVertexConsumer;
 	@1.16.2-forge
 	public static fun of (Lcom/mojang/blaze3d/vertex/IVertexBuilder;)Lgg/essential/universal/vertex/UVertexConsumer;
@@ -1576,7 +1576,7 @@ public abstract interface class gg/essential/universal/vertex/UVertexConsumer {
 public final class gg/essential/universal/vertex/UVertexConsumer$Companion {
 	@1.8.9-forge
 	public final fun of (Lnet/minecraft/client/renderer/WorldRenderer;)Lgg/essential/universal/vertex/UVertexConsumer;
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public final fun of (Lcom/mojang/blaze3d/vertex/VertexConsumer;)Lgg/essential/universal/vertex/UVertexConsumer;
 	@1.16.2-forge
 	public final fun of (Lcom/mojang/blaze3d/vertex/IVertexBuilder;)Lgg/essential/universal/vertex/UVertexConsumer;
@@ -1594,7 +1594,7 @@ public final class gg/essential/universal/vertex/UVertexConsumer$DefaultImpls {
 
 public final class gg/essential/universal/wrappers/UPlayer {
 	public static final field INSTANCE Lgg/essential/universal/wrappers/UPlayer;
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public static final fun getPlayer ()Lnet/minecraft/client/player/LocalPlayer;
 	@1.16.2-forge
 	public static final fun getPlayer ()Lnet/minecraft/client/entity/player/ClientPlayerEntity;
@@ -1614,7 +1614,7 @@ public final class gg/essential/universal/wrappers/UPlayer {
 	public static final fun sendClientSideMessage (Lgg/essential/universal/wrappers/message/UTextComponent;)V
 	@1.8.9-forge
 	public static final fun sendClientSideMessage (Lnet/minecraft/util/IChatComponent;)V
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public static final fun sendClientSideMessage (Lnet/minecraft/network/chat/Component;)V
 	@1.16.2-fabric,1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.11-fabric,1.21.3-fabric,1.21.4-fabric,1.21.5-fabric,1.21.6-fabric,1.21.7-fabric,1.21.9-fabric
 	public static final fun sendClientSideMessage (Lnet/minecraft/text/Text;)V

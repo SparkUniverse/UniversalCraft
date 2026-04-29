@@ -63,7 +63,11 @@ internal class URenderPass : AutoCloseable {
         //$$ init {
             //#if MC>=12106
             //$$ val dynamicUniforms = RenderSystem.getDynamicUniforms().write(
-            //$$     RenderSystem.getModelViewMatrix(),
+                //#if MC >= 26.2
+                //$$ RenderSystem.getModelViewMatrixCopy(),
+                //#else
+                //$$ RenderSystem.getModelViewMatrix(),
+                //#endif
             //$$     org.joml.Vector4f(1f, 1f, 1f, 1f),
             //#if MC>=12109
             //$$     org.joml.Vector3f(),

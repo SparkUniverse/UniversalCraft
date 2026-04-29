@@ -9,7 +9,11 @@ import gg.essential.universal.UGraphics
 import net.minecraft.client.renderer.WorldRenderer
 import net.minecraft.client.renderer.vertex.VertexFormat
 
-//#if MC>=11900
+//#if MC >= 26.2
+//$$ import com.mojang.blaze3d.vertex.ByteBufferBuilder
+//#endif
+
+//#if MC>=11900 && MC < 26.2
 //$$ import net.minecraft.client.render.Tessellator
 //#endif
 //#endif
@@ -41,6 +45,10 @@ interface UBufferBuilder : UVertexConsumer {
     fun build(): UBuiltBuffer?
 
     companion object {
+        //#if MC >= 26.2 && !STANDALONE
+        //$$ private val sharedBuffer = ByteBufferBuilder(64 * 1024)
+        //#endif
+
         @JvmStatic
         fun create(drawMode: UGraphics.DrawMode, format: UGraphics.CommonVertexFormats): UBufferBuilder =
             create(drawMode, format.mc)
@@ -51,7 +59,9 @@ interface UBufferBuilder : UVertexConsumer {
             //$$ @Suppress("UNUSED_VARIABLE") val unused = drawMode
             //$$ return BufferBuilder(format.parts)
             //#else
-            //#if MC>=12100
+            //#if MC >= 26.2
+            //$$ val mcBufferBuilder = BufferBuilder(sharedBuffer, drawMode.mcMode, format)
+            //#elseif MC>=12100
             //$$ val mcBufferBuilder = Tessellator.getInstance().begin(drawMode.mcMode, format)
             //#else
             //#if MC>=11900

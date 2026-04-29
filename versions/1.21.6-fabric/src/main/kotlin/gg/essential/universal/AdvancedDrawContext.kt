@@ -10,7 +10,11 @@ import net.minecraft.client.texture.AbstractTexture
 import net.minecraft.util.Identifier
 
 //#if MC >= 26.1
+//#if MC >= 26.2
+//$$ import org.joml.Matrix4f
+//#else
 //$$ import net.minecraft.client.renderer.Projection
+//#endif
 //$$ import net.minecraft.client.renderer.ProjectionMatrixBuffer
 //#else
 import net.minecraft.client.render.ProjectionMatrix2
@@ -29,7 +33,11 @@ import net.minecraft.client.render.ProjectionMatrix2
  */
 internal class AdvancedDrawContext : AutoCloseable {
     //#if MC >= 26.1
+    //#if MC >= 26.2
+    //$$ private val projection = Matrix4f()
+    //#else
     //$$ private val projection = Projection()
+    //#endif
     //$$ private var allocatedProjectionMatrix: ProjectionMatrixBuffer? = null
     //#else
     private var allocatedProjectionMatrix: ProjectionMatrix2? = null
@@ -57,7 +65,16 @@ internal class AdvancedDrawContext : AutoCloseable {
             allocatedProjectionMatrix = projectionMatrix
         }
         //#if MC >= 26.1
+        //#if MC >= 26.2
+        //$$ projection.setOrtho(
+        //$$     0f, width.toFloat() / scaleFactor,
+        //$$     height.toFloat() / scaleFactor, 0f,
+        //$$     1000f, 21000f,
+        //$$     RenderSystem.getDevice().deviceInfo.isZZeroToOne,
+        //$$ )
+        //#else
         //$$ projection.setupOrtho(1000f, 21000f, width.toFloat() / scaleFactor, height.toFloat() / scaleFactor, true)
+        //#endif
         //$$ val projectionMatrixBuffer = projectionMatrix.getBuffer(projection)
         //#else
         val projectionMatrixBuffer = projectionMatrix.set(width.toFloat() / scaleFactor, height.toFloat() / scaleFactor)

@@ -529,6 +529,7 @@ public final class gg/essential/universal/UKeyboard {
 	public static final field KEY_Y I
 	public static final field KEY_Z I
 	public static final fun allowRepeatEvents (Z)V
+	public static final fun getKeyModifiers ()Lgg/essential/universal/UKeyboard$Modifiers;
 	public static final fun getKeyName (I)Ljava/lang/String;
 	public static final fun getKeyName (II)Ljava/lang/String;
 	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
@@ -541,6 +542,8 @@ public final class gg/essential/universal/UKeyboard {
 	public static final fun getKeyName (Lnet/minecraft/client/settings/KeyBinding;)Ljava/lang/String;
 	public static final fun getModifiers ()Lgg/essential/universal/UKeyboard$Modifiers;
 	public static final fun isAltKeyDown ()Z
+	public static final fun isCommandKeyDown ()Z
+	public static final fun isControlKeyDown ()Z
 	public static final fun isCtrlKeyDown ()Z
 	public static final fun isEnterKey (I)Z
 	public static final fun isKeyComboCtrlA (I)Z
@@ -551,21 +554,27 @@ public final class gg/essential/universal/UKeyboard {
 	public static final fun isKeyComboCtrlY (I)Z
 	public static final fun isKeyComboCtrlZ (I)Z
 	public static final fun isKeyDown (I)Z
+	public static final fun isOSModifierKeyDown ()Z
 	public static final fun isShiftKeyDown ()Z
 }
 
 public final class gg/essential/universal/UKeyboard$Modifiers {
 	public fun <init> (ZZZ)V
+	public fun <init> (ZZZZ)V
 	public final fun component1 ()Z
 	public final fun component2 ()Z
 	public final fun component3 ()Z
-	public final fun copy (ZZZ)Lgg/essential/universal/UKeyboard$Modifiers;
-	public static synthetic fun copy$default (Lgg/essential/universal/UKeyboard$Modifiers;ZZZILjava/lang/Object;)Lgg/essential/universal/UKeyboard$Modifiers;
+	public final fun component4 ()Z
+	public final fun copy (ZZZZ)Lgg/essential/universal/UKeyboard$Modifiers;
+	public static synthetic fun copy$default (Lgg/essential/universal/UKeyboard$Modifiers;ZZZZILjava/lang/Object;)Lgg/essential/universal/UKeyboard$Modifiers;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public final fun isAlt ()Z
 	public final fun isCtrl ()Z
+	public final fun isOnlyPlatformModifierActive ()Z
+	public final fun isPlatformModifierActive ()Z
 	public final fun isShift ()Z
+	public final fun isSuper ()Z
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -865,6 +874,7 @@ public abstract class gg/essential/universal/UScreen : net/minecraft/client/gui/
 	@26.1-fabric,26.2-fabric
 	public final fun extractRenderState (Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIF)V
 	public static final fun getCurrentScreen ()Lnet/minecraft/client/gui/screens/Screen;
+	protected final fun getInputHandler ()Lgg/essential/universal/UScreen$InputHandler;
 	public fun getNewGuiScale ()I
 	public final fun getRestoreCurrentGuiOnClose ()Z
 	public fun getTitle ()Lnet/minecraft/network/chat/Component;
@@ -923,9 +933,11 @@ public abstract class gg/essential/universal/UScreen : net/minecraft/client/gui/
 	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge
 	public final fun renderBackground (Lcom/mojang/blaze3d/vertex/PoseStack;I)V
 	public final fun restorePreviousScreen ()V
+	protected final fun setInputHandler (Lgg/essential/universal/UScreen$InputHandler;)V
 	public fun setNewGuiScale (I)V
 	public fun setUnlocalizedName (Ljava/lang/String;)V
 	public final fun tick ()V
+	public final fun uSuperInputHandler ()Lgg/essential/universal/UScreen$InputHandler;
 	public fun updateGuiScale ()V
 }
 
@@ -945,6 +957,7 @@ public abstract class gg/essential/universal/UScreen : net/minecraft/client/gui/
 	public final fun charTyped (CI)Z
 	public static final fun displayScreen (Lnet/minecraft/client/gui/screen/Screen;)V
 	public static final fun getCurrentScreen ()Lnet/minecraft/client/gui/screen/Screen;
+	protected final fun getInputHandler ()Lgg/essential/universal/UScreen$InputHandler;
 	public fun getNewGuiScale ()I
 	public final fun getRestoreCurrentGuiOnClose ()Z
 	@1.16.2-forge
@@ -1013,9 +1026,11 @@ public abstract class gg/essential/universal/UScreen : net/minecraft/client/gui/
 	@1.16.2-fabric,1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric
 	public final fun renderBackground (Lnet/minecraft/client/util/math/MatrixStack;I)V
 	public final fun restorePreviousScreen ()V
+	protected final fun setInputHandler (Lgg/essential/universal/UScreen$InputHandler;)V
 	public fun setNewGuiScale (I)V
 	public fun setUnlocalizedName (Ljava/lang/String;)V
 	public final fun tick ()V
+	public final fun uSuperInputHandler ()Lgg/essential/universal/UScreen$InputHandler;
 	public fun updateGuiScale ()V
 }
 
@@ -1033,6 +1048,7 @@ public abstract class gg/essential/universal/UScreen : net/minecraft/client/gui/
 	public final fun drawScreen (IIF)V
 	public final fun drawWorldBackground (I)V
 	public static final fun getCurrentScreen ()Lnet/minecraft/client/gui/GuiScreen;
+	protected final fun getInputHandler ()Lgg/essential/universal/UScreen$InputHandler;
 	public fun getNewGuiScale ()I
 	public final fun getRestoreCurrentGuiOnClose ()Z
 	public fun getUnlocalizedName ()Ljava/lang/String;
@@ -1059,8 +1075,10 @@ public abstract class gg/essential/universal/UScreen : net/minecraft/client/gui/
 	public fun onScreenClose ()V
 	public fun onTick ()V
 	public final fun restorePreviousScreen ()V
+	protected final fun setInputHandler (Lgg/essential/universal/UScreen$InputHandler;)V
 	public fun setNewGuiScale (I)V
 	public fun setUnlocalizedName (Ljava/lang/String;)V
+	public final fun uSuperInputHandler ()Lgg/essential/universal/UScreen$InputHandler;
 	public fun updateGuiScale ()V
 	public final fun updateScreen ()V
 }
@@ -1078,6 +1096,17 @@ public final class gg/essential/universal/UScreen$Companion {
 	public final fun displayScreen (Lnet/minecraft/client/gui/GuiScreen;)V
 	@1.12.2-forge,1.8.9-forge
 	public final fun getCurrentScreen ()Lnet/minecraft/client/gui/GuiScreen;
+}
+
+public abstract interface class gg/essential/universal/UScreen$InputHandler {
+	public fun uCharTyped (I)Z
+	public fun uKeyPressed (IILgg/essential/universal/UKeyboard$Modifiers;)Z
+	public fun uKeyReleased (IILgg/essential/universal/UKeyboard$Modifiers;)Z
+	public fun uMouseClicked (DDILgg/essential/universal/UKeyboard$Modifiers;)Z
+	public fun uMouseDragged (DDILgg/essential/universal/UKeyboard$Modifiers;)Z
+	public fun uMouseReleased (DDILgg/essential/universal/UKeyboard$Modifiers;)Z
+	public fun uMouseScrolled (DDDD)Z
+	public abstract fun uSuperInputHandler ()Lgg/essential/universal/UScreen$InputHandler;
 }
 
 public final class gg/essential/universal/USound {

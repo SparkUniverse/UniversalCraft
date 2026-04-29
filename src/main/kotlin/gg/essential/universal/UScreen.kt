@@ -28,8 +28,11 @@ import net.minecraft.client.gui.GuiScreen
 //#else
 import org.lwjgl.input.Mouse
 import java.io.IOException
+import kotlin.math.floor
 
 //#endif
+
+private const val INPUTHANDLER_DEP_MSG = "Implement [UScreen.InputHandler] for input functions that more closely adhere to newer MC input behaviour."
 
 abstract class UScreen(
     val restoreCurrentGuiOnClose: Boolean = false,
@@ -53,6 +56,7 @@ abstract class UScreen(
     private var guiScaleToRestore = -1
     private var restoringGuiScale = false
     private val screenToRestore: GuiScreen? = if (restoreCurrentGuiOnClose) currentScreen else null
+    protected var inputHandler: InputHandler? = this as? InputHandler
     //#if MC>=12106
     //$$ // Background is now draw from the final `renderWithTooltip` method, before we ever get control, so we need
     //$$ // to suppress by default and can only allow during `onDrawScreen`.
@@ -134,14 +138,26 @@ abstract class UScreen(
     //#endif
     //$$ }
     //$$
+    //#if MC < 26.1 && MC >= 1.15.2
+    //$$ // Smuggle this value for use in super calls, where intermediate functions have dropped it to match 26.1+
+    //$$ private var lastCharModifiers = 0
+    //#endif
     //#if MC>=12109
     //$$ final override fun keyPressed(input: KeyInput): Boolean {
-    //$$     onKeyPressed(input.key, 0.toChar(), input.modifiers.toModifiers())
+    //$$     inputHandler?.let {
+    //$$         return it.uKeyPressed(input.key, input.scancode, input.modifiers.toModifiers())
+    //$$     }
+    //$$
+    //$$     @Suppress("DEPRECATION") onKeyPressed(input.key, 0.toChar(), input.modifiers.toModifiers())
     //$$     return false
     //$$ }
     //$$
     //$$ final override fun keyReleased(input: KeyInput): Boolean {
-    //$$     onKeyReleased(input.key, 0.toChar(), input.modifiers.toModifiers())
+    //$$     inputHandler?.let {
+    //$$         return it.uKeyReleased(input.key, input.scancode, input.modifiers.toModifiers())
+    //$$     }
+    //$$
+    //$$     @Suppress("DEPRECATION") onKeyReleased(input.key, 0.toChar(), input.modifiers.toModifiers())
     //$$     return false
     //$$ }
     //$$
@@ -152,11 +168,21 @@ abstract class UScreen(
         //#else
         //$$ val modifiers = input.modifiers.toModifiers()
         //#endif
+    //$$     inputHandler?.let {
+            //#if MC < 26.1
+            //$$ lastCharModifiers = input.modifiers
+            //#endif
+    //$$         return it.uCharTyped(codepoint).also {
+                //#if MC < 26.1
+                //$$ lastCharModifiers = 0
+                //#endif
+    //$$         }
+    //$$     }
     //$$     if (Character.isBmpCodePoint(codepoint)) {
-    //$$         onKeyPressed(0, input.codepoint.toChar(), modifiers)
+    //$$         @Suppress("DEPRECATION") onKeyPressed(0, input.codepoint.toChar(), modifiers)
     //$$     } else if (Character.isValidCodePoint(codepoint)) {
-    //$$         onKeyPressed(0, Character.highSurrogate(input.codepoint), modifiers)
-    //$$         onKeyPressed(0, Character.lowSurrogate(input.codepoint), modifiers)
+    //$$         @Suppress("DEPRECATION") onKeyPressed(0, Character.highSurrogate(input.codepoint), modifiers)
+    //$$         @Suppress("DEPRECATION") onKeyPressed(0, Character.lowSurrogate(input.codepoint), modifiers)
     //$$     }
     //$$     return false
     //$$ }
@@ -168,7 +194,15 @@ abstract class UScreen(
     //$$     lastMouseInput = click.buttonInfo
     //$$     lastDoubled = doubled
     //$$     if (click.button() == 1) lastClick = UMinecraft.getTime()
-    //$$     onMouseClicked(click.x, click.y, click.button())
+    //$$
+    //$$     inputHandler?.let {
+    //$$         return it.uMouseClicked(click.x, click.y, click.button(), click.modifiers().toModifiers()).also {
+    //$$             lastMouseInput = null
+    //$$             lastDoubled = null
+    //$$         }
+    //$$     }
+    //$$
+    //$$     @Suppress("DEPRECATION") onMouseClicked(click.x, click.y, click.button())
     //$$     lastMouseInput = null
     //$$     lastDoubled = null
     //$$     return false
@@ -176,7 +210,14 @@ abstract class UScreen(
     //$$
     //$$ final override fun mouseReleased(click: Click): Boolean {
     //$$     lastMouseInput = click.buttonInfo
-    //$$     onMouseReleased(click.x, click.y, click.button())
+    //$$
+    //$$     inputHandler?.let {
+    //$$         return it.uMouseReleased(click.x, click.y, click.button(), click.modifiers().toModifiers()).also {
+    //$$             lastMouseInput = null
+    //$$         }
+    //$$     }
+    //$$
+    //$$     @Suppress("DEPRECATION") onMouseReleased(click.x, click.y, click.button())
     //$$     lastMouseInput = null
     //$$     return false
     //$$ }
@@ -185,42 +226,76 @@ abstract class UScreen(
     //$$     lastMouseInput = click.buttonInfo
     //$$     lastDraggedDx = offsetX
     //$$     lastDraggedDy = offsetY
-    //$$     onMouseDragged(click.x, click.y, click.button(), UMinecraft.getTime() - lastClick)
+    //$$
+    //$$     inputHandler?.let {
+    //$$         return it.uMouseDragged(click.x, click.y, click.button(), click.modifiers().toModifiers()).also {
+    //$$             lastMouseInput = null
+    //$$         }
+    //$$     }
+    //$$
+    //$$     @Suppress("DEPRECATION") onMouseDragged(click.x, click.y, click.button(), UMinecraft.getTime() - lastClick)
     //$$     lastMouseInput = null
     //$$     return false
     //$$ }
     //#else
     //$$ final override fun keyPressed(keyCode: Int, scanCode: Int, modifierCode: Int): Boolean {
-    //$$     onKeyPressed(keyCode, 0.toChar(), modifierCode.toModifiers())
+    //$$     inputHandler?.let {
+    //$$         return it.uKeyPressed(keyCode, scanCode, modifierCode.toModifiers())
+    //$$     }
+    //$$
+    //$$     @Suppress("DEPRECATION") onKeyPressed(keyCode, 0.toChar(), modifierCode.toModifiers())
     //$$     return false
     //$$ }
     //$$
     //$$ final override fun keyReleased(keyCode: Int, scanCode: Int, modifierCode: Int): Boolean {
-    //$$     onKeyReleased(keyCode, 0.toChar(), modifierCode.toModifiers())
+    //$$     inputHandler?.let {
+    //$$         return it.uKeyReleased(keyCode, scanCode, modifierCode.toModifiers())
+    //$$     }
+    //$$
+    //$$     @Suppress("DEPRECATION") onKeyReleased(keyCode, 0.toChar(), modifierCode.toModifiers())
     //$$     return false
     //$$ }
     //$$
     //$$ final override fun charTyped(char: Char, modifierCode: Int): Boolean {
-    //$$     onKeyPressed(0, char, modifierCode.toModifiers())
+    //$$     inputHandler?.let {
+    //$$         lastCharModifiers = modifierCode
+    //$$         return it.uCharTyped(char.code).also { lastCharModifiers = 0 }
+    //$$     }
+    //$$
+    //$$     @Suppress("DEPRECATION") onKeyPressed(0, char, modifierCode.toModifiers())
     //$$     return false
     //$$ }
     //$$
     //$$ final override fun mouseClicked(mouseX: Double, mouseY: Double, mouseButton: Int): Boolean {
     //$$     if (mouseButton == 1)
     //$$         lastClick = UMinecraft.getTime()
-    //$$     onMouseClicked(mouseX, mouseY, mouseButton)
+    //$$
+    //$$     inputHandler?.let {
+    //$$         return it.uMouseClicked(mouseX, mouseY, mouseButton, UKeyboard.getModifiers())
+    //$$     }
+    //$$
+    //$$     @Suppress("DEPRECATION") onMouseClicked(mouseX, mouseY, mouseButton)
     //$$     return false
     //$$ }
     //$$
     //$$ final override fun mouseReleased(mouseX: Double, mouseY: Double, mouseButton: Int): Boolean {
-    //$$     onMouseReleased(mouseX, mouseY, mouseButton)
+    //$$     inputHandler?.let {
+    //$$         return it.uMouseReleased(mouseX, mouseY, mouseButton, UKeyboard.getModifiers())
+    //$$     }
+    //$$
+    //$$     @Suppress("DEPRECATION") onMouseReleased(mouseX, mouseY, mouseButton)
     //$$     return false
     //$$ }
     //$$
     //$$ final override fun mouseDragged(x: Double, y: Double, mouseButton: Int, dx: Double, dy: Double): Boolean {
     //$$     lastDraggedDx = dx
     //$$     lastDraggedDy = dy
-    //$$     onMouseDragged(x, y, mouseButton, UMinecraft.getTime() - lastClick)
+    //$$
+    //$$     inputHandler?.let {
+    //$$         return it.uMouseDragged(x, y, mouseButton, UKeyboard.getModifiers())
+    //$$     }
+    //$$
+    //$$     @Suppress("DEPRECATION") onMouseDragged(x, y, mouseButton, UMinecraft.getTime() - lastClick)
     //$$     return false
     //$$ }
     //#endif
@@ -233,8 +308,12 @@ abstract class UScreen(
     //#endif
     //$$     lastScrolledX = mouseX
     //$$     lastScrolledY = mouseY
-    //$$     @Suppress("DEPRECATION")
-    //$$     onMouseScrolled(delta)
+    //$$
+    //$$     inputHandler?.let {
+    //$$         return it.uMouseScrolled(mouseX, mouseY, lastScrolledDX, delta)
+    //$$     }
+    //$$
+    //$$     @Suppress("DEPRECATION") onMouseScrolled(delta)
     //$$     return false
     //$$ }
     //$$
@@ -289,27 +368,48 @@ abstract class UScreen(
     }
 
     final override fun keyTyped(typedChar: Char, keyCode: Int) {
-        onKeyPressed(keyCode, typedChar, UKeyboard.getModifiers())
+        inputHandler?.let {
+            val handled = if (keyCode != 0) false else {
+                it.uKeyPressed(keyCode, 0, UKeyboard.getKeyModifiers())
+            }
+            if (!handled
+                && !typedChar.isISOControl() // Block control code characters. E.G. the 'CTRL + A' character. https://en.wikipedia.org/wiki/Control_character
+                && typedChar !in CharCategory.PRIVATE_USE // Block PUA characters. Known to be incorrectly sent by macOS + LWJGL2. https://en.wikipedia.org/wiki/Private_Use_Areas
+            ) {
+                it.uCharTyped(typedChar.code)
+            }
+        } ?: @Suppress("DEPRECATION") onKeyPressed(keyCode, typedChar, UKeyboard.getKeyModifiers())
     }
 
     final override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
-        onMouseClicked(mouseX.toDouble(), mouseY.toDouble(), mouseButton)
+        inputHandler?.uMouseClicked(mouseX.restoreFrac(UMouse.Scaled.x), mouseY.restoreFrac(UMouse.Scaled.y), mouseButton, UKeyboard.getKeyModifiers())
+            ?: @Suppress("DEPRECATION") onMouseClicked(mouseX.toDouble(), mouseY.toDouble(), mouseButton)
     }
 
     final override fun mouseReleased(mouseX: Int, mouseY: Int, state: Int) {
-        onMouseReleased(mouseX.toDouble(), mouseY.toDouble(), state)
+        inputHandler?.uMouseReleased(mouseX.restoreFrac(UMouse.Scaled.x), mouseY.restoreFrac(UMouse.Scaled.y), state, UKeyboard.getKeyModifiers())
+            ?: @Suppress("DEPRECATION") onMouseReleased(mouseX.toDouble(), mouseY.toDouble(), state)
     }
 
     final override fun mouseClickMove(mouseX: Int, mouseY: Int, clickedMouseButton: Int, timeSinceLastClick: Long) {
-        onMouseDragged(mouseX.toDouble(), mouseY.toDouble(), clickedMouseButton, timeSinceLastClick)
+        inputHandler?.uMouseDragged(mouseX.restoreFrac(UMouse.Scaled.x), mouseY.restoreFrac(UMouse.Scaled.y), clickedMouseButton, UKeyboard.getKeyModifiers())
+            ?: @Suppress("DEPRECATION") onMouseDragged(mouseX.toDouble(), mouseY.toDouble(), clickedMouseButton, timeSinceLastClick)
     }
+
+    // We want to restore the fractional part of the mouse click, but not outright override the mouse pos with the real one
+    // as the input mouse Int may have been modified by another mod.
+    private fun Int.restoreFrac(realMouseScaled: Double): Double =
+        this + (realMouseScaled - floor(realMouseScaled))
 
     final override fun handleMouseInput() {
         super.handleMouseInput()
         val scrollDelta = Mouse.getEventDWheel()
-        @Suppress("DEPRECATION")
-        if (scrollDelta != 0)
-            onMouseScrolled(scrollDelta.toDouble())
+        if (scrollDelta != 0) {
+            inputHandler?.uMouseScrolled(UMouse.Scaled.x, UMouse.Scaled.y, 0.0,
+                    // Revert LWJGL 2 delta scaling, see onMouseScrolled(Double) for more info
+                    scrollDelta / 120.0)
+                ?: @Suppress("DEPRECATION") onMouseScrolled(scrollDelta.toDouble())
+        }
     }
 
     final override fun updateScreen() {
@@ -404,6 +504,7 @@ abstract class UScreen(
         onDrawScreen(mouseX, mouseY, partialTicks)
     }
 
+    @Deprecated(INPUTHANDLER_DEP_MSG)
     open fun onKeyPressed(keyCode: Int, typedChar: Char, modifiers: UKeyboard.Modifiers?) {
         //#if MC>=11502
         //$$ if (keyCode != 0) {
@@ -431,6 +532,7 @@ abstract class UScreen(
         //#endif
     }
 
+    @Deprecated(INPUTHANDLER_DEP_MSG)
     open fun onKeyReleased(keyCode: Int, typedChar: Char, modifiers: UKeyboard.Modifiers?) {
         //#if MC>=11502
         //$$ if (keyCode != 0) {
@@ -443,6 +545,7 @@ abstract class UScreen(
         //#endif
     }
 
+    @Deprecated(INPUTHANDLER_DEP_MSG)
     open fun onMouseClicked(mouseX: Double, mouseY: Double, mouseButton: Int) {
         //#if MC>=11502
         //$$ if (mouseButton == 1)
@@ -461,6 +564,7 @@ abstract class UScreen(
         //#endif
     }
 
+    @Deprecated(INPUTHANDLER_DEP_MSG)
     open fun onMouseReleased(mouseX: Double, mouseY: Double, state: Int) {
         //#if MC>=12109
         //$$ super.mouseReleased(Click(mouseX, mouseY, MouseInput(state, lastMouseInput?.modifiers ?: 0)))
@@ -471,6 +575,7 @@ abstract class UScreen(
         //#endif
     }
 
+    @Deprecated(INPUTHANDLER_DEP_MSG)
     open fun onMouseDragged(x: Double, y: Double, clickedButton: Int, timeSinceLastClick: Long) {
         //#if MC>=12109
         //$$ super.mouseDragged(Click(x, y, MouseInput(clickedButton, lastMouseInput?.modifiers ?: 0)), lastDraggedDx, lastDraggedDy)
@@ -485,6 +590,7 @@ abstract class UScreen(
     // The deltas obtained from lwjgl 2 are scaled by a constant factor and thus much higher than the ones provided by lwjgl 3.
     @Deprecated("Provided `delta` values have different units depending on Minecraft versions.", ReplaceWith("onMouseScrolled(mouseX, mouseY, deltaHorizontal, deltaVertical)"))
     open fun onMouseScrolled(delta: Double) {
+        @Suppress("DEPRECATION")
         //#if MC>=11502
         //$$ onMouseScrolled(lastScrolledX, lastScrolledY, lastScrolledDX, delta)
         //#else
@@ -499,6 +605,7 @@ abstract class UScreen(
     // Must be called with consistently scaled deltas on all mc/lwjgl versions.
     // This is to ensure a consistent scrolling experience across all versions.
     // See older function above this for further explanation.
+    @Deprecated(INPUTHANDLER_DEP_MSG)
     open fun onMouseScrolled(mouseX: Double, mouseY: Double, deltaHorizontal: Double, deltaVertical: Double) {
         //#if MC>=12002
         //$$ super.mouseScrolled(mouseX, mouseY, deltaHorizontal, deltaVertical)
@@ -569,6 +676,150 @@ abstract class UScreen(
     fun onDrawBackgroundCompat(matrixStack: UMatrixStack, tint: Int) = UMatrixStack.Compat.runLegacyMethod(matrixStack) {
         @Suppress("DEPRECATION")
         onDrawBackground(tint)
+    }
+
+    @Suppress("unused")
+    private fun superMouseClicked(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers): Boolean {
+        //#if MC >= 1.21.9
+        //$$ return super.mouseClicked(Click(x, y, MouseInput(button, modifiers.toInt())), lastDoubled ?: false)
+        //#elseif MC >= 1.15.2
+        //$$ return super.mouseClicked(x, y, button)
+        //#else
+        super.mouseClicked(x.toInt(), y.toInt(), button)
+        return false
+        //#endif
+    }
+
+    @Suppress("unused")
+    private fun superMouseReleased(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers): Boolean {
+        //#if MC >= 1.21.9
+        //$$ return super.mouseReleased(Click(x, y, MouseInput(button, modifiers.toInt())))
+        //#elseif MC >= 1.15.2
+        //$$ return super.mouseReleased(x, y, button)
+        //#else
+        super.mouseReleased(x.toInt(), y.toInt(), button)
+        return false
+        //#endif
+    }
+
+    @Suppress("unused")
+    private fun superMouseDragged(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers): Boolean {
+        //#if MC >= 1.21.9
+        //$$ return super.mouseDragged(Click(x, y, MouseInput(button, modifiers.toInt())), lastDraggedDx, lastDraggedDy)
+        //#elseif MC >= 1.15.2
+        //$$ return super.mouseDragged(x, y, button, lastDraggedDx, lastDraggedDy)
+        //#else
+        super.mouseClickMove(x.toInt(), y.toInt(), button, 0L)
+        return false
+        //#endif
+    }
+
+    @Suppress("unused")
+    private fun superMouseScrolled(x: Double, y: Double, scrollX: Double, scrollY: Double): Boolean {
+        //#if MC >= 1.20.2
+        //$$ return super.mouseScrolled(x, y, scrollX, scrollY)
+        //#elseif MC >= 1.15.2
+        //$$ return super.mouseScrolled(x, y, scrollY)
+        //#else
+        return false // No super
+        //#endif
+    }
+
+    private fun superCharTyped(codepoint: Int): Boolean {
+        //#if MC >= 26.1
+        //$$ return super.charTyped(CharacterEvent(codepoint))
+        //#elseif MC >= 1.21.9
+        //$$ return super.charTyped(CharInput(codepoint, lastCharModifiers))
+        //#elseif MC >= 1.15.2
+        //$$ return super.charTyped(codepoint.toChar(), lastCharModifiers)
+        //#else
+        super.keyTyped(codepoint.toChar(), 0)
+        return false
+        //#endif
+    }
+
+    @Suppress("unused")
+    private fun superKeyPressed(key: Int, scanCode: Int, modifiers: UKeyboard.Modifiers): Boolean {
+        //#if MC >= 1.21.9
+        //$$ return super.keyPressed(KeyInput(key, scanCode, modifiers.toInt()))
+        //#elseif MC >= 1.15.2
+        //$$ return super.keyPressed(key, scanCode, modifiers.toInt())
+        //#else
+        super.keyTyped(0.toChar(), key)
+        return false
+        //#endif
+    }
+
+    @Suppress("unused")
+    private fun superKeyReleased(key: Int, scanCode: Int, modifiers: UKeyboard.Modifiers): Boolean {
+        //#if MC >= 1.21.9
+        //$$ return super.keyReleased(KeyInput(key, scanCode, modifiers.toInt()))
+        //#elseif MC >= 1.15.2
+        //$$ return super.keyReleased(key, scanCode, modifiers.toInt())
+        //#else
+        return false // No super
+        //#endif
+    }
+
+    @Suppress("unused") // Becomes used if the child class is an instance of [InputHandler]
+    fun uSuperInputHandler(): InputHandler = object : InputHandler {
+        override fun uSuperInputHandler(): InputHandler = this
+
+        override fun uMouseClicked(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers): Boolean =
+            superMouseClicked(x, y, button, modifiers)
+
+        override fun uMouseReleased(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers): Boolean =
+            superMouseReleased(x, y, button, modifiers)
+
+        override fun uMouseDragged(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers): Boolean =
+            superMouseDragged(x, y, button, modifiers)
+
+        override fun uMouseScrolled(x: Double, y: Double, scrollX: Double, scrollY: Double): Boolean =
+            superMouseScrolled(x, y, scrollX, scrollY)
+
+        override fun uCharTyped(codepoint: Int): Boolean =
+            superCharTyped(codepoint)
+
+        override fun uKeyPressed(key: Int, scanCode: Int, modifiers: UKeyboard.Modifiers): Boolean =
+            superKeyPressed(key, scanCode, modifiers)
+
+        override fun uKeyReleased(key: Int, scanCode: Int, modifiers: UKeyboard.Modifiers): Boolean =
+            superKeyReleased(key, scanCode, modifiers)
+    }
+
+    /** Usually you can simply have your screen implement this interface, [UScreen] will then use it automatically.
+     * If you require more control, you can instead also manually set the [inputHandler] property.
+     * [UScreen] provides a [uSuperInputHandler] implementation you can call from your handler.
+     *
+     * On versions below 1.16, the boolean returns are not passed to Minecraft as they are not used,
+     * the interface still replaces and executes the same for consistency.
+     */
+    interface InputHandler {
+        fun uSuperInputHandler(): InputHandler
+
+        fun uMouseClicked(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers): Boolean =
+            uSuperInputHandler().uMouseClicked(x, y, button, modifiers)
+
+        fun uMouseReleased(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers): Boolean =
+            uSuperInputHandler().uMouseReleased(x, y, button, modifiers)
+
+        fun uMouseDragged(x: Double, y: Double, button: Int, modifiers: UKeyboard.Modifiers): Boolean =
+            uSuperInputHandler().uMouseDragged(x, y, button, modifiers)
+
+        // Must be called with consistently scaled scroll deltas on all mc/lwjgl versions.
+        // This is to ensure a consistent scrolling experience across all versions.
+        // See onMouseScrolled(Double) for further explanation.
+        fun uMouseScrolled(x: Double, y: Double, scrollX: Double, scrollY: Double): Boolean =
+            uSuperInputHandler().uMouseScrolled(x, y, scrollX, scrollY)
+
+        fun uCharTyped(codepoint: Int): Boolean =
+            uSuperInputHandler().uCharTyped(codepoint)
+
+        fun uKeyPressed(key: Int, scanCode: Int, modifiers: UKeyboard.Modifiers): Boolean =
+            uSuperInputHandler().uKeyPressed(key, scanCode, modifiers)
+
+        fun uKeyReleased(key: Int, scanCode: Int, modifiers: UKeyboard.Modifiers): Boolean =
+            uSuperInputHandler().uKeyReleased(key, scanCode, modifiers)
     }
 
     companion object {

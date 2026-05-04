@@ -192,9 +192,11 @@ public class gg/essential/universal/UGraphics {
 	public fun endVertex ()Lgg/essential/universal/UGraphics;
 	public static fun getActiveTexture ()I
 	public static fun getCharWidth (C)F
+	public static fun getDevice ()Lgg/essential/universal/render/UGpuDevice;
 	public static fun getEmptyTexture ()Lgg/essential/universal/utils/ReleasedDynamicTexture;
 	public static fun getFontHeight ()I
 	public static fun getFromTessellator ()Lgg/essential/universal/UGraphics;
+	public static fun getPlatformAdapter ()Lgg/essential/universal/render/UGpuPlatformAdapter;
 	public static fun getStringWidth (Ljava/lang/String;)I
 	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric
 	public static fun getTessellator ()Lcom/mojang/blaze3d/vertex/Tesselator;
@@ -1106,9 +1108,107 @@ public abstract interface class gg/essential/universal/render/DrawCallBuilder {
 	public abstract fun noScissor ()Lgg/essential/universal/render/DrawCallBuilder;
 	public abstract fun scissor (IIII)Lgg/essential/universal/render/DrawCallBuilder;
 	public abstract fun texture (II)Lgg/essential/universal/render/DrawCallBuilder;
+	public abstract fun texture (ILgg/essential/universal/render/UGpuTextureView;Lgg/essential/universal/render/UGpuSampler;)Lgg/essential/universal/render/DrawCallBuilder;
 	public abstract fun texture (Ljava/lang/String;I)Lgg/essential/universal/render/DrawCallBuilder;
+	public abstract fun texture (Ljava/lang/String;Lgg/essential/universal/render/UGpuTextureView;Lgg/essential/universal/render/UGpuSampler;)Lgg/essential/universal/render/DrawCallBuilder;
 	public abstract fun uniform (Ljava/lang/String;[F)Lgg/essential/universal/render/DrawCallBuilder;
 	public abstract fun uniform (Ljava/lang/String;[I)Lgg/essential/universal/render/DrawCallBuilder;
+}
+
+public abstract interface class gg/essential/universal/render/UGpuDevice {
+	public abstract fun createTexture (Ljava/lang/String;Lgg/essential/universal/render/UGpuTexture$Usage;Lgg/essential/universal/render/UGpuFormat;III)Lgg/essential/universal/render/UGpuTexture;
+	public static synthetic fun createTexture$default (Lgg/essential/universal/render/UGpuDevice;Ljava/lang/String;Lgg/essential/universal/render/UGpuTexture$Usage;Lgg/essential/universal/render/UGpuFormat;IIIILjava/lang/Object;)Lgg/essential/universal/render/UGpuTexture;
+	public abstract fun createTextureView (Lgg/essential/universal/render/UGpuTexture;II)Lgg/essential/universal/render/UGpuTextureView;
+	public static synthetic fun createTextureView$default (Lgg/essential/universal/render/UGpuDevice;Lgg/essential/universal/render/UGpuTexture;IIILjava/lang/Object;)Lgg/essential/universal/render/UGpuTextureView;
+}
+
+public abstract interface class gg/essential/universal/render/UGpuFormat {
+	public static final field Companion Lgg/essential/universal/render/UGpuFormat$Companion;
+}
+
+public final class gg/essential/universal/render/UGpuFormat$Companion {
+	public final fun getDEFAULT_DEPTH ()Lgg/essential/universal/render/UGpuFormat;
+	public final fun getDEFAULT_RGBA ()Lgg/essential/universal/render/UGpuFormat;
+}
+
+public abstract interface class gg/essential/universal/render/UGpuPlatformAdapter {
+	public abstract fun getDefaultGpuFormatDepth ()Lgg/essential/universal/render/UGpuFormat;
+	public abstract fun getDefaultGpuFormatRgba ()Lgg/essential/universal/render/UGpuFormat;
+	@26.2-fabric
+	public abstract fun gpuFormat (Lcom/mojang/blaze3d/GpuFormat;)Lgg/essential/universal/render/UGpuFormat;
+	@1.12.2-forge,1.16.2-fabric,1.16.2-forge,1.17.1-fabric,1.17.1-forge,1.18.1-fabric,1.18.1-forge,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.2-forge,1.19.3-fabric,1.19.3-forge,1.19.4-fabric,1.19.4-forge,1.20-fabric,1.20.1-fabric,1.20.1-forge,1.20.2-fabric,1.20.2-forge,1.20.4-fabric,1.20.4-forge,1.20.4-neoforge,1.20.6-fabric,1.20.6-forge,1.20.6-neoforge,1.21-fabric,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-fabric,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,1.8.9-forge,26.1-fabric
+	public abstract fun gpuFormat (III)Lgg/essential/universal/render/UGpuFormat;
+	@1.21.11-fabric,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.2-fabric
+	public abstract fun texture (Lcom/mojang/blaze3d/textures/GpuTexture;)Lgg/essential/universal/render/UGpuTexture;
+	@1.21.11-fabric,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.2-fabric
+	public abstract fun texture (Lgg/essential/universal/render/UGpuTexture;)Lcom/mojang/blaze3d/textures/GpuTexture;
+	@1.21.11-fabric,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.2-fabric
+	public abstract fun textureView (Lcom/mojang/blaze3d/textures/GpuTextureView;)Lgg/essential/universal/render/UGpuTextureView;
+	@1.21.11-fabric,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.2-fabric
+	public abstract fun textureView (Lgg/essential/universal/render/UGpuTextureView;)Lcom/mojang/blaze3d/textures/GpuTextureView;
+	@1.12.2-forge,1.16.2-fabric,1.16.2-forge,1.17.1-fabric,1.17.1-forge,1.18.1-fabric,1.18.1-forge,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.2-forge,1.19.3-fabric,1.19.3-forge,1.19.4-fabric,1.19.4-forge,1.20-fabric,1.20.1-fabric,1.20.1-forge,1.20.2-fabric,1.20.2-forge,1.20.4-fabric,1.20.4-forge,1.20.4-neoforge,1.20.6-fabric,1.20.6-forge,1.20.6-neoforge,1.21-fabric,1.21-forge,1.21-neoforge,1.21.3-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-fabric,1.21.4-forge,1.21.4-neoforge,1.8.9-forge
+	public abstract fun texture (ILgg/essential/universal/render/UGpuFormat;III)Lgg/essential/universal/render/UGpuTexture;
+	@1.12.2-forge,1.16.2-fabric,1.16.2-forge,1.17.1-fabric,1.17.1-forge,1.18.1-fabric,1.18.1-forge,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.2-forge,1.19.3-fabric,1.19.3-forge,1.19.4-fabric,1.19.4-forge,1.20-fabric,1.20.1-fabric,1.20.1-forge,1.20.2-fabric,1.20.2-forge,1.20.4-fabric,1.20.4-forge,1.20.4-neoforge,1.20.6-fabric,1.20.6-forge,1.20.6-neoforge,1.21-fabric,1.21-forge,1.21-neoforge,1.21.3-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-fabric,1.21.4-forge,1.21.4-neoforge,1.8.9-forge
+	public abstract fun texture (Lgg/essential/universal/render/UGpuTexture;)I
+}
+
+public abstract interface class gg/essential/universal/render/UGpuSampler {
+	public static final field Companion Lgg/essential/universal/render/UGpuSampler$Companion;
+}
+
+public final class gg/essential/universal/render/UGpuSampler$AddressMode : java/lang/Enum {
+	public static final field CLAMP_TO_EDGE Lgg/essential/universal/render/UGpuSampler$AddressMode;
+	public static final field REPEAT Lgg/essential/universal/render/UGpuSampler$AddressMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lgg/essential/universal/render/UGpuSampler$AddressMode;
+	public static fun values ()[Lgg/essential/universal/render/UGpuSampler$AddressMode;
+}
+
+public final class gg/essential/universal/render/UGpuSampler$Companion {
+	public final fun get (Lgg/essential/universal/render/UGpuSampler$AddressMode;Lgg/essential/universal/render/UGpuSampler$AddressMode;Lgg/essential/universal/render/UGpuSampler$FilterMode;Lgg/essential/universal/render/UGpuSampler$FilterMode;Z)Lgg/essential/universal/render/UGpuSampler;
+}
+
+public final class gg/essential/universal/render/UGpuSampler$FilterMode : java/lang/Enum {
+	public static final field LINEAR Lgg/essential/universal/render/UGpuSampler$FilterMode;
+	public static final field NEAREST Lgg/essential/universal/render/UGpuSampler$FilterMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lgg/essential/universal/render/UGpuSampler$FilterMode;
+	public static fun values ()[Lgg/essential/universal/render/UGpuSampler$FilterMode;
+}
+
+public abstract interface class gg/essential/universal/render/UGpuTexture : java/io/Closeable {
+	public abstract fun getHeight ()I
+	public abstract fun getMipLevels ()I
+	public abstract fun getWidth ()I
+	public abstract fun isClosed ()Z
+}
+
+public final class gg/essential/universal/render/UGpuTexture$Usage {
+	public static final field Companion Lgg/essential/universal/render/UGpuTexture$Usage$Companion;
+	public fun <init> (I)V
+	public final fun component1 ()I
+	public final fun contains (Lgg/essential/universal/render/UGpuTexture$Usage;)Z
+	public final fun copy (I)Lgg/essential/universal/render/UGpuTexture$Usage;
+	public static synthetic fun copy$default (Lgg/essential/universal/render/UGpuTexture$Usage;IILjava/lang/Object;)Lgg/essential/universal/render/UGpuTexture$Usage;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBits ()I
+	public fun hashCode ()I
+	public final fun plus (Lgg/essential/universal/render/UGpuTexture$Usage;)Lgg/essential/universal/render/UGpuTexture$Usage;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class gg/essential/universal/render/UGpuTexture$Usage$Companion {
+	public final fun getCOPY_DST ()Lgg/essential/universal/render/UGpuTexture$Usage;
+	public final fun getCOPY_SRC ()Lgg/essential/universal/render/UGpuTexture$Usage;
+	public final fun getRENDER_ATTACHMENT ()Lgg/essential/universal/render/UGpuTexture$Usage;
+	public final fun getTEXTURE_BINDING ()Lgg/essential/universal/render/UGpuTexture$Usage;
+}
+
+public abstract interface class gg/essential/universal/render/UGpuTextureView : java/io/Closeable {
+	public abstract fun getBaseMipLevel ()I
+	public abstract fun getMipLevels ()I
+	public abstract fun getTexture ()Lgg/essential/universal/render/UGpuTexture;
+	public abstract fun isClosed ()Z
 }
 
 public final class gg/essential/universal/render/URenderPipeline {
@@ -1363,6 +1463,8 @@ public final class gg/essential/universal/utils/ReleasedDynamicTexture : net/min
 	public fun deleteGlTexture ()V
 	public final fun getDynamicGlId ()I
 	public fun getGlTextureId ()I
+	public final fun getGpuTexture ()Lgg/essential/universal/render/UGpuTexture;
+	public final fun getGpuTextureView ()Lgg/essential/universal/render/UGpuTextureView;
 	public final fun getHeight ()I
 	public final fun getUploaded ()Z
 	public final fun getWidth ()I
@@ -1386,6 +1488,8 @@ public final class gg/essential/universal/utils/ReleasedDynamicTexture : net/min
 	public fun getGlTextureView ()Lcom/mojang/blaze3d/textures/GpuTextureView;
 	@1.16.2-fabric,1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.3-fabric,1.21.4-fabric
 	public fun getGlId ()I
+	public final fun getGpuTexture ()Lgg/essential/universal/render/UGpuTexture;
+	public final fun getGpuTextureView ()Lgg/essential/universal/render/UGpuTextureView;
 	public final fun getHeight ()I
 	public final fun getUploaded ()Z
 	public final fun getWidth ()I
@@ -1427,6 +1531,8 @@ public final class gg/essential/universal/utils/ReleasedDynamicTexture : net/min
 	public final fun getDynamicGlId ()I
 	@1.12.2-forge,1.8.9-forge
 	public fun getGlTextureId ()I
+	public final fun getGpuTexture ()Lgg/essential/universal/render/UGpuTexture;
+	public final fun getGpuTextureView ()Lgg/essential/universal/render/UGpuTextureView;
 	public final fun getHeight ()I
 	@1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.2-fabric
 	public fun getTexture ()Lcom/mojang/blaze3d/textures/GpuTexture;

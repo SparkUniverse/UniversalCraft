@@ -5,6 +5,11 @@ import gg.essential.universal.vertex.UBuiltBufferInternal
 
 //#if STANDALONE
 //#else
+//#if MC >= 26.2
+//$$ import com.mojang.blaze3d.vertex.VertexFormat
+//$$ import java.nio.ByteBuffer
+//#endif
+
 //#if MC>=12111
 //$$ import com.mojang.blaze3d.textures.AddressMode
 //$$ import com.mojang.blaze3d.textures.FilterMode
@@ -58,6 +63,10 @@ internal class URenderPass : AutoCloseable {
         private val pipeline: URenderPipeline,
         private val builtBuffer: UBuiltBufferInternal,
     ) : DrawCallBuilder {
+        //#if MC>=12106 && !STANDALONE
+        //$$ private val tmpBuffers = mutableListOf<GpuBuffer>()
+        //#endif
+
         //#if MC>=12105 && !STANDALONE
         //$$ val mc: RenderPass
         //$$ init {
@@ -82,6 +91,14 @@ internal class URenderPass : AutoCloseable {
             //#endif
             //$$ )
             //#endif
+            //#if MC >= 26.2
+            //$$ fun VertexFormat.uploadImmediateVertexBuffer(buffer: ByteBuffer) =
+            //$$     RenderSystem.getDevice().createBuffer({ "Immediate vertex buffer for $pipeline" }, GpuBuffer.USAGE_COPY_DST or GpuBuffer.USAGE_VERTEX, buffer)
+            //$$         .also { tmpBuffers.add(it) }
+            //$$ fun VertexFormat.uploadImmediateIndexBuffer(buffer: ByteBuffer) =
+            //$$     RenderSystem.getDevice().createBuffer({ "Immediate index buffer for $pipeline" }, GpuBuffer.USAGE_COPY_DST or GpuBuffer.USAGE_INDEX, buffer)
+            //$$         .also { tmpBuffers.add(it) }
+            //#endif
         //$$     val builtBuffer = builtBuffer.mc
         //$$     val vertexBuffer = pipeline.format.uploadImmediateVertexBuffer(builtBuffer.buffer)
         //$$     val sortedBuffer = builtBuffer.sortedBuffer
@@ -91,7 +108,11 @@ internal class URenderPass : AutoCloseable {
         //$$         val shapeIndexBuffer = RenderSystem.getSequentialBuffer(builtBuffer.drawParameters.mode())
         //$$         shapeIndexBuffer.getIndexBuffer(builtBuffer.drawParameters.indexCount()) to shapeIndexBuffer.indexType
         //$$     }
-        //$$     mc = MinecraftClient.getInstance().framebuffer.let { fb ->
+            //#if MC >= 26.2
+            //$$ mc = Minecraft.getInstance().gameRenderer.mainRenderTarget().let { fb ->
+            //#else
+            //$$ mc = MinecraftClient.getInstance().framebuffer.let { fb ->
+            //#endif
         //$$         RenderSystem.getDevice().createCommandEncoder().createRenderPass(
                     //#if MC>=12106
                     //$$ { "Immediate draw for $pipeline" },
@@ -127,10 +148,6 @@ internal class URenderPass : AutoCloseable {
             scissor = ScissorState(true, x, y, width, height)
         }
 
-        //#if MC>=12106 && !STANDALONE
-        //$$ private val tmpBuffers = mutableListOf<GpuBuffer>()
-        //#endif
-
         override fun uniform(name: String, vararg values: Float): DrawCallBuilder = apply {
             //#if MC>=12105 && !STANDALONE
             //#if MC>=12106
@@ -165,6 +182,15 @@ internal class URenderPass : AutoCloseable {
             //#endif
         }
 
+        //#if MC >= 1.21.5 && !STANDALONE
+        //$$ private fun samplerNameByIndex(index: Int) =
+            //#if MC >= 26.2
+            //$$ pipeline.mcRenderPipeline.bindGroupLayouts.asSequence().flatMap { it.samplers }.elementAt(index)
+            //#else
+            //$$ pipeline.mcRenderPipeline.samplers[index]
+            //#endif
+        //#endif
+
         override fun texture(name: String, textureView: UGpuTextureView, sampler: UGpuSampler): DrawCallBuilder = apply {
             //#if MC >= 1.21.5 && !STANDALONE
             //#if MC >= 1.21.11
@@ -184,7 +210,7 @@ internal class URenderPass : AutoCloseable {
 
         override fun texture(index: Int, textureView: UGpuTextureView, sampler: UGpuSampler): DrawCallBuilder = apply {
             //#if MC >= 1.21.5 && !STANDALONE
-            //$$ texture(pipeline.mcRenderPipeline.samplers[index], textureView, sampler)
+            //$$ texture(samplerNameByIndex(index), textureView, sampler)
             //#else
             sampler.impl.configureTexture(textureView.texture.impl.glId)
             pipeline.texture(index, textureView.texture.impl.glId)
@@ -222,7 +248,7 @@ internal class URenderPass : AutoCloseable {
         override fun texture(index: Int, textureGlId: Int): DrawCallBuilder = apply {
             //#if MC>=12105 && !STANDALONE
             //$$ @Suppress("DEPRECATION")
-            //$$ texture(pipeline.mcRenderPipeline.samplers[index], textureGlId)
+            //$$ texture(samplerNameByIndex(index), textureGlId)
             //#else
             pipeline.texture(index, textureGlId)
             //#endif

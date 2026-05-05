@@ -124,7 +124,9 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement;
 //$$ import net.minecraft.util.text.StringTextComponent;
 //$$ import net.minecraft.util.text.ITextProperties;
 //$$ import net.minecraft.client.renderer.RenderType;
+//#if MC < 1.21.6
 //$$ import net.minecraft.client.renderer.IRenderTypeBuffer;
+//#endif
 //$$ import java.util.ArrayList;
 //$$ import java.util.Optional;
 //#else
@@ -1307,7 +1309,7 @@ public class UGraphics {
         return beginWithActiveShader(mode, format);
     }
 
-    //#if MC>=11600
+    //#if MC>=11600 && MC < 26.2
     //$$ private RenderType renderLayer;
     //$$ public UGraphics beginRenderLayer(RenderType renderLayer) {
     //$$     this.renderLayer = renderLayer;
@@ -1340,7 +1342,7 @@ public class UGraphics {
         //$$ BuiltBuffer builtBuffer = instance.endNullable();
         //$$ if (builtBuffer == null) return;
         //#endif
-        //#if MC>=11600
+        //#if MC>=11600 && MC < 26.2
         //$$ if (renderLayer != null) {
             //#if MC>=12100
             //$$ renderLayer.draw(builtBuffer);
@@ -1374,7 +1376,7 @@ public class UGraphics {
         //$$ builtBuffer.sortQuads(ALLOCATOR, RenderSystem.getVertexSorting());
         //#endif
         //#endif
-        //#if MC>=11600
+        //#if MC>=11600 && MC < 26.2
         //$$ if (renderLayer != null) {
             //#if MC>=12100
             //$$ renderLayer.draw(builtBuffer);

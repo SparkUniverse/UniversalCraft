@@ -34,12 +34,7 @@ internal object UGpuDeviceImpl : UGpuDevice {
         mipLevels: Int
     ): UGpuTexture {
         require(usage.bits != 0) { "At least one usage bit must be set" }
-        require(width > 0) { "Width must be positive but was $width" }
-        require(height > 0) { "Height must be positive but was $height" }
-        require(mipLevels > 0) { "Mip levels must be positive but was $mipLevels"}
-        fun log2(x: Int) = 31 - x.countLeadingZeroBits()
-        val maxMipLevels = log2(max(width, height)) + 1
-        require(mipLevels <= maxMipLevels) { "Texture of size ${width}x${height} supports at most $maxMipLevels but $mipLevels were requested" }
+        requireValidTextureSize(width, height,  mipLevels)
 
         //#if STANDALONE
         //$$ return createGlTexture(label, usage, format.impl, width, height, mipLevels)
@@ -187,5 +182,14 @@ internal object UGpuDeviceImpl : UGpuDevice {
         //#else
         return UGpuTextureViewImpl(texture.impl, baseMipLevel, mipLevels)
         //#endif
+    }
+
+    internal fun requireValidTextureSize(width: Int, height: Int, mipLevels: Int) {
+        require(width > 0) { "Width must be positive but was $width" }
+        require(height > 0) { "Height must be positive but was $height" }
+        require(mipLevels > 0) { "Mip levels must be positive but was $mipLevels"}
+        fun log2(x: Int) = 31 - x.countLeadingZeroBits()
+        val maxMipLevels = log2(max(width, height)) + 1
+        require(mipLevels <= maxMipLevels) { "Texture of size ${width}x${height} supports at most $maxMipLevels but $mipLevels were requested" }
     }
 }

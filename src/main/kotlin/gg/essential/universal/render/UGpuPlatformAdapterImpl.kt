@@ -1,5 +1,6 @@
 package gg.essential.universal.render
 
+import gg.essential.universal.render.UGpuDeviceImpl.requireValidTextureSize
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL14
 
@@ -64,10 +65,7 @@ internal object UGpuPlatformAdapterImpl : UGpuPlatformAdapter {
     //$$     texture.impl.mc
     //#else
     override fun texture(glId: Int, format: UGpuFormat, width: Int, height: Int, mipLevels: Int): UGpuTexture {
-        require(width > 0) { "Width must be positive" }
-        require(height > 0) { "Height must be positive" }
-        require(mipLevels > 0) { "Mip levels must be positive"}
-        require(mipLevels <= 1) { TODO("mipLevels") }
+        requireValidTextureSize(width, height, mipLevels)
         return UGpuTextureImpl(UGpuTexture.Usage(-1), format.impl, glId, width, height, mipLevels)
     }
     override fun texture(texture: UGpuTexture): Int =

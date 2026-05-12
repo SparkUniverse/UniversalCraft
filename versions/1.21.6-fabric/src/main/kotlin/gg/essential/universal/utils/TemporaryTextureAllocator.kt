@@ -30,7 +30,12 @@ internal class TemporaryTextureAllocator(
         }
 
         val device = RenderSystem.getDevice()
-        device.createCommandEncoder().clearColorAndDepthTextures(texture.texture, 0, texture.depthTexture, 1.0)
+        //#if MC >= 26.2
+        //$$ val clearColor = org.joml.Vector4f(0f)
+        //#else
+        val clearColor = 0
+        //#endif
+        device.createCommandEncoder().clearColorAndDepthTextures(texture.texture, clearColor, texture.depthTexture, 1.0)
 
         usedAllocations.add(texture)
 

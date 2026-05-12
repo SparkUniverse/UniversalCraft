@@ -50,6 +50,7 @@ import static org.lwjgl.opengl.GL13.GL_ACTIVE_TEXTURE;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 
 //#if MC >= 26.2
+//$$ import com.mojang.blaze3d.PrimitiveTopology;
 //#else
 import net.minecraft.client.renderer.Tessellator;
 //#endif
@@ -744,7 +745,7 @@ public class UGraphics {
     //$$             pipeline = drawable.getPipeline();
     //$$             texture = drawable.textureView();
                 //#if MC >= 26.2
-                //$$ bufferBuilder = new BufferBuilder(ALLOCATOR, pipeline.getVertexFormatMode(), pipeline.getVertexFormat());
+                //$$ bufferBuilder = new BufferBuilder(ALLOCATOR, pipeline.getPrimitiveTopology(), pipeline.getVertexFormatBinding(0));
                 //#else
                 //$$ bufferBuilder = Tessellator.getInstance().begin(pipeline.getVertexFormatMode(), pipeline.getVertexFormat());
                 //#endif
@@ -1091,7 +1092,9 @@ public class UGraphics {
 
         public final int glMode;
         //#if !STANDALONE
-        //#if MC>=11700
+        //#if MC >= 26.2
+        //$$ public final PrimitiveTopology mcMode;
+        //#elseif MC>=11700
         //$$ public final VertexFormat.DrawMode mcMode;
         //#else
         public final int mcMode;
@@ -1109,7 +1112,20 @@ public class UGraphics {
             //#endif
         }
 
-        //#if MC>=11700 && !STANDALONE
+        //#if STANDALONE
+        //#elseif MC >= 26.2
+        //$$ private static PrimitiveTopology glToMcDrawMode(int glMode) {
+        //$$     switch (glMode) {
+        //$$         case GL11.GL_LINES: return PrimitiveTopology.LINES;
+        //$$         case GL11.GL_LINE_STRIP: return PrimitiveTopology.DEBUG_LINE_STRIP;
+        //$$         case GL11.GL_TRIANGLES: return PrimitiveTopology.TRIANGLES;
+        //$$         case GL11.GL_TRIANGLE_STRIP: return PrimitiveTopology.TRIANGLE_STRIP;
+        //$$         case GL11.GL_TRIANGLE_FAN: return PrimitiveTopology.TRIANGLE_FAN;
+        //$$         case GL11.GL_QUADS: return PrimitiveTopology.QUADS;
+        //$$         default: throw new IllegalArgumentException("Unsupported draw mode " + glMode);
+        //$$     }
+        //$$ }
+        //#elseif MC >= 1.17
         //$$ private static VertexFormat.DrawMode glToMcDrawMode(int glMode) {
         //$$     switch (glMode) {
         //$$         case GL11.GL_LINES: return VertexFormat.DrawMode.LINES;
@@ -1125,7 +1141,9 @@ public class UGraphics {
         //$$         default: throw new IllegalArgumentException("Unsupported draw mode " + glMode);
         //$$     }
         //$$ }
-        //$$
+        //#endif
+
+        //#if MC >= 1.17 && MC < 26.2
         //$$ private static DrawMode fromMc(VertexFormat.DrawMode mcMode) {
         //$$     switch (mcMode) {
         //$$         case LINES: return DrawMode.LINES;
@@ -1155,7 +1173,7 @@ public class UGraphics {
             }
         }
 
-        //#if MC>=11600 && !STANDALONE
+        //#if MC>=11600 && MC < 26.2
         //$$ public static DrawMode fromRenderLayer(RenderType renderLayer) {
             //#if MC>=11700
             //$$ return fromMc(renderLayer.getDrawMode());

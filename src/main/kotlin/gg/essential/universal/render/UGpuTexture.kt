@@ -24,7 +24,7 @@ sealed interface UGpuTexture : Closeable {
 
     data class Usage(val bits: Int) {
         operator fun contains(other: Usage): Boolean =
-            (bits and other.bits.inv()) == other.bits
+            (bits and other.bits) == other.bits
 
         operator fun plus(other: Usage): Usage =
             Usage(bits or other.bits)

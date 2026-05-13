@@ -111,7 +111,9 @@ class URenderPipeline private constructor(
     //$$     }
     //$$     renderPass.setPipeline(mcRenderPipeline)
     //$$
-        //#if MC>=12106
+        //#if MC >= 26.2
+        //$$ renderPass.drawIndexed(builtBuffer.drawState().indexCount, 1, 0, 0, 0)
+        //#elseif MC>=12106
         //$$ renderPass.drawIndexed(0, 0, builtBuffer.drawParameters.indexCount, 1)
         //#else
         //$$ renderPass.drawIndexed(0, builtBuffer.drawParameters.indexCount())

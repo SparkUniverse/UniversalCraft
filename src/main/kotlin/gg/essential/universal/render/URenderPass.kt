@@ -165,6 +165,33 @@ internal class URenderPass : AutoCloseable {
             //#endif
         }
 
+        override fun texture(name: String, textureView: UGpuTextureView, sampler: UGpuSampler): DrawCallBuilder = apply {
+            //#if MC >= 1.21.5 && !STANDALONE
+            //#if MC >= 1.21.11
+            //$$ mc.bindTexture(name, textureView.impl.mc, sampler.impl.mc)
+            //#elseif MC >= 1.21.6
+            //$$ sampler.impl.configureTexture((textureView.texture.impl.mc as GlTexture).glId)
+            //$$ mc.bindSampler(name, textureView.impl.mc)
+            //#else
+            //$$ sampler.impl.configureTexture((textureView.texture.impl.mc as GlTexture).glId)
+            //$$ mc.bindSampler(name, textureView.texture.impl.mc)
+            //#endif
+            //#else
+            sampler.impl.configureTexture(textureView.texture.impl.glId)
+            pipeline.texture(name, textureView.texture.impl.glId)
+            //#endif
+        }
+
+        override fun texture(index: Int, textureView: UGpuTextureView, sampler: UGpuSampler): DrawCallBuilder = apply {
+            //#if MC >= 1.21.5 && !STANDALONE
+            //$$ texture(pipeline.mcRenderPipeline.samplers[index], textureView, sampler)
+            //#else
+            sampler.impl.configureTexture(textureView.texture.impl.glId)
+            pipeline.texture(index, textureView.texture.impl.glId)
+            //#endif
+        }
+
+        @Deprecated("Does not support Vulkan; uses hard-coded sampler on 1.21.11+, relies on texture configuration on older versions.")
         override fun texture(name: String, textureGlId: Int): DrawCallBuilder = apply {
             //#if MC>=12105 && !STANDALONE
             //#if MC>=12106
@@ -191,8 +218,10 @@ internal class URenderPass : AutoCloseable {
             //#endif
         }
 
+        @Deprecated("Does not support Vulkan; uses hard-coded sampler on 1.21.11+, relies on texture configuration on older versions.")
         override fun texture(index: Int, textureGlId: Int): DrawCallBuilder = apply {
             //#if MC>=12105 && !STANDALONE
+            //$$ @Suppress("DEPRECATION")
             //$$ texture(pipeline.mcRenderPipeline.samplers[index], textureGlId)
             //#else
             pipeline.texture(index, textureGlId)

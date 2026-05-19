@@ -2,6 +2,7 @@ package gg.essential.universal.render
 
 import gg.essential.universal.vertex.UBuiltBuffer
 import gg.essential.universal.vertex.UBuiltBufferInternal
+import kotlin.ranges.coerceIn
 
 //#if STANDALONE
 //#else
@@ -57,18 +58,20 @@ internal class URenderPass : AutoCloseable {
         val builder = DrawCallBuilderImpl(pipeline, builtBuffer as UBuiltBufferInternal)
         configure(builder)
         builder.submit()
+        builder.close()
     }
 
     internal inner class DrawCallBuilderImpl(
         private val pipeline: URenderPipeline,
         private val builtBuffer: UBuiltBufferInternal,
-    ) : DrawCallBuilder {
+    ) : DrawCallBuilder, AutoCloseable {
         //#if MC>=12106 && !STANDALONE
         //$$ private val tmpBuffers = mutableListOf<GpuBuffer>()
         //#endif
 
         //#if MC>=12105 && !STANDALONE
         //$$ val mc: RenderPass
+        //$$ val outputTextureSize: Pair<Int, Int>
         //$$ init {
             //#if MC>=12106
             //$$ val dynamicUniforms = RenderSystem.getDynamicUniforms().write(
@@ -113,16 +116,22 @@ internal class URenderPass : AutoCloseable {
             //#else
             //$$ mc = MinecraftClient.getInstance().framebuffer.let { fb ->
             //#endif
+                //#if MC >= 1.21.6
+                //$$ val outputColorTexture = RenderSystem.outputColorTextureOverride ?: fb.colorAttachmentView!!
+                //$$ val outputDepthTexture = RenderSystem.outputDepthTextureOverride ?: fb.depthAttachmentView
+                //#else
+                //$$ val outputColorTexture = fb.colorAttachment!!
+                //$$ val outputDepthTexture = fb.depthAttachment
+                //#endif
+        //$$         outputTextureSize = Pair(outputColorTexture.getWidth(0), outputColorTexture.getHeight(0))
         //$$         RenderSystem.getDevice().createCommandEncoder().createRenderPass(
                     //#if MC>=12106
                     //$$ { "Immediate draw for $pipeline" },
-                    //$$ RenderSystem.outputColorTextureOverride ?: fb.colorAttachmentView!!,
-                    //$$ OptionalInt.empty(),
-                    //$$ RenderSystem.outputDepthTextureOverride ?: fb.depthAttachmentView,
-                    //$$ OptionalDouble.empty(),
-                    //#else
-                    //$$ fb.colorAttachment!!, OptionalInt.empty(), fb.depthAttachment, OptionalDouble.empty()
                     //#endif
+        //$$             outputColorTexture,
+        //$$             OptionalInt.empty(),
+        //$$             outputDepthTexture,
+        //$$             OptionalDouble.empty(),
         //$$         )
         //$$     }
         //$$     mc.setVertexBuffer(0, vertexBuffer)
@@ -256,19 +265,21 @@ internal class URenderPass : AutoCloseable {
 
         fun submit() {
             //#if MC>=12105 && !STANDALONE
-            //$$ val scissor = scissor ?: ScissorState.active()
+            //$$ var scissor = scissor ?: ScissorState.active()
             //$$ if (scissor.enabled) {
+            //$$     // As of 26.2-snapshot-4, Minecraft will throw when the given scissor is out-of-bounds or empty.
+            //$$     // Existing users of URenderPass are already used to it accepting such scissors, so we'll silently
+            //$$     // coerce the given scissor to fit, and skip drawing altogether when it's empty.
+            //$$     scissor = scissor.coerceIn(0, 0, outputTextureSize.first, outputTextureSize.second)
+            //$$     if (scissor.width <= 0 || scissor.height <= 0) {
+            //$$         return
+            //$$     }
             //$$     mc.enableScissor(scissor.x, scissor.y, scissor.width, scissor.height)
             //$$ } else {
             //$$     mc.disableScissor()
             //$$ }
             //$$
             //$$ pipeline.draw(mc, builtBuffer.mc)
-            //$$
-            //$$ mc.close()
-            //#if MC>=12106
-            //$$ tmpBuffers.forEach { it.close() }
-            //#endif
             //#else
             if (currPipeline != pipeline) {
                 currPipeline = pipeline
@@ -284,8 +295,18 @@ internal class URenderPass : AutoCloseable {
             pipeline.draw(builtBuffer)
 
             prevScissor?.activate()
+            //#endif
+        }
 
+        override fun close() {
+            //#if MC >= 1.21.5 && !STANDALONE
+            //$$ mc.close()
+            //#else
             pipeline.unbind()
+            //#endif
+
+            //#if MC >= 1.21.6 && !STANDALONE
+            //$$ tmpBuffers.forEach { it.close() }
             //#endif
         }
     }

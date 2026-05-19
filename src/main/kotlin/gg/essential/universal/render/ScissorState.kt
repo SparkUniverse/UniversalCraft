@@ -27,6 +27,24 @@ internal data class ScissorState(val enabled: Boolean, val x: Int, val y: Int, v
         //#endif
     }
 
+    fun coerceIn(x: Int, y: Int, width: Int, height: Int): ScissorState {
+        var x1 = this.x
+        var x2 = this.x + this.width
+        var y1 = this.y
+        var y2 = this.y + this.height
+        x1 = x1.coerceAtLeast(x)
+        x2 = x2.coerceAtMost(x + width)
+        y1 = y1.coerceAtLeast(y)
+        y2 = y2.coerceAtMost(y + height)
+        return ScissorState(
+            enabled,
+            x1,
+            y1,
+            (x2 - x1).coerceAtLeast(0),
+            (y2 - y1).coerceAtLeast(0),
+        )
+    }
+
     companion object {
         val DISABLED = ScissorState(false, 0, 0, 0, 0)
 

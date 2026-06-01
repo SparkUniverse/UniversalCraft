@@ -110,7 +110,7 @@ public class gg/essential/universal/UGraphics {
 	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.11-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.2-fabric
 	public fun begin (ILcom/mojang/blaze3d/vertex/VertexFormat;)Lgg/essential/universal/UGraphics;
 	public fun begin (ILgg/essential/universal/UGraphics$CommonVertexFormats;)Lgg/essential/universal/UGraphics;
-	@26.1-fabric,26.2-fabric
+	@26.1-fabric
 	public fun beginRenderLayer (Lnet/minecraft/client/renderer/rendertype/RenderType;)Lgg/essential/universal/UGraphics;
 	@1.16.2-fabric,1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.3-fabric,1.21.4-fabric
 	public fun begin (ILnet/minecraft/client/render/VertexFormat;)Lgg/essential/universal/UGraphics;
@@ -1262,7 +1262,9 @@ public final class gg/essential/universal/render/URenderPipeline$ColorLogic : ja
 }
 
 public final class gg/essential/universal/render/URenderPipeline$Companion {
-	@26.1-fabric,26.2-fabric
+	@26.2-fabric
+	public final fun builder (Lnet/minecraft/resources/Identifier;Lgg/essential/universal/UGraphics$DrawMode;Lcom/mojang/blaze3d/vertex/VertexFormat;Lnet/minecraft/resources/Identifier;Lnet/minecraft/resources/Identifier;Ljava/util/List;)Lgg/essential/universal/render/URenderPipeline$Builder;
+	@26.1-fabric
 	public final fun builder (Lnet/minecraft/resources/Identifier;Lgg/essential/universal/UGraphics$DrawMode;Lcom/mojang/blaze3d/vertex/VertexFormat;Lnet/minecraft/resources/Identifier;Lnet/minecraft/resources/Identifier;Ljava/util/List;Ljava/util/Map;)Lgg/essential/universal/render/URenderPipeline$Builder;
 	@1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge
 	public final fun builder (Lnet/minecraft/resources/ResourceLocation;Lgg/essential/universal/UGraphics$DrawMode;Lcom/mojang/blaze3d/vertex/VertexFormat;Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/resources/ResourceLocation;Ljava/util/List;Ljava/util/Map;)Lgg/essential/universal/render/URenderPipeline$Builder;
@@ -1607,7 +1609,7 @@ public final class gg/essential/universal/vertex/UBufferBuilder$Companion {
 public abstract interface class gg/essential/universal/vertex/UBuiltBuffer : java/lang/AutoCloseable {
 	public static final field Companion Lgg/essential/universal/vertex/UBuiltBuffer$Companion;
 	public fun draw (Lgg/essential/universal/render/URenderPipeline;Lkotlin/jvm/functions/Function1;)V
-	@26.1-fabric,26.2-fabric
+	@26.1-fabric
 	public fun draw (Lnet/minecraft/client/renderer/rendertype/RenderType;)V
 	@1.16.2-forge,1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge
 	public fun draw (Lnet/minecraft/client/renderer/RenderType;)V
@@ -1615,7 +1617,7 @@ public abstract interface class gg/essential/universal/vertex/UBuiltBuffer : jav
 	public fun draw (Lnet/minecraft/client/render/RenderLayer;)V
 	public static synthetic fun draw$default (Lgg/essential/universal/vertex/UBuiltBuffer;Lgg/essential/universal/render/URenderPipeline;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 	public fun drawAndClose (Lgg/essential/universal/render/URenderPipeline;Lkotlin/jvm/functions/Function1;)V
-	@26.1-fabric,26.2-fabric
+	@26.1-fabric
 	public fun drawAndClose (Lnet/minecraft/client/renderer/rendertype/RenderType;)V
 	@1.16.2-forge,1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge
 	public fun drawAndClose (Lnet/minecraft/client/renderer/RenderType;)V

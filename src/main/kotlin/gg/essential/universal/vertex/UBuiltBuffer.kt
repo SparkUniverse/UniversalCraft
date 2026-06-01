@@ -39,7 +39,7 @@ interface UBuiltBuffer : AutoCloseable {
         }
     }
 
-    //#if MC>=11600 && !STANDALONE
+    //#if MC >= 1.16 && MC < 26.2
     //$$ fun drawAndClose(renderLayer: RenderType): Unit =
     //$$     use { draw(renderLayer) }
     //$$

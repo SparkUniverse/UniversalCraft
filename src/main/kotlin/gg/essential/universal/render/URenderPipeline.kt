@@ -17,6 +17,11 @@ import org.lwjgl.opengl.GL11
 import net.minecraft.client.renderer.vertex.VertexFormat
 import net.minecraft.util.ResourceLocation
 
+//#if MC >= 26.2
+//$$ import com.mojang.blaze3d.pipeline.BindGroupLayout
+//$$ import net.minecraft.client.renderer.BindGroupLayouts
+//#endif
+
 //#if MC>=12105
 //$$ import com.mojang.blaze3d.vertex.VertexFormatElement
 //$$ import com.mojang.blaze3d.pipeline.BlendFunction
@@ -325,7 +330,16 @@ class URenderPipeline private constructor(
 
         //#if MC>=11700 && !STANDALONE
         //#if MC>=12105
-        //$$ class Mc(val vert: Identifier, val frag: Identifier, val samplers: List<String>, val uniforms: Map<String, UniformType>) : ShaderSupplier
+        //$$ class Mc(
+        //$$     val vert: Identifier,
+        //$$     val frag: Identifier,
+            //#if MC >= 26.2
+            //$$ val bindGroupLayouts: List<BindGroupLayout>,
+            //#else
+            //$$ val samplers: List<String>,
+            //$$ val uniforms: Map<String, UniformType>,
+            //#endif
+        //$$ ) : ShaderSupplier
         //#else
         //$$ class Mc(val shader: Supplier<Shader>) : ShaderSupplier {
         //$$     override fun bind(blendState: BlendState) {
@@ -426,8 +440,15 @@ class URenderPipeline private constructor(
             //$$             withVertexShader(vertId)
             //$$             withFragmentShader(fragId)
             //$$
-            //$$             transformer.samplers.forEach { withSampler(it) }
-            //$$             transformer.uniforms.forEach { withUniform(it.key, it.value.mc) }
+                        //#if MC >= 26.2
+                        //$$ withBindGroupLayout(BindGroupLayout.builder().apply {
+                        //$$     transformer.samplers.forEach { withSampler(it) }
+                        //$$     transformer.uniforms.forEach { withUniform(it.key, it.value.mc) }
+                        //$$ }.build())
+                        //#else
+                        //$$ transformer.samplers.forEach { withSampler(it) }
+                        //$$ transformer.uniforms.forEach { withUniform(it.key, it.value.mc) }
+                        //#endif
             //$$
             //$$             // ShaderProgram calls glBindAttribLocation using the names in the VertexFormat so we need to
             //$$             // construct a custom one based on the original but with our prefixed names
@@ -450,8 +471,12 @@ class URenderPipeline private constructor(
             //$$             withVertexShader(shader.vert)
             //$$             withFragmentShader(shader.frag)
             //$$
-            //$$             shader.samplers.forEach { withSampler(it) }
-            //$$             shader.uniforms.forEach { withUniform(it.key, it.value) }
+                        //#if MC >= 26.2
+                        //$$ shader.bindGroupLayouts.forEach { withBindGroupLayout(it) }
+                        //#else
+                        //$$ shader.samplers.forEach { withSampler(it) }
+                        //$$ shader.uniforms.forEach { withUniform(it.key, it.value) }
+                        //#endif
             //$$         }
             //$$     }
             //#if MC >= 26.1
@@ -629,6 +654,12 @@ class URenderPipeline private constructor(
         //$$ @JvmStatic
         //$$ fun wrap(mc: RenderPipeline): URenderPipeline =
         //$$     URenderPipeline(mc.location, mc.vertexFormat, null, mc)
+        //#endif
+        //#if MC >= 26.2
+        //$$ fun builder(id: Identifier, drawMode: DrawMode, format: VertexFormat, vert: Identifier, frag: Identifier, bindGroupLayouts: List<BindGroupLayout>): Builder {
+        //$$     return BuilderImpl(id, drawMode, format, ShaderSupplier.Mc(vert, frag, bindGroupLayouts))
+        //$$ }
+        //#elseif MC >= 1.21.5
         //$$ fun builder(id: Identifier, drawMode: DrawMode, format: VertexFormat, vert: Identifier, frag: Identifier, samplers: List<String>, uniforms: Map<String, UniformType>): Builder {
         //$$     return BuilderImpl(id, drawMode, format, ShaderSupplier.Mc(vert, frag, samplers, uniforms))
         //$$ }
@@ -664,6 +695,15 @@ class URenderPipeline private constructor(
             //$$     ?: throw IllegalArgumentException("No default shader for $format.")
             //#if MC>=12105
             //$$ val shaderId = Identifier.ofVanilla(shader)
+            //#if MC >= 26.2
+            //$$ val bindGroupLayouts = buildList(4) {
+            //$$     add(BindGroupLayouts.MATRICES_PROJECTION)
+            //$$     if (format.mc.contains(VertexFormatElement.UV0)) add(BindGroupLayouts.SAMPLER0)
+            //$$     if (format.mc.contains(VertexFormatElement.UV1)) add(BindGroupLayouts.SAMPLER1)
+            //$$     if (format.mc.contains(VertexFormatElement.UV2)) add(BindGroupLayouts.SAMPLER2)
+            //$$ }
+            //$$ return builder(mcId, drawMode, format.mc, shaderId, shaderId, bindGroupLayouts)
+            //#else
             //$$ val samplers = List(format.mc.elements.count {
                 //#if MC >= 26.1
                 //$$ it == VertexFormatElement.UV0 || it == VertexFormatElement.UV1 || it == VertexFormatElement.UV2
@@ -682,6 +722,7 @@ class URenderPipeline private constructor(
                 //#endif
             //$$ )
             //$$ return builder(mcId, drawMode, format.mc, shaderId, shaderId, samplers, uniforms)
+            //#endif
             //#else
             //$$ return builder(mcId, drawMode, format.mc, shader)
             //#endif

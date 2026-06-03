@@ -29,7 +29,11 @@ import kotlin.ranges.coerceIn
 //$$ import gg.essential.universal.vertex.UBufferBuilder
 //$$ import net.minecraft.client.MinecraftClient
 //$$ import net.minecraft.client.texture.GlTexture
+//#if MC >= 26.2
+//$$ import java.util.Optional
+//#else
 //$$ import java.util.OptionalInt
+//#endif
 //$$ import java.util.OptionalDouble
 //#endif
 //#endif
@@ -129,12 +133,20 @@ internal class URenderPass : AutoCloseable {
                     //$$ { "Immediate draw for $pipeline" },
                     //#endif
         //$$             outputColorTexture,
-        //$$             OptionalInt.empty(),
+                    //#if MC >= 26.2
+                    //$$ Optional.empty(),
+                    //#else
+                    //$$ OptionalInt.empty(),
+                    //#endif
         //$$             outputDepthTexture,
         //$$             OptionalDouble.empty(),
         //$$         )
         //$$     }
-        //$$     mc.setVertexBuffer(0, vertexBuffer)
+            //#if MC >= 26.2
+            //$$ mc.setVertexBuffer(0, vertexBuffer.slice())
+            //#else
+            //$$ mc.setVertexBuffer(0, vertexBuffer)
+            //#endif
         //$$     mc.setIndexBuffer(indexBuffer, indexType)
             //#if MC>=12106
             //$$ RenderSystem.bindDefaultUniforms(mc)
@@ -229,7 +241,9 @@ internal class URenderPass : AutoCloseable {
         @Deprecated("Does not support Vulkan; uses hard-coded sampler on 1.21.11+, relies on texture configuration on older versions.")
         override fun texture(name: String, textureGlId: Int): DrawCallBuilder = apply {
             //#if MC>=12105 && !STANDALONE
-            //#if MC>=12106
+            //#if MC >= 26.2
+            //$$ val texture = object : GlTexture(USAGE_TEXTURE_BINDING, "", GpuFormat.RGBA8_UNORM, 0, 0, 0, 1, textureGlId, null) {
+            //#elseif MC>=12106
             //$$ val texture = object : GlTexture(USAGE_TEXTURE_BINDING, "", TextureFormat.RGBA8, 0, 0, 0, 1, textureGlId) {
             //#else
             //$$ val texture = object : GlTexture("", TextureFormat.RGBA8, 0, 0, 0, textureGlId) {

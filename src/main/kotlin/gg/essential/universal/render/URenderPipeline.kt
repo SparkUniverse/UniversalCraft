@@ -18,7 +18,9 @@ import net.minecraft.client.renderer.vertex.VertexFormat
 import net.minecraft.util.ResourceLocation
 
 //#if MC >= 26.2
+//$$ import com.mojang.blaze3d.GpuFormat
 //$$ import com.mojang.blaze3d.pipeline.BindGroupLayout
+//$$ import com.mojang.blaze3d.vertex.DefaultVertexFormat
 //$$ import net.minecraft.client.renderer.BindGroupLayouts
 //#endif
 
@@ -418,7 +420,12 @@ class URenderPipeline private constructor(
             //$$ var shaderSourceGetter: ShaderSourceGetter? = null
             //$$ var mcRenderPipeline = RenderPipeline.builder().apply {
             //$$     withLocation(id)
-            //$$     withVertexFormat(format, drawMode.mcMode)
+                //#if MC >= 26.2
+                //$$ withPrimitiveTopology(drawMode.mcMode)
+                //$$ withVertexBinding(0, format)
+                //#else
+                //$$ withVertexFormat(format, drawMode.mcMode)
+                //#endif
             //$$     when (shader) {
             //$$         is ShaderSupplier.LegacySource -> {
             //$$             val transformer = ShaderTransformer(format, 150)
@@ -452,6 +459,15 @@ class URenderPipeline private constructor(
             //$$
             //$$             // ShaderProgram calls glBindAttribLocation using the names in the VertexFormat so we need to
             //$$             // construct a custom one based on the original but with our prefixed names
+            //#if MC >= 26.2
+            //$$             val builder = VertexFormat.builder(0)
+            //$$             format.elements.forEachIndexed { index, element ->
+            //$$                 val name = transformer.attributes.getOrNull(index) ?: element.name
+            //$$                 val nextOffset = format.elements.getOrNull(index + 1)?.offset ?: format.vertexSize
+            //$$                 builder.addAttribute(name, nextOffset - element.offset, element.format)
+            //$$             }
+            //$$             withVertexBinding(0, builder.build())
+            //#else
             //$$             val builder = VertexFormat.builder()
             //$$             var expectedOffset = 0
             //$$             format.elements.mapIndexed { index, element ->
@@ -466,6 +482,7 @@ class URenderPipeline private constructor(
             //$$                 builder.add(name, element)
             //$$             }
             //$$             withVertexFormat(builder.build(), drawMode.mcMode)
+            //#endif
             //$$         }
             //$$         is ShaderSupplier.Mc -> {
             //$$             withVertexShader(shader.vert)
@@ -519,6 +536,9 @@ class URenderPipeline private constructor(
             //$$             blendState.srcAlpha.mcSourceFactor,
             //$$             blendState.dstAlpha.mcDestFactor,
             //$$         ) else null),
+                    //#if MC >= 26.2
+                    //$$ GpuFormat.RGBA8_UNORM,
+                    //#endif
             //$$         colorMask.let { (colorMask, alphaMask) ->
             //$$             var flags = 0
             //$$             if (colorMask) flags += ColorTargetState.WRITE_COLOR
@@ -653,7 +673,11 @@ class URenderPipeline private constructor(
         //#if MC>=12105
         //$$ @JvmStatic
         //$$ fun wrap(mc: RenderPipeline): URenderPipeline =
-        //$$     URenderPipeline(mc.location, mc.vertexFormat, null, mc)
+            //#if MC >= 26.2
+            //$$ URenderPipeline(mc.location, mc.vertexFormatBindings[0]!!, null, mc)
+            //#else
+            //$$ URenderPipeline(mc.location, mc.vertexFormat, null, mc)
+            //#endif
         //#endif
         //#if MC >= 26.2
         //$$ fun builder(id: Identifier, drawMode: DrawMode, format: VertexFormat, vert: Identifier, frag: Identifier, bindGroupLayouts: List<BindGroupLayout>): Builder {
@@ -698,9 +722,9 @@ class URenderPipeline private constructor(
             //#if MC >= 26.2
             //$$ val bindGroupLayouts = buildList(4) {
             //$$     add(BindGroupLayouts.MATRICES_PROJECTION)
-            //$$     if (format.mc.contains(VertexFormatElement.UV0)) add(BindGroupLayouts.SAMPLER0)
-            //$$     if (format.mc.contains(VertexFormatElement.UV1)) add(BindGroupLayouts.SAMPLER1)
-            //$$     if (format.mc.contains(VertexFormatElement.UV2)) add(BindGroupLayouts.SAMPLER2)
+            //$$     if (format.mc.contains(DefaultVertexFormat.UV0_SEMANTIC_NAME)) add(BindGroupLayouts.SAMPLER0)
+            //$$     if (format.mc.contains(DefaultVertexFormat.UV1_SEMANTIC_NAME)) add(BindGroupLayouts.SAMPLER1)
+            //$$     if (format.mc.contains(DefaultVertexFormat.UV2_SEMANTIC_NAME)) add(BindGroupLayouts.SAMPLER2)
             //$$ }
             //$$ return builder(mcId, drawMode, format.mc, shaderId, shaderId, bindGroupLayouts)
             //#else

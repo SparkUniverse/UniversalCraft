@@ -64,7 +64,12 @@ internal class ShaderTransformer(private val vertexFormat: VertexFormat?, privat
 
             if (vertexFormat != null) {
                 //#if MC>=11700 && !STANDALONE
-                //$$ newAttributes.sortedBy { vertexFormat.shaderAttributes.indexOf(it.first.removePrefix("uc_")) }
+                //#if MC >= 26.2
+                //$$ fun orgIndexOfAttr(name: String) = vertexFormat.elements.indexOfFirst { it.name == name }
+                //#else
+                //$$ fun orgIndexOfAttr(name: String) = vertexFormat.shaderAttributes.indexOf(name)
+                //#endif
+                //$$ newAttributes.sortedBy { orgIndexOfAttr(it.first.removePrefix("uc_")) }
                 //$$     .forEach {
                 //$$         attributes.add(it.first)
                 //$$         transformed.add(it.second)

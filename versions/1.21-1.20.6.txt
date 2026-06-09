@@ -1,0 +1,2 @@
+net.minecraft.client.render.VertexFormatElement type() getComponentType()
+net.minecraft.client.render.VertexFormatElement usage() getType()

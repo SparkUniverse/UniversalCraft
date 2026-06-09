@@ -4,6 +4,11 @@ package gg.essential.universal.shader
 //$$ import gg.essential.universal.standalone.render.VertexFormat
 //#else
 import net.minecraft.client.renderer.vertex.VertexFormat
+import net.minecraft.client.renderer.vertex.VertexFormatElement
+
+//#if MC >= 26.2
+//$$ import com.mojang.blaze3d.GpuFormat
+//#endif
 //#endif
 
 internal class ShaderTransformer(private val vertexFormat: VertexFormat?, private val targetVersion: Int) {
@@ -55,12 +60,19 @@ internal class ShaderTransformer(private val vertexFormat: VertexFormat?, privat
             }
         }
         if (vert) {
+            //#if STANDALONE
+            //$$ fun uvVecType(index: Int) = "vec2"
+            //#else
+            fun uvVecType(index: Int) =
+                if (vertexFormat?.uvIsFloat(index) ?: true) "vec2" else "ivec2"
+            //#endif
+
             val newAttributes = mutableListOf<Pair<String, String>>()
             replaceAttribute(newAttributes, "gl_Vertex", "vec3", "uc_Position", replacement = "vec4(uc_Position, 1.0)")
             replaceAttribute(newAttributes, "gl_Color", "vec4")
-            replaceAttribute(newAttributes, "gl_MultiTexCoord0.st", "vec2", "uc_UV0")
-            replaceAttribute(newAttributes, "gl_MultiTexCoord1.st", "vec2", "uc_UV1")
-            replaceAttribute(newAttributes, "gl_MultiTexCoord2.st", "vec2", "uc_UV2")
+            replaceAttribute(newAttributes, "gl_MultiTexCoord0.st", uvVecType(0), "uc_UV0")
+            replaceAttribute(newAttributes, "gl_MultiTexCoord1.st", uvVecType(1), "uc_UV1")
+            replaceAttribute(newAttributes, "gl_MultiTexCoord2.st", uvVecType(2), "uc_UV2")
 
             if (vertexFormat != null) {
                 //#if MC>=11700 && !STANDALONE
@@ -146,6 +158,29 @@ internal class ShaderTransformer(private val vertexFormat: VertexFormat?, privat
         return transformed.joinToString("\n")
     }
 }
+
+//#if !STANDALONE
+private fun VertexFormat.uvIsFloat(i: Int): Boolean =
+    //#if MC >= 26.2
+    //$$ this.getElement("UV$i")
+    //#elseif MC >= 26.1
+    //$$ this.elements.getOrNull(this.elementAttributeNames.indexOf("UV$i"))
+    //#else
+    this.elements
+        .asSequence()
+        .filter { it.usage == VertexFormatElement.EnumUsage.UV }
+        .elementAtOrNull(i)
+    //#endif
+        ?.isFloat()
+        ?: true
+
+private fun VertexFormatElement.isFloat() =
+    //#if MC >= 26.2
+    //$$ this.format == GpuFormat.RG16_FLOAT || this.format == GpuFormat.RG32_FLOAT
+    //#else
+    this.type == VertexFormatElement.EnumType.FLOAT
+    //#endif
+//#endif
 
 internal enum class UniformType(val typeName: String, val glslName: String, val default: IntArray) {
     Int1("int", "int", intArrayOf(0)),

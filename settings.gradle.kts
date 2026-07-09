@@ -70,6 +70,7 @@ listOf(
     "26.1-fabric",
     "26.1-neoforge",
     "26.2-fabric",
+    "26.3-fabric",
 ).forEach { version ->
     include(":$version")
     project(":$version").apply {

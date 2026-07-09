@@ -6,6 +6,10 @@ import kotlin.ranges.coerceIn
 
 //#if STANDALONE
 //#else
+//#if MC >= 26.3
+//$$ import com.mojang.renderpearl.api.pipeline.UniformType
+//#endif
+
 //#if MC >= 26.2
 //$$ import com.mojang.blaze3d.vertex.VertexFormat
 //$$ import java.nio.ByteBuffer
@@ -127,7 +131,10 @@ internal class URenderPassLegacyImpl : AutoCloseable {
             //#else
             //$$ mc = MinecraftClient.getInstance().framebuffer.let { fb ->
             //#endif
-                //#if MC >= 1.21.6
+                //#if MC >= 26.3
+                //$$ val outputColorTexture = fb.colorTextureView!!
+                //$$ val outputDepthTexture = fb.depthTextureView
+                //#elseif MC >= 1.21.6
                 //$$ val outputColorTexture = RenderSystem.outputColorTextureOverride ?: fb.colorAttachmentView!!
                 //$$ val outputDepthTexture = RenderSystem.outputDepthTextureOverride ?: fb.depthAttachmentView
                 //#else
@@ -213,7 +220,15 @@ internal class URenderPassLegacyImpl : AutoCloseable {
         //#if MC >= 1.21.5 && !STANDALONE
         //$$ private fun samplerNameByIndex(index: Int) =
             //#if MC >= 26.2
-            //$$ pipeline.mcRenderPipeline.bindGroupLayouts.asSequence().flatMap { it.samplers }.elementAt(index)
+            //$$ pipeline.mcRenderPipeline.bindGroupLayouts.asSequence()
+                //#if MC >= 26.3
+                //$$ .flatMap { it.uniforms }
+                //$$ .filter { it.type == UniformType.COMBINED_IMAGE_SAMPLER }
+                //$$ .map { it.name }
+                //#else
+                //$$ .flatMap { it.samplers }
+                //#endif
+            //$$     .elementAt(index)
             //#else
             //$$ pipeline.mcRenderPipeline.samplers[index]
             //#endif

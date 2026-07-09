@@ -495,6 +495,10 @@ internal object UGpuDeviceImpl : UGpuDevice {
         val bytesCopyRange = texelCopyRange.first * texelByteSize .. texelCopyRange.last * texelByteSize
         require(bytesCopyRange.last < source.size) { "Copy range $bytesCopyRange is out of bounds for $source"}
 
+        //#if MC >= 26.3 && !STANDALONE
+        //$$ RenderSystem.getDevice().createCommandEncoder()
+        //$$     .copyBufferToTexture(source.mc, sourceX, sourceY, sourceWidth, sourceHeight, destination.impl.mc, destinationX, destinationY, copyWidth, copyHeight, mipLevel, arrayLayer)
+        //#else
         if (isVulkan()) {
             //#if MC >= 26.2 && !STANDALONE
             //$$ MemoryStack.stackPush().use { stack ->
@@ -557,6 +561,7 @@ internal object UGpuDeviceImpl : UGpuDevice {
                 GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 4)
             }
         }
+        //#endif
     }
 
     override fun createFence(): UGpuFence {
@@ -657,7 +662,11 @@ internal object UGpuDeviceImpl : UGpuDevice {
     //#if MC >= 26.2 && !STANDALONE
     //$$ private val lookup = MethodHandles.lookup()
     //$$ private val GpuDevice_backend by lazy {
-    //$$     val field = GpuDevice::class.java.getDeclaredField("backend")
+        //#if MC >= 26.3
+        //$$ val field = com.mojang.renderpearl.frontend.FrontendGpuDevice::class.java.getDeclaredField("backend")
+        //#else
+        //$$ val field = GpuDevice::class.java.getDeclaredField("backend")
+        //#endif
     //$$     field.isAccessible = true
     //$$     lookup.unreflectGetter(field)
     //$$ }
@@ -668,7 +677,11 @@ internal object UGpuDeviceImpl : UGpuDevice {
     //$$         .let { it is VulkanDevice }
     //$$
     //$$ private val CommandEncoder_backend by lazy {
-    //$$     val field = CommandEncoder::class.java.getDeclaredField("backend")
+        //#if MC >= 26.3
+        //$$ val field = com.mojang.renderpearl.frontend.FrontendCommandEncoder::class.java.getDeclaredField("backend")
+        //#else
+        //$$ val field = CommandEncoder::class.java.getDeclaredField("backend")
+        //#endif
     //$$     field.isAccessible = true
     //$$     lookup.unreflectGetter(field)
     //$$ }

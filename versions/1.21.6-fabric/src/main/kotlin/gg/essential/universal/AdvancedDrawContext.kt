@@ -1,3 +1,4 @@
+//#if MC < 26.3
 package gg.essential.universal
 
 import com.mojang.blaze3d.systems.ProjectionType
@@ -105,3 +106,4 @@ internal class AdvancedDrawContext : AutoCloseable {
         textureAllocator.close()
     }
 }
+//#endif

@@ -13,12 +13,15 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement
 
 internal class ShaderTransformer(private val vertexFormat: VertexFormat?, private val targetVersion: Int) {
     init {
-        check(targetVersion in listOf(110, 130, 150))
+        check(targetVersion in listOf(110, 130, 150, 330))
     }
 
     val attributes = mutableListOf<String>()
     val samplers = mutableSetOf<String>()
     val uniforms = mutableMapOf<String, UniformType>()
+    //#if MC >= 26.3 && !STANDALONE
+    //$$ val vertOutFragIn = mutableListOf<String>()
+    //#endif
 
     fun transform(originalSource: String): String {
         var source = originalSource
@@ -31,6 +34,9 @@ internal class ShaderTransformer(private val vertexFormat: VertexFormat?, privat
         val replacements = mutableMapOf<String, String>()
         val transformed = mutableListOf<String>()
         transformed.add("#version $targetVersion")
+        //#if MC >= 26.3 && !STANDALONE
+        //$$ transformed.add("#extension GL_ARB_separate_shader_objects : require")
+        //#endif
 
         val frag = "gl_FragColor" in source
         val vert = !frag
@@ -154,6 +160,24 @@ internal class ShaderTransformer(private val vertexFormat: VertexFormat?, privat
                 else -> replacements.entries.fold(line) { acc, (needle, replacement) -> acc.replace(needle, replacement) }
             })
         }
+
+        //#if MC >= 26.3 && !STANDALONE
+        //$$ var inIndex = 0
+        //$$ for ((i, line) in transformed.withIndex()) {
+        //$$     if (!line.startsWith("in ")) continue
+        //$$     val (_, _, name) = line.trimEnd(';').split(" ")
+        //$$     val location = if (vert) inIndex++ else vertOutFragIn.indexOf(name)
+        //$$     transformed[i] = "layout(location = $location) $line"
+        //$$ }
+        //$$ var outIndex = 0
+        //$$ for ((i, line) in transformed.withIndex()) {
+        //$$     if (!line.startsWith("out ")) continue
+        //$$     val (_, _, name) = line.trimEnd(';').split(" ")
+        //$$     val location = outIndex++
+        //$$     transformed[i] = "layout(location = $location) $line"
+        //$$     if (vert) vertOutFragIn.add(name)
+        //$$ }
+        //#endif
 
         return transformed.joinToString("\n")
     }

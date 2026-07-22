@@ -20,5 +20,8 @@ sealed interface UGpuDevice {
         mipLevels: Int = texture.mipLevels,
     ): UGpuTextureView
 
+    fun createBuffer(usage: UGpuBuffer.Usage, size: Long): UGpuBuffer
+    fun createBuffer(usage: UGpuBuffer.Usage, buffer: ByteBuffer): UGpuBuffer
+
     fun createFence(): UGpuFence
 }

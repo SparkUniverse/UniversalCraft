@@ -1117,7 +1117,60 @@ public abstract interface class gg/essential/universal/render/DrawCallBuilder {
 	public abstract fun uniform (Ljava/lang/String;[I)Lgg/essential/universal/render/DrawCallBuilder;
 }
 
+public abstract interface class gg/essential/universal/render/UGpuBuffer : java/io/Closeable {
+	public abstract fun getSize ()J
+	public abstract fun isClosed ()Z
+	public fun slice (JJ)Lgg/essential/universal/render/UGpuBufferSlice;
+	public static synthetic fun slice$default (Lgg/essential/universal/render/UGpuBuffer;JJILjava/lang/Object;)Lgg/essential/universal/render/UGpuBufferSlice;
+}
+
+public final class gg/essential/universal/render/UGpuBuffer$Usage {
+	public static final field Companion Lgg/essential/universal/render/UGpuBuffer$Usage$Companion;
+	public fun <init> (I)V
+	public final fun component1 ()I
+	public final fun contains (Lgg/essential/universal/render/UGpuBuffer$Usage;)Z
+	public final fun copy (I)Lgg/essential/universal/render/UGpuBuffer$Usage;
+	public static synthetic fun copy$default (Lgg/essential/universal/render/UGpuBuffer$Usage;IILjava/lang/Object;)Lgg/essential/universal/render/UGpuBuffer$Usage;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBits ()I
+	public fun hashCode ()I
+	public final fun plus (Lgg/essential/universal/render/UGpuBuffer$Usage;)Lgg/essential/universal/render/UGpuBuffer$Usage;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class gg/essential/universal/render/UGpuBuffer$Usage$Companion {
+	public final fun getCOPY_DST ()Lgg/essential/universal/render/UGpuBuffer$Usage;
+	public final fun getCOPY_SRC ()Lgg/essential/universal/render/UGpuBuffer$Usage;
+	public final fun getHINT_CLIENT_STORAGE ()Lgg/essential/universal/render/UGpuBuffer$Usage;
+	public final fun getINDEX ()Lgg/essential/universal/render/UGpuBuffer$Usage;
+	public final fun getINDIRECT_PARAMETERS ()Lgg/essential/universal/render/UGpuBuffer$Usage;
+	public final fun getMAP_READ ()Lgg/essential/universal/render/UGpuBuffer$Usage;
+	public final fun getMAP_WRITE ()Lgg/essential/universal/render/UGpuBuffer$Usage;
+	public final fun getUNIFORM ()Lgg/essential/universal/render/UGpuBuffer$Usage;
+	public final fun getUNIFORM_TEXEL_BUFFER ()Lgg/essential/universal/render/UGpuBuffer$Usage;
+	public final fun getVERTEX ()Lgg/essential/universal/render/UGpuBuffer$Usage;
+}
+
+public final class gg/essential/universal/render/UGpuBufferSlice {
+	public fun <init> (Lgg/essential/universal/render/UGpuBuffer;JJ)V
+	public final fun component1 ()Lgg/essential/universal/render/UGpuBuffer;
+	public final fun component2 ()J
+	public final fun component3 ()J
+	public final fun copy (Lgg/essential/universal/render/UGpuBuffer;JJ)Lgg/essential/universal/render/UGpuBufferSlice;
+	public static synthetic fun copy$default (Lgg/essential/universal/render/UGpuBufferSlice;Lgg/essential/universal/render/UGpuBuffer;JJILjava/lang/Object;)Lgg/essential/universal/render/UGpuBufferSlice;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBuffer ()Lgg/essential/universal/render/UGpuBuffer;
+	public final fun getOffset ()J
+	public final fun getSize ()J
+	public fun hashCode ()I
+	public final fun slice (JJ)Lgg/essential/universal/render/UGpuBufferSlice;
+	public static synthetic fun slice$default (Lgg/essential/universal/render/UGpuBufferSlice;JJILjava/lang/Object;)Lgg/essential/universal/render/UGpuBufferSlice;
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract interface class gg/essential/universal/render/UGpuDevice {
+	public abstract fun createBuffer (Lgg/essential/universal/render/UGpuBuffer$Usage;J)Lgg/essential/universal/render/UGpuBuffer;
+	public abstract fun createBuffer (Lgg/essential/universal/render/UGpuBuffer$Usage;Ljava/nio/ByteBuffer;)Lgg/essential/universal/render/UGpuBuffer;
 	public abstract fun createFence ()Lgg/essential/universal/render/UGpuFence;
 	public abstract fun createTexture (Ljava/lang/String;Lgg/essential/universal/render/UGpuTexture$Usage;Lgg/essential/universal/render/UGpuFormat;III)Lgg/essential/universal/render/UGpuTexture;
 	public static synthetic fun createTexture$default (Lgg/essential/universal/render/UGpuDevice;Ljava/lang/String;Lgg/essential/universal/render/UGpuTexture$Usage;Lgg/essential/universal/render/UGpuFormat;IIIILjava/lang/Object;)Lgg/essential/universal/render/UGpuTexture;
@@ -1139,6 +1192,18 @@ public final class gg/essential/universal/render/UGpuFormat$Companion {
 }
 
 public abstract interface class gg/essential/universal/render/UGpuPlatformAdapter {
+	@1.21.11-fabric,1.21.11-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.1-neoforge,26.2-fabric
+	public abstract fun buffer (Lcom/mojang/blaze3d/buffers/GpuBuffer;)Lgg/essential/universal/render/UGpuBuffer;
+	@1.21.11-fabric,1.21.11-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.1-neoforge,26.2-fabric
+	public abstract fun buffer (Lgg/essential/universal/render/UGpuBuffer;)Lcom/mojang/blaze3d/buffers/GpuBuffer;
+	@1.21.11-fabric,1.21.11-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.1-neoforge,26.2-fabric
+	public abstract fun bufferSlice (Lcom/mojang/blaze3d/buffers/GpuBufferSlice;)Lgg/essential/universal/render/UGpuBufferSlice;
+	@1.21.11-fabric,1.21.11-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.1-neoforge,26.2-fabric
+	public abstract fun bufferSlice (Lgg/essential/universal/render/UGpuBufferSlice;)Lcom/mojang/blaze3d/buffers/GpuBufferSlice;
+	@1.12.2-forge,1.16.2-fabric,1.16.2-forge,1.17.1-fabric,1.17.1-forge,1.18.1-fabric,1.18.1-forge,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.2-forge,1.19.3-fabric,1.19.3-forge,1.19.4-fabric,1.19.4-forge,1.20-fabric,1.20.1-fabric,1.20.1-forge,1.20.2-fabric,1.20.2-forge,1.20.4-fabric,1.20.4-forge,1.20.4-neoforge,1.20.6-fabric,1.20.6-forge,1.20.6-neoforge,1.21-fabric,1.21-forge,1.21-neoforge,1.21.3-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-fabric,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.8.9-forge
+	public abstract fun buffer (ILgg/essential/universal/render/UGpuBuffer$Usage;J)Lgg/essential/universal/render/UGpuBuffer;
+	@1.12.2-forge,1.16.2-fabric,1.16.2-forge,1.17.1-fabric,1.17.1-forge,1.18.1-fabric,1.18.1-forge,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.2-forge,1.19.3-fabric,1.19.3-forge,1.19.4-fabric,1.19.4-forge,1.20-fabric,1.20.1-fabric,1.20.1-forge,1.20.2-fabric,1.20.2-forge,1.20.4-fabric,1.20.4-forge,1.20.4-neoforge,1.20.6-fabric,1.20.6-forge,1.20.6-neoforge,1.21-fabric,1.21-forge,1.21-neoforge,1.21.3-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-fabric,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.8.9-forge
+	public abstract fun buffer (Lgg/essential/universal/render/UGpuBuffer;)I
 	public abstract fun getDefaultGpuFormatDepth ()Lgg/essential/universal/render/UGpuFormat;
 	public abstract fun getDefaultGpuFormatRgba ()Lgg/essential/universal/render/UGpuFormat;
 	@26.2-fabric

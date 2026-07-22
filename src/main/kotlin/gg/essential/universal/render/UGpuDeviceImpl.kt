@@ -4,6 +4,9 @@ import gg.essential.universal.UGraphics
 import java.nio.ByteBuffer
 import kotlin.math.max
 import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL15
+import org.lwjgl.opengl.GL30
+import org.lwjgl.opengl.GL31
 
 //#if STANDALONE
 //$$ import org.lwjgl.opengl.GL20C
@@ -25,6 +28,16 @@ import net.minecraft.client.renderer.GlStateManager
 //#endif
 
 internal object UGpuDeviceImpl : UGpuDevice {
+    //#if MC >= 1.16
+    //$$ val OpenGL31 by lazy { org.lwjgl.opengl.GL.getCapabilities().OpenGL31 }
+    //$$ val OpenGL30 by lazy { org.lwjgl.opengl.GL.getCapabilities().OpenGL30 }
+    //#else
+    val OpenGL31 by lazy { org.lwjgl.opengl.GLContext.getCapabilities().OpenGL31 }
+    val OpenGL30 by lazy { org.lwjgl.opengl.GLContext.getCapabilities().OpenGL30 }
+    //#endif
+
+    private val tmpVao by lazy { GL30.glGenVertexArrays() }
+
     override fun createTexture(
         label: String?,
         usage: UGpuTexture.Usage,
@@ -198,6 +211,83 @@ internal object UGpuDeviceImpl : UGpuDevice {
         val maxMipLevels = log2(max(width, height)) + 1
         require(mipLevels <= maxMipLevels) { "Texture of size ${width}x${height} supports at most $maxMipLevels but $mipLevels were requested" }
     }
+
+    override fun createBuffer(usage: UGpuBuffer.Usage, size: Long): UGpuBuffer {
+        require(size <= Int.MAX_VALUE) { "Sizes greater than Int.MAX_VALUE are not supported" } // due to MC 1.21.6-9
+        //#if MC >= 1.21.11 && !STANDALONE
+        //$$ return UGpuBufferImpl(RenderSystem.getDevice().createBuffer(null, usage.bits, size))
+        //#elseif MC >= 1.21.6 && !STANDALONE
+        //$$ return UGpuBufferImpl(RenderSystem.getDevice().createBuffer(null, usage.bits, size.toInt()))
+        //#else
+        val buffer = UGpuBufferImpl(usage, size, GL15.glGenBuffers())
+        withBufferBound(buffer) { bindTarget ->
+            GL15.glBufferData(bindTarget, size, usage.glUsageHint)
+        }
+        return buffer
+        //#endif
+    }
+
+    override fun createBuffer(usage: UGpuBuffer.Usage, buffer: ByteBuffer): UGpuBuffer {
+        //#if MC >= 1.21.6 && !STANDALONE
+        //$$ return UGpuBufferImpl(RenderSystem.getDevice().createBuffer(null, usage.bits, buffer))
+        //#else
+        val gpuBuffer = UGpuBufferImpl(usage, buffer.remaining().toLong(), GL15.glGenBuffers())
+        withBufferBound(gpuBuffer) { bindTarget ->
+            GL15.glBufferData(bindTarget, buffer, usage.glUsageHint)
+        }
+        return gpuBuffer
+        //#endif
+    }
+
+    //#if MC < 1.21.6 || STANDALONE
+    private inline fun <T> withBufferBound(gpuBuffer: UGpuBufferImpl, block: (bindTarget: Int) -> T): T {
+        val bindTarget = gpuBuffer.usage.bindTarget
+        val bindTargetBinding = when (bindTarget) {
+            GL15.GL_ARRAY_BUFFER -> GL15.GL_ARRAY_BUFFER_BINDING
+            GL15.GL_ELEMENT_ARRAY_BUFFER -> GL15.GL_ELEMENT_ARRAY_BUFFER_BINDING
+            GL31.GL_UNIFORM_BUFFER -> GL31.GL_UNIFORM_BUFFER_BINDING
+            GL31.GL_COPY_WRITE_BUFFER -> 0x8F37 // GL31.GL_COPY_WRITE_BUFFER_BINDING (missing from LWJGL3 for unknown reason?)
+            else -> throw AssertionError("Unexpected bind target $bindTarget")
+        }
+        val prevVao: Int
+        if (bindTarget == GL15.GL_ELEMENT_ARRAY_BUFFER && OpenGL30) {
+            // Requires VAO, see https://stackoverflow.com/questions/20391921/
+            prevVao = GL11.glGetInteger(GL30.GL_VERTEX_ARRAY_BINDING)
+            GL30.glBindVertexArray(tmpVao)
+        } else {
+            prevVao = 0
+        }
+        val prevBinding = GL11.glGetInteger(bindTargetBinding)
+        GL15.glBindBuffer(bindTarget, gpuBuffer.glId)
+        try {
+            return block(bindTarget)
+        } finally {
+            GL15.glBindBuffer(bindTarget, prevBinding)
+            if (bindTarget == GL15.GL_ELEMENT_ARRAY_BUFFER && OpenGL30) {
+                GL30.glBindVertexArray(prevVao)
+            }
+        }
+    }
+
+    // We'll try to pick an appropriate binding target for our buffers because
+    // > Once created, a named buffer object may be re-bound to any target as often as needed. However, the GL
+    // > implementation may make choices about how to optimize the storage of a buffer object based on its initial
+    // > binding target.
+    private val UGpuBuffer.Usage.bindTarget: Int
+        get() = when {
+            UGpuBuffer.Usage.VERTEX in this -> GL15.GL_ARRAY_BUFFER
+            UGpuBuffer.Usage.INDEX in this -> GL15.GL_ELEMENT_ARRAY_BUFFER
+            UGpuBuffer.Usage.UNIFORM in this -> if (OpenGL31) GL31.GL_UNIFORM_BUFFER else GL15.GL_ARRAY_BUFFER
+            else -> if (OpenGL31) GL31.GL_COPY_WRITE_BUFFER else GL15.GL_ARRAY_BUFFER
+        }
+
+    private val UGpuBuffer.Usage.glUsageHint: Int
+        get() = when {
+            UGpuBuffer.Usage.MAP_WRITE in this -> if (UGpuBuffer.Usage.HINT_CLIENT_STORAGE in this) GL15.GL_STREAM_DRAW else GL15.GL_STATIC_DRAW
+            UGpuBuffer.Usage.MAP_READ in this -> if (UGpuBuffer.Usage.HINT_CLIENT_STORAGE in this) GL15.GL_STREAM_READ else GL15.GL_STATIC_READ
+            else -> GL15.GL_STATIC_DRAW
+        }
+    //#endif
 
     override fun createFence(): UGpuFence {
         return UGpuFenceImpl()

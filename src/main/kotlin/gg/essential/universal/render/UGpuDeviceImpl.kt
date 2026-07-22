@@ -198,4 +198,8 @@ internal object UGpuDeviceImpl : UGpuDevice {
         val maxMipLevels = log2(max(width, height)) + 1
         require(mipLevels <= maxMipLevels) { "Texture of size ${width}x${height} supports at most $maxMipLevels but $mipLevels were requested" }
     }
+
+    override fun createFence(): UGpuFence {
+        return UGpuFenceImpl()
+    }
 }

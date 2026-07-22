@@ -1118,10 +1118,15 @@ public abstract interface class gg/essential/universal/render/DrawCallBuilder {
 }
 
 public abstract interface class gg/essential/universal/render/UGpuDevice {
+	public abstract fun createFence ()Lgg/essential/universal/render/UGpuFence;
 	public abstract fun createTexture (Ljava/lang/String;Lgg/essential/universal/render/UGpuTexture$Usage;Lgg/essential/universal/render/UGpuFormat;III)Lgg/essential/universal/render/UGpuTexture;
 	public static synthetic fun createTexture$default (Lgg/essential/universal/render/UGpuDevice;Ljava/lang/String;Lgg/essential/universal/render/UGpuTexture$Usage;Lgg/essential/universal/render/UGpuFormat;IIIILjava/lang/Object;)Lgg/essential/universal/render/UGpuTexture;
 	public abstract fun createTextureView (Lgg/essential/universal/render/UGpuTexture;II)Lgg/essential/universal/render/UGpuTextureView;
 	public static synthetic fun createTextureView$default (Lgg/essential/universal/render/UGpuDevice;Lgg/essential/universal/render/UGpuTexture;IIILjava/lang/Object;)Lgg/essential/universal/render/UGpuTextureView;
+}
+
+public abstract interface class gg/essential/universal/render/UGpuFence : java/lang/AutoCloseable {
+	public abstract fun awaitCompletion (J)Z
 }
 
 public abstract interface class gg/essential/universal/render/UGpuFormat {

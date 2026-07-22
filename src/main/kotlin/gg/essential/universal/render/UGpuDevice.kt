@@ -19,4 +19,6 @@ sealed interface UGpuDevice {
         baseMipLevel: Int = 0,
         mipLevels: Int = texture.mipLevels,
     ): UGpuTextureView
+
+    fun createFence(): UGpuFence
 }

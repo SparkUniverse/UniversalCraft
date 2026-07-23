@@ -31,9 +31,11 @@ internal object UGpuDeviceImpl : UGpuDevice {
     //#if MC >= 1.16
     //$$ val OpenGL31 by lazy { org.lwjgl.opengl.GL.getCapabilities().OpenGL31 }
     //$$ val OpenGL30 by lazy { org.lwjgl.opengl.GL.getCapabilities().OpenGL30 }
+    //$$ val ARB_map_buffer_range by lazy { org.lwjgl.opengl.GL.getCapabilities().GL_ARB_map_buffer_range }
     //#else
     val OpenGL31 by lazy { org.lwjgl.opengl.GLContext.getCapabilities().OpenGL31 }
     val OpenGL30 by lazy { org.lwjgl.opengl.GLContext.getCapabilities().OpenGL30 }
+    val ARB_map_buffer_range by lazy { org.lwjgl.opengl.GLContext.getCapabilities().GL_ARB_map_buffer_range }
     //#endif
 
     private val tmpVao by lazy { GL30.glGenVertexArrays() }
@@ -236,6 +238,63 @@ internal object UGpuDeviceImpl : UGpuDevice {
             GL15.glBufferData(bindTarget, buffer, usage.glUsageHint)
         }
         return gpuBuffer
+        //#endif
+    }
+
+    override fun mapBuffer(gpuBufferSlice: UGpuBufferSlice, read: Boolean, write: Boolean): UGpuDevice.MappedBuffer {
+        check(!gpuBufferSlice.buffer.isClosed) { "Buffer is closed" }
+        if (read) require(UGpuBuffer.Usage.MAP_READ in gpuBufferSlice.buffer.impl.usage) { "Buffer must have MAP_READ usage flag" }
+        if (write) require(UGpuBuffer.Usage.MAP_WRITE in gpuBufferSlice.buffer.impl.usage) { "Buffer must have MAP_WRITE usage flag" }
+
+        require(gpuBufferSlice.offset + gpuBufferSlice.size <= Int.MAX_VALUE) { "Slices further than Int.MAX_VALUE into the buffer are not supported" } // due to pre-GL30 fallback path
+
+        //#if MC >= 1.21.6 && !STANDALONE
+        //#if MC >= 26.2
+        //$$ val view = gpuBufferSlice.mc.map(read, write)
+        //#else
+        //$$ val view = RenderSystem.getDevice().createCommandEncoder().mapBuffer(gpuBufferSlice.mc, read, write)
+        //#endif
+        //$$ return object : UGpuDevice.MappedBuffer {
+        //$$     override val data: ByteBuffer = view.data()
+        //$$     override fun close() = view.close()
+        //$$ }
+        //#else
+        val mapBufferRange = OpenGL30 || ARB_map_buffer_range
+        val access = when {
+            read && write -> if (mapBufferRange) GL30.GL_MAP_READ_BIT + GL30.GL_MAP_WRITE_BIT else GL15.GL_READ_WRITE
+            read -> if (mapBufferRange) GL30.GL_MAP_READ_BIT else GL15.GL_READ_ONLY
+            write -> if (mapBufferRange) GL30.GL_MAP_WRITE_BIT else GL15.GL_WRITE_ONLY
+            else -> throw IllegalArgumentException("At least one of `read` or `write` must be true")
+        }
+        val buffer = withBufferBound(gpuBufferSlice.buffer.impl) { bindTarget ->
+            if (mapBufferRange) {
+                GL30.glMapBufferRange(bindTarget, gpuBufferSlice.offset, gpuBufferSlice.size, access, null)
+            } else {
+                @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS") // old_buffer may be null according to javadocs
+                val fullBuf = GL15.glMapBuffer(bindTarget, access, gpuBufferSlice.offset + gpuBufferSlice.size, null)
+                if (gpuBufferSlice.offset > 0) {
+                    fullBuf?.position(gpuBufferSlice.offset.toInt())
+                    fullBuf?.slice()
+                } else {
+                    fullBuf
+                }
+            }
+        } ?: throw IllegalStateException("Failed to map buffer")
+        gpuBufferSlice.buffer.impl.mappedCount++
+        return object : UGpuDevice.MappedBuffer {
+            override val data: ByteBuffer = buffer
+
+            var closed = false
+
+            override fun close() {
+                if (closed) return
+                closed = true
+                gpuBufferSlice.buffer.impl.mappedCount--
+                withBufferBound(gpuBufferSlice.buffer.impl) { bindTarget ->
+                    GL15.glUnmapBuffer(bindTarget)
+                }
+            }
+        }
         //#endif
     }
 

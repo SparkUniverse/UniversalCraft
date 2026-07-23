@@ -23,5 +23,10 @@ sealed interface UGpuDevice {
     fun createBuffer(usage: UGpuBuffer.Usage, size: Long): UGpuBuffer
     fun createBuffer(usage: UGpuBuffer.Usage, buffer: ByteBuffer): UGpuBuffer
 
+    fun mapBuffer(gpuBufferSlice: UGpuBufferSlice, read: Boolean, write: Boolean): MappedBuffer
+    interface MappedBuffer : AutoCloseable {
+        val data: ByteBuffer
+    }
+
     fun createFence(): UGpuFence
 }

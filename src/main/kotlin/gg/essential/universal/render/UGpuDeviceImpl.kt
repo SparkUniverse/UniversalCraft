@@ -239,6 +239,50 @@ internal object UGpuDeviceImpl : UGpuDevice {
         //#endif
     }
 
+    override fun mapBuffer(gpuBufferSlice: UGpuBufferSlice, read: Boolean, write: Boolean): UGpuDevice.MappedBuffer {
+        check(!gpuBufferSlice.buffer.isClosed) { "Buffer is closed" }
+        if (read) require(UGpuBuffer.Usage.MAP_READ in gpuBufferSlice.buffer.impl.usage) { "Buffer must have MAP_READ usage flag" }
+        if (write) require(UGpuBuffer.Usage.MAP_WRITE in gpuBufferSlice.buffer.impl.usage) { "Buffer must have MAP_WRITE usage flag" }
+
+        //#if MC >= 1.21.6 && !STANDALONE
+        //#if MC >= 26.2
+        //$$ val view = gpuBufferSlice.mc.map(read, write)
+        //#else
+        //$$ val view = RenderSystem.getDevice().createCommandEncoder().mapBuffer(gpuBufferSlice.mc, read, write)
+        //#endif
+        //$$ return object : UGpuDevice.MappedBuffer {
+        //$$     override val data: ByteBuffer = view.data()
+        //$$     override fun close() = view.close()
+        //$$ }
+        //#else
+        val access = when {
+            read && write -> GL15.GL_READ_WRITE
+            read -> GL15.GL_READ_ONLY
+            write -> GL15.GL_WRITE_ONLY
+            else -> throw IllegalArgumentException("At least one of `read` or `write` must be true")
+        }
+        val buffer = withBufferBound(gpuBufferSlice.buffer.impl) { bindTarget ->
+            @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS") // old_buffer may be null according to javadocs
+            GL15.glMapBuffer(bindTarget, access, gpuBufferSlice.size, null)
+        } ?: throw IllegalStateException("Failed to map buffer")
+        gpuBufferSlice.buffer.impl.mappedCount++
+        return object : UGpuDevice.MappedBuffer {
+            override val data: ByteBuffer = buffer
+
+            var closed = false
+
+            override fun close() {
+                if (closed) return
+                closed = true
+                gpuBufferSlice.buffer.impl.mappedCount--
+                withBufferBound(gpuBufferSlice.buffer.impl) { bindTarget ->
+                    GL15.glUnmapBuffer(bindTarget)
+                }
+            }
+        }
+        //#endif
+    }
+
     //#if MC < 1.21.6 || STANDALONE
     private inline fun <T> withBufferBound(gpuBuffer: UGpuBufferImpl, block: (bindTarget: Int) -> T): T {
         val bindTarget = gpuBuffer.usage.bindTarget

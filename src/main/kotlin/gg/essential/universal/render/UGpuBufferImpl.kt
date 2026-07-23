@@ -32,7 +32,10 @@ internal class UGpuBufferImpl(
     override var isClosed = false
         private set
 
+    var mappedCount = 0
+
     override fun close() {
+        if (mappedCount > 0) throw IllegalArgumentException("Buffer is currently mapped")
         if (isClosed) return
         isClosed = true
 

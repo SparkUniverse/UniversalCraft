@@ -1143,8 +1143,13 @@ public class UGraphics {
         //$$ }
         //#endif
 
-        //#if MC >= 1.17 && MC < 26.2
-        //$$ private static DrawMode fromMc(VertexFormat.DrawMode mcMode) {
+        //#if MC >= 1.17 && !STANDALONE
+        //$$ @ApiStatus.Internal
+        //#if MC >= 26.2
+        //$$ public static DrawMode fromMc(PrimitiveTopology mcMode) {
+        //#else
+        //$$ public static DrawMode fromMc(VertexFormat.DrawMode mcMode) {
+        //#endif
         //$$     switch (mcMode) {
         //$$         case LINES: return DrawMode.LINES;
                 //#if MC>=12111

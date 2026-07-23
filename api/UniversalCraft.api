@@ -1216,19 +1216,21 @@ public abstract interface class gg/essential/universal/render/UGpuTextureView : 
 public final class gg/essential/universal/render/URenderPipeline {
 	public static final field Companion Lgg/essential/universal/render/URenderPipeline$Companion;
 	@1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge
-	public synthetic fun <init> (Lnet/minecraft/resources/ResourceLocation;Lcom/mojang/blaze3d/vertex/VertexFormat;Ljava/util/function/BiFunction;Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lnet/minecraft/resources/ResourceLocation;Lgg/essential/universal/UGraphics$DrawMode;Lgg/essential/universal/UGraphics$CommonVertexFormats;Lcom/mojang/blaze3d/vertex/VertexFormat;Ljava/util/function/BiFunction;Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	@1.21.5-fabric,1.21.6-fabric,1.21.7-fabric,1.21.9-fabric
-	public synthetic fun <init> (Lnet/minecraft/util/Identifier;Lcom/mojang/blaze3d/vertex/VertexFormat;Ljava/util/function/BiFunction;Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lnet/minecraft/util/Identifier;Lgg/essential/universal/UGraphics$DrawMode;Lgg/essential/universal/UGraphics$CommonVertexFormats;Lcom/mojang/blaze3d/vertex/VertexFormat;Ljava/util/function/BiFunction;Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	@1.21.11-neoforge,26.1-fabric,26.1-neoforge,26.2-fabric
-	public synthetic fun <init> (Lnet/minecraft/resources/Identifier;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/shaders/ShaderSource;Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lnet/minecraft/resources/Identifier;Lgg/essential/universal/UGraphics$DrawMode;Lgg/essential/universal/UGraphics$CommonVertexFormats;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/shaders/ShaderSource;Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	@1.21.11-fabric
-	public synthetic fun <init> (Lnet/minecraft/util/Identifier;Lcom/mojang/blaze3d/vertex/VertexFormat;Lnet/minecraft/client/gl/ShaderSourceGetter;Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lnet/minecraft/util/Identifier;Lgg/essential/universal/UGraphics$DrawMode;Lgg/essential/universal/UGraphics$CommonVertexFormats;Lcom/mojang/blaze3d/vertex/VertexFormat;Lnet/minecraft/client/gl/ShaderSourceGetter;Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge
-	public synthetic fun <init> (Lnet/minecraft/resources/ResourceLocation;Lcom/mojang/blaze3d/vertex/VertexFormat;Lgg/essential/universal/render/URenderPipeline$ShaderSupplier;Lgg/essential/universal/render/ManagedGlState;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lnet/minecraft/resources/ResourceLocation;Lgg/essential/universal/UGraphics$DrawMode;Lgg/essential/universal/UGraphics$CommonVertexFormats;Lcom/mojang/blaze3d/vertex/VertexFormat;Lgg/essential/universal/render/URenderPipeline$ShaderSupplier;Lgg/essential/universal/render/ManagedGlState;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	@1.16.2-fabric,1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.3-fabric,1.21.4-fabric
-	public synthetic fun <init> (Lnet/minecraft/util/Identifier;Lnet/minecraft/client/render/VertexFormat;Lgg/essential/universal/render/URenderPipeline$ShaderSupplier;Lgg/essential/universal/render/ManagedGlState;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lnet/minecraft/util/Identifier;Lgg/essential/universal/UGraphics$DrawMode;Lgg/essential/universal/UGraphics$CommonVertexFormats;Lnet/minecraft/client/render/VertexFormat;Lgg/essential/universal/render/URenderPipeline$ShaderSupplier;Lgg/essential/universal/render/ManagedGlState;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	@1.12.2-forge,1.16.2-forge,1.8.9-forge
-	public synthetic fun <init> (Lnet/minecraft/util/ResourceLocation;Lnet/minecraft/client/renderer/vertex/VertexFormat;Lgg/essential/universal/render/URenderPipeline$ShaderSupplier;Lgg/essential/universal/render/ManagedGlState;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lnet/minecraft/util/ResourceLocation;Lgg/essential/universal/UGraphics$DrawMode;Lgg/essential/universal/UGraphics$CommonVertexFormats;Lnet/minecraft/client/renderer/vertex/VertexFormat;Lgg/essential/universal/render/URenderPipeline$ShaderSupplier;Lgg/essential/universal/render/ManagedGlState;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getCommonVertexFormat ()Lgg/essential/universal/UGraphics$CommonVertexFormats;
+	public final fun getDrawMode ()Lgg/essential/universal/UGraphics$DrawMode;
 	public fun toString ()Ljava/lang/String;
 	@1.21.11-fabric,1.21.11-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.1-neoforge,26.2-fabric
 	public static final fun wrap (Lcom/mojang/blaze3d/pipeline/RenderPipeline;)Lgg/essential/universal/render/URenderPipeline;

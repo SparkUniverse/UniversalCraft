@@ -90,10 +90,9 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement
 
 class URenderPipeline private constructor(
     private val id: ResourceLocation,
+    val drawMode: DrawMode,
+    val commonVertexFormat: CommonVertexFormats?,
     internal val format: VertexFormat,
-    //#if STANDALONE
-    //$$ private val drawMode: DrawMode,
-    //#endif
     //#if MC>=12105 && !STANDALONE
     //$$ private var shaderSourceGetter: ShaderSourceGetter?,
     //$$ internal val mcRenderPipeline: RenderPipeline,
@@ -410,6 +409,7 @@ class URenderPipeline private constructor(
     private class BuilderImpl(
         private val id: ResourceLocation,
         private val drawMode: DrawMode,
+        private val commonVertexFormat: CommonVertexFormats?,
         private val format: VertexFormat,
         //#if MC>=12105 && !STANDALONE
         //$$ private val shader: ShaderSupplier,
@@ -594,6 +594,8 @@ class URenderPipeline private constructor(
             //$$
             //$$ return URenderPipeline(
             //$$     id,
+            //$$     drawMode,
+            //$$     commonVertexFormat,
             //$$     format,
             //$$     shaderSourceGetter,
             //$$     mcRenderPipeline,
@@ -601,10 +603,9 @@ class URenderPipeline private constructor(
             //#else
             return URenderPipeline(
                 id,
+                drawMode,
+                commonVertexFormat,
                 format,
-                //#if STANDALONE
-                //$$ drawMode,
-                //#endif
                 shader,
                 ManagedGlState(
                     depthTest = depthTest != DepthTest.Disabled,
@@ -676,29 +677,29 @@ class URenderPipeline private constructor(
         //$$ @JvmStatic
         //$$ fun wrap(mc: RenderPipeline): URenderPipeline =
             //#if MC >= 26.2
-            //$$ URenderPipeline(mc.location, mc.vertexFormatBindings[0]!!, null, mc)
+            //$$ URenderPipeline(mc.location, DrawMode.fromMc(mc.primitiveTopology), null, mc.vertexFormatBindings[0]!!, null, mc)
             //#else
-            //$$ URenderPipeline(mc.location, mc.vertexFormat, null, mc)
+            //$$ URenderPipeline(mc.location, DrawMode.fromMc(mc.vertexFormatMode), null, mc.vertexFormat, null, mc)
             //#endif
         //#endif
         //#if MC >= 26.2
         //$$ fun builder(id: Identifier, drawMode: DrawMode, format: VertexFormat, vert: Identifier, frag: Identifier, bindGroupLayouts: List<BindGroupLayout>): Builder {
-        //$$     return BuilderImpl(id, drawMode, format, ShaderSupplier.Mc(vert, frag, bindGroupLayouts))
+        //$$     return BuilderImpl(id, drawMode, null, format, ShaderSupplier.Mc(vert, frag, bindGroupLayouts))
         //$$ }
         //#elseif MC >= 1.21.5
         //$$ fun builder(id: Identifier, drawMode: DrawMode, format: VertexFormat, vert: Identifier, frag: Identifier, samplers: List<String>, uniforms: Map<String, UniformType>): Builder {
-        //$$     return BuilderImpl(id, drawMode, format, ShaderSupplier.Mc(vert, frag, samplers, uniforms))
+        //$$     return BuilderImpl(id, drawMode, null, format, ShaderSupplier.Mc(vert, frag, samplers, uniforms))
         //$$ }
         //#else
         //#if MC>=11700
         //$$ fun builder(id: Identifier, drawMode: DrawMode, format: VertexFormat, shader: Supplier<Shader>?): Builder {
-        //$$     return BuilderImpl(id, drawMode, format, shader?.let { ShaderSupplier.Mc(it) })
+        //$$     return BuilderImpl(id, drawMode, null, format, shader?.let { ShaderSupplier.Mc(it) })
         //$$ }
         //#endif
         //#if MC>=12102
         //$$ fun builder(id: Identifier, drawMode: DrawMode, format: VertexFormat, shader: ShaderProgramKey): Builder {
         //$$     val shaderSupplier = Supplier { MinecraftClient.getInstance().shaderLoader.getProgramToLoad(shader) }
-        //$$     return BuilderImpl(id, drawMode, format, ShaderSupplier.Mc(shaderSupplier))
+        //$$     return BuilderImpl(id, drawMode, null, format, ShaderSupplier.Mc(shaderSupplier))
         //$$ }
         //#endif
         //#endif
@@ -706,7 +707,7 @@ class URenderPipeline private constructor(
 
         fun builderWithDefaultShader(id: String, drawMode: DrawMode, format: CommonVertexFormats): Builder {
             //#if STANDALONE
-            //$$ return BuilderImpl(id, drawMode, format.mc, null)
+            //$$ return BuilderImpl(id, drawMode, format, format.mc, ShaderSupplier.Default(DefaultShader.get(format.mc.parts)))
             //#else
             //#if MC>=12100
             //$$ val mcId = Identifier.of(id)
@@ -728,7 +729,7 @@ class URenderPipeline private constructor(
             //$$     if (format.mc.contains(DefaultVertexFormat.UV1_SEMANTIC_NAME)) add(BindGroupLayouts.SAMPLER1)
             //$$     if (format.mc.contains(DefaultVertexFormat.UV2_SEMANTIC_NAME)) add(BindGroupLayouts.SAMPLER2)
             //$$ }
-            //$$ return builder(mcId, drawMode, format.mc, shaderId, shaderId, bindGroupLayouts)
+            //$$ return BuilderImpl(mcId, drawMode, format, format.mc, ShaderSupplier.Mc(shaderId, shaderId, bindGroupLayouts))
             //#else
             //$$ val samplers = List(format.mc.elements.count {
                 //#if MC >= 26.1
@@ -747,22 +748,26 @@ class URenderPipeline private constructor(
                 //$$ "ColorModulator" to UniformType.VEC4,
                 //#endif
             //$$ )
-            //$$ return builder(mcId, drawMode, format.mc, shaderId, shaderId, samplers, uniforms)
+            //$$ return BuilderImpl(mcId, drawMode, format, format.mc, ShaderSupplier.Mc(shaderId, shaderId, samplers, uniforms))
             //#endif
             //#else
-            //$$ return builder(mcId, drawMode, format.mc, shader)
+            //$$ return BuilderImpl(mcId, drawMode, format, format.mc, ShaderSupplier.Mc(shader))
             //#endif
             //#else
-            return BuilderImpl(mcId, drawMode, format.mc, null)
+            return BuilderImpl(mcId, drawMode, format, format.mc, null)
             //#endif
             //#endif
         }
 
         fun builderWithLegacyShader(id: String, drawMode: DrawMode, format: CommonVertexFormats, vertSource: String, fragSource: String): Builder {
-            return builderWithLegacyShader(id, drawMode, format.mc, vertSource, fragSource)
+            return builderWithLegacyShader(id, drawMode, format, format.mc, vertSource, fragSource)
         }
 
         fun builderWithLegacyShader(id: String, drawMode: DrawMode, format: VertexFormat, vertSource: String, fragSource: String): Builder {
+            return builderWithLegacyShader(id, drawMode, null, format, vertSource, fragSource)
+        }
+
+        private fun builderWithLegacyShader(id: String, drawMode: DrawMode, commonVertexFormat: CommonVertexFormats?, format: VertexFormat, vertSource: String, fragSource: String): Builder {
             //#if STANDALONE
             //$$ val mcId = id
             //#elseif MC>=12100
@@ -770,7 +775,7 @@ class URenderPipeline private constructor(
             //#else
             val mcId = ResourceLocation(id)
             //#endif
-            return BuilderImpl(mcId, drawMode, format, ShaderSupplier.LegacySource(format, vertSource, fragSource))
+            return BuilderImpl(mcId, drawMode, commonVertexFormat, format, ShaderSupplier.LegacySource(format, vertSource, fragSource))
         }
     }
 }

@@ -4,13 +4,35 @@ import gg.essential.universal.UGraphics
 import java.nio.ByteBuffer
 import kotlin.math.max
 import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL12
 import org.lwjgl.opengl.GL15
+import org.lwjgl.opengl.GL21
 import org.lwjgl.opengl.GL30
 import org.lwjgl.opengl.GL31
 
 //#if STANDALONE
 //$$ import org.lwjgl.opengl.GL20C
 //#else
+
+//#if MC >= 26.2
+//$$ import com.mojang.blaze3d.opengl.GlConst
+//$$ import com.mojang.blaze3d.systems.CommandEncoder
+//$$ import com.mojang.blaze3d.systems.CommandEncoderBackend
+//$$ import com.mojang.blaze3d.systems.GpuDevice
+//$$ import com.mojang.blaze3d.systems.GpuDeviceBackend
+//$$ import com.mojang.blaze3d.vulkan.VulkanBackend
+//$$ import com.mojang.blaze3d.vulkan.VulkanCommandEncoder
+//$$ import com.mojang.blaze3d.vulkan.VulkanDevice
+//$$ import com.mojang.blaze3d.vulkan.VulkanGpuBuffer
+//$$ import com.mojang.blaze3d.vulkan.VulkanGpuTexture
+//$$ import org.lwjgl.system.MemoryStack
+//$$ import org.lwjgl.vulkan.VK10
+//$$ import org.lwjgl.vulkan.VK12
+//$$ import org.lwjgl.vulkan.VkBufferImageCopy
+//$$ import org.lwjgl.vulkan.VkCommandBuffer
+//$$ import java.lang.invoke.MethodHandles
+//#endif
+
 //#if MC >= 1.21.5
 //$$ import com.mojang.blaze3d.textures.TextureFormat
 //$$ import net.minecraft.client.texture.GlTexture
@@ -333,7 +355,156 @@ internal object UGpuDeviceImpl : UGpuDevice {
         }
     //#endif
 
+    override fun copyBufferToTexture(
+        source: UGpuBufferSlice,
+        sourceX: Int,
+        sourceY: Int,
+        sourceWidth: Int,
+        sourceHeight: Int,
+        destination: UGpuTexture,
+        destinationX: Int,
+        destinationY: Int,
+        copyWidth: Int,
+        copyHeight: Int,
+        mipLevel: Int,
+        arrayLayer: Int,
+    ) {
+        val destinationWidth = destination.width shr mipLevel
+        val destinationHeight = destination.width shr mipLevel
+        require(!source.buffer.isClosed) { "Source buffer is closed" }
+        require(!destination.isClosed) { "Destination texture is closed" }
+        require(UGpuBuffer.Usage.COPY_SRC in source.buffer.impl.usage) { "Source buffer must have COPY_SRC usage flag" }
+        require(UGpuTexture.Usage.COPY_DST in destination.impl.usage) { "Destination texture must have COPY_DST usage flag" }
+        require(copyWidth >= 0) { "copyWidth must be positive but was $copyWidth" }
+        require(copyHeight >= 0) { "copyHeight must be positive but was $copyHeight" }
+        require(sourceX >= 0) { "sourceX must be positive but was $sourceX" }
+        require(sourceY >= 0) { "sourceY must be positive but was $sourceY" }
+        require(sourceX + copyWidth <= sourceWidth) { "Tried to copy $copyWidth from $sourceX but source is only $sourceWidth wide" }
+        require(sourceY + copyHeight <= sourceHeight) { "Tried to copy $copyHeight from $sourceY but source is only $sourceHeight high" }
+        require(destinationX >= 0) { "destinationX must be positive but was $destinationX" }
+        require(destinationY >= 0) { "destinationY must be positive but was $destinationY" }
+        require(destinationX + copyWidth <= destinationWidth) { "Tried to copy $copyWidth to $destinationX but destination is only $destinationWidth wide" }
+        require(destinationY + copyHeight <= destinationHeight) { "Tried to copy $copyHeight to $destinationY but destination is only $destinationHeight high" }
+        require(mipLevel >= 0) { "mipLevel must not be negative" }
+        require(mipLevel < destination.mipLevels) { "mipLevel is $mipLevel but texture only has $mipLevel levels" }
+        require(arrayLayer == 0) { "arrayLayer other than 0 is not yet supported" }
+
+        val format = destination.impl.format
+        require(source.offset % format.componentByteSize == 0L) { "Source buffer offset must be ${format.componentByteSize}-aligned but was ${source.offset}" }
+        val texelByteSize = format.componentCount * format.componentByteSize
+        val texelCopyRange = sourceX + sourceY * sourceWidth.toLong() until(sourceX + copyWidth) + (sourceY + copyHeight - 1) * sourceWidth.toLong()
+        val bytesCopyRange = texelCopyRange.first * texelByteSize .. texelCopyRange.last * texelByteSize
+        require(bytesCopyRange.last < source.size) { "Copy range $bytesCopyRange is out of bounds for $source"}
+
+        if (isVulkan()) {
+            //#if MC >= 26.2 && !STANDALONE
+            //$$ MemoryStack.stackPush().use { stack ->
+            //$$     VK12.vkCmdCopyBufferToImage(
+            //$$         vkCommandBuffer(),
+            //$$         (source.buffer.impl.mc as VulkanGpuBuffer).vkBuffer(),
+            //$$         (destination.impl.mc as VulkanGpuTexture).vkImage(),
+            //$$         1,
+            //$$         VkBufferImageCopy.calloc(1, stack).also { region ->
+            //$$             region.bufferOffset(source.offset + bytesCopyRange.first)
+            //$$             region.bufferRowLength(sourceWidth)
+            //$$             region.bufferImageHeight(sourceHeight)
+            //$$             region.imageSubresource().let { image ->
+            //$$                 image.aspectMask(VK10.VK_IMAGE_ASPECT_COLOR_BIT)
+            //$$                 image.mipLevel(mipLevel)
+            //$$                 image.baseArrayLayer(arrayLayer)
+            //$$                 image.layerCount(1)
+            //$$             }
+            //$$             region.imageOffset().set(destinationX, destinationY, 0)
+            //$$             region.imageExtent().set(copyWidth, copyHeight, 1)
+            //$$         },
+            //$$     )
+            //$$     vkMemoryBarrier(stack)
+            //$$ }
+            //#endif
+        } else {
+            UGraphics.configureTexture(destination.impl.glId) {
+                GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, sourceWidth)
+                GL11.glPixelStorei(GL12.GL_UNPACK_IMAGE_HEIGHT, sourceHeight)
+                GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, 0)
+                GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, 0)
+                GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, format.componentByteSize)
+
+                GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, source.buffer.impl.glId)
+
+                GL11.glTexSubImage2D(
+                    GL11.GL_TEXTURE_2D,
+                    mipLevel,
+                    destinationX,
+                    destinationY,
+                    copyWidth,
+                    copyHeight,
+                    //#if MC >= 26.2 && !STANDALONE
+                    //$$ GlConst.toGlExternalId(destination.impl.format.mc),
+                    //$$ GlConst.toGlType(destination.impl.format.mc),
+                    //#else
+                    destination.impl.format.format,
+                    destination.impl.format.type,
+                    //#endif
+                    source.offset + bytesCopyRange.first,
+                )
+
+                GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, 0)
+
+                // We restore these to defaults as well as to not disturb third-party mods which assume defaults
+                GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, 0)
+                GL11.glPixelStorei(GL12.GL_UNPACK_IMAGE_HEIGHT, 0)
+                GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, 0)
+                GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, 0)
+                GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 4)
+            }
+        }
+    }
+
     override fun createFence(): UGpuFence {
         return UGpuFenceImpl()
     }
+
+    //#if MC >= 26.2 && !STANDALONE
+    //$$ private val lookup = MethodHandles.lookup()
+    //$$ private val GpuDevice_backend by lazy {
+    //$$     val field = GpuDevice::class.java.getDeclaredField("backend")
+    //$$     field.isAccessible = true
+    //$$     lookup.unreflectGetter(field)
+    //$$ }
+    //$$
+    //$$ fun isVulkan() =
+    //$$     RenderSystem.getDevice()
+    //$$         .let { GpuDevice_backend.invoke(it) as GpuDeviceBackend }
+    //$$         .let { it is VulkanDevice }
+    //$$
+    //$$ private val CommandEncoder_backend by lazy {
+    //$$     val field = CommandEncoder::class.java.getDeclaredField("backend")
+    //$$     field.isAccessible = true
+    //$$     lookup.unreflectGetter(field)
+    //$$ }
+    //$$
+    //$$ private val VulkanCommandEncoder_commandBuffer by lazy {
+    //$$     val method = VulkanCommandEncoder::class.java.getDeclaredMethod("commandBuffer")
+    //$$     method.isAccessible = true
+    //$$     lookup.unreflect(method)
+    //$$ }
+    //$$ private fun vkCommandBuffer(): VkCommandBuffer =
+    //$$     RenderSystem.getDevice()
+    //$$         .createCommandEncoder()
+    //$$         .let { CommandEncoder_backend.invoke(it) as CommandEncoderBackend }
+    //$$         .let { VulkanCommandEncoder_commandBuffer.invoke(it) as VkCommandBuffer }
+    //$$
+    //$$ private val VulkanCommandEncoder_memoryBarrier by lazy {
+    //$$     val method = VulkanCommandEncoder::class.java.getDeclaredMethod("memoryBarrier", MemoryStack::class.java)
+    //$$     method.isAccessible = true
+    //$$     lookup.unreflect(method)
+    //$$ }
+    //$$ private fun vkMemoryBarrier(stack: MemoryStack): Unit =
+    //$$     RenderSystem.getDevice()
+    //$$         .createCommandEncoder()
+    //$$         .let { CommandEncoder_backend.invoke(it) as CommandEncoderBackend }
+    //$$         .let { VulkanCommandEncoder_memoryBarrier.invoke(it, stack); Unit }
+    //#else
+    fun isVulkan() = false
+    //#endif
 }

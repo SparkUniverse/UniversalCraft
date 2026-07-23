@@ -28,5 +28,20 @@ sealed interface UGpuDevice {
         val data: ByteBuffer
     }
 
+    fun copyBufferToTexture(
+        source: UGpuBufferSlice,
+        sourceX: Int,
+        sourceY: Int,
+        sourceWidth: Int,
+        sourceHeight: Int,
+        destination: UGpuTexture,
+        destinationX: Int,
+        destinationY: Int,
+        copyWidth: Int,
+        copyHeight: Int,
+        mipLevel: Int,
+        arrayLayer: Int,
+    )
+
     fun createFence(): UGpuFence
 }

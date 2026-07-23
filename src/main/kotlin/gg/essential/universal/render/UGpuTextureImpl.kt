@@ -45,6 +45,24 @@ internal data class UGpuFormatImpl(
             else -> false
         }
         //#endif
+    val componentByteSize: Int
+        //#if MC >= 26.2 && !STANDALONE
+        //$$ get() = mc.componentType().byteSize()
+        //#else
+        get() = when (type) {
+            GL11.GL_BYTE, GL11.GL_UNSIGNED_BYTE -> 1
+            else -> throw UnsupportedOperationException("Format $this not yet supported (or invalid).")
+        }
+    //#endif
+    val componentCount: Int
+        //#if MC >= 26.2 && !STANDALONE
+        //$$ get() = mc.componentCount()
+        //#else
+        get() = when (format) {
+            GL11.GL_RGBA -> 4
+            else -> throw UnsupportedOperationException("Format $this not yet supported (or invalid).")
+        }
+        //#endif
 }
 
 internal class UGpuTextureImpl(
@@ -78,6 +96,7 @@ internal class UGpuTextureImpl(
     //$$ override val width: Int get() = mc.getWidth(0)
     //$$ override val height: Int get() = mc.getHeight(0)
     //$$ override val mipLevels: Int get() = mc.mipLevels
+    //$$ val glId: Int get() = (mc as net.minecraft.client.texture.GlTexture).glId
     //#endif
 
     //#if MC >= 1.21.6 && !STANDALONE

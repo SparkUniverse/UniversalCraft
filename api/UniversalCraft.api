@@ -1169,6 +1169,7 @@ public final class gg/essential/universal/render/UGpuBufferSlice {
 }
 
 public abstract interface class gg/essential/universal/render/UGpuDevice {
+	public abstract fun copyBufferToTexture (Lgg/essential/universal/render/UGpuBufferSlice;IIIILgg/essential/universal/render/UGpuTexture;IIIIII)V
 	public abstract fun createBuffer (Lgg/essential/universal/render/UGpuBuffer$Usage;J)Lgg/essential/universal/render/UGpuBuffer;
 	public abstract fun createBuffer (Lgg/essential/universal/render/UGpuBuffer$Usage;Ljava/nio/ByteBuffer;)Lgg/essential/universal/render/UGpuBuffer;
 	public abstract fun createFence ()Lgg/essential/universal/render/UGpuFence;

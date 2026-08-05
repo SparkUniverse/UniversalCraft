@@ -305,6 +305,9 @@ object UKeyboard {
     @JvmStatic
     fun isKeyComboCtrlShiftZ(key: Int): Boolean = key == KEY_Z && isCtrlKeyDown() && isShiftKeyDown() && !isAltKeyDown()
 
+    @JvmStatic
+    fun isEnterKey(key: Int) = key == KEY_ENTER || key == KEY_NUMPADENTER
+
     //#if STANDALONE
     //$$ internal val keysDown = mutableSetOf<Int>()
     //$$
@@ -313,9 +316,6 @@ object UKeyboard {
     //$$     return key in keysDown
     //$$ }
     //#else
-    @JvmStatic
-    fun isEnterKey(key: Int) = key == KEY_ENTER || key == KEY_NUMPADENTER
-
     @JvmStatic
     fun isKeyDown(key: Int): Boolean {
         if (key == KEY_NONE) return false

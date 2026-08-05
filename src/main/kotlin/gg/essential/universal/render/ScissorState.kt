@@ -2,6 +2,7 @@ package gg.essential.universal.render
 
 import org.lwjgl.opengl.GL11
 import java.nio.ByteBuffer
+import java.nio.ByteOrder
 
 //#if MC==12105
 //$$ import com.mojang.blaze3d.systems.RenderSystem
@@ -54,7 +55,7 @@ internal data class ScissorState(val enabled: Boolean, val x: Int, val y: Int, v
         //#endif
 
         // Note: LWJGL2 requires a buffer of 16 elements, even if the property we query only has 4
-        private val tmpIntBuffer = ByteBuffer.allocateDirect(16 * Int.SIZE_BYTES).asIntBuffer()
+        private val tmpIntBuffer = ByteBuffer.allocateDirect(16 * Int.SIZE_BYTES).order(ByteOrder.nativeOrder()).asIntBuffer()
 
         fun active(): ScissorState {
             //#if MC>=12106 && !STANDALONE

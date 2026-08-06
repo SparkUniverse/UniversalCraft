@@ -1,5 +1,6 @@
 package gg.essential.universal.standalone
 
+import gg.essential.universal.UGraphics
 import gg.essential.universal.standalone.glfw.Glfw
 import gg.essential.universal.standalone.glfw.GlfwWindow
 import gg.essential.universal.UKeyboard
@@ -8,6 +9,11 @@ import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UMouse
 import gg.essential.universal.UResolution
 import gg.essential.universal.UScreen
+import gg.essential.universal.render.UGpuSampler
+import gg.essential.universal.render.UGpuSampler.Companion.invoke
+import gg.essential.universal.render.URenderPipeline
+import gg.essential.universal.shader.BlendState
+import gg.essential.universal.vertex.UBufferBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -125,6 +131,8 @@ class UCWindow(val glfwWindow: GlfwWindow, val uiScope: CoroutineScope) {
     }
 
     suspend fun renderScreenUntilClosed() {
+        var prevScreen: UScreen? = null
+        var renderer: UScreen.Renderer? = null
         var nextTick = 0f
         renderLoop { _, deltaTime ->
             val screen = UScreen.currentScreen ?: return@renderLoop false
@@ -135,9 +143,48 @@ class UCWindow(val glfwWindow: GlfwWindow, val uiScope: CoroutineScope) {
                 screen.onTick()
             }
 
-            screen.onDrawScreen(UMatrixStack(), UMouse.Scaled.x.toInt(), UMouse.Scaled.y.toInt(), nextTick + 1 / 20f)
+            if (prevScreen != screen) {
+                prevScreen = screen
+                renderer?.close()
+                renderer = null
+            }
+            val renderer = renderer ?: screen.uCreateRenderer()?.also { renderer = it }
+            if (renderer != null) {
+                val renderState = screen.uExtractRenderState(UMouse.Scaled.x.toInt(), UMouse.Scaled.y.toInt(), nextTick + 1 / 20f)
+                val textureView = renderer.render(renderState)
+                val x1 = 0.0
+                val x2 = UResolution.scaledWidth.toDouble()
+                val y1 = 0.0
+                val y2 = UResolution.scaledHeight.toDouble()
+                val buffer = UBufferBuilder.create(UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_TEXTURE)
+                buffer.pos(UMatrixStack.UNIT, x1, y2, 0.0).tex(0.0, 0.0).endVertex()
+                buffer.pos(UMatrixStack.UNIT, x2, y2, 0.0).tex(1.0, 0.0).endVertex()
+                buffer.pos(UMatrixStack.UNIT, x2, y1, 0.0).tex(1.0, 1.0).endVertex()
+                buffer.pos(UMatrixStack.UNIT, x1, y1, 0.0).tex(0.0, 1.0).endVertex()
+                buffer.build()?.drawAndClose(PIPELINE_BLIT) {
+                    texture(0, textureView, SAMPLER_NEAREST)
+                }
+            } else {
+                screen.onDrawScreen(UMatrixStack(), UMouse.Scaled.x.toInt(), UMouse.Scaled.y.toInt(), nextTick + 1 / 20f)
+            }
 
             return@renderLoop true
         }
     }
 }
+
+private val PIPELINE_BLIT = URenderPipeline.builderWithDefaultShader(
+    "universalcraft:blit",
+    UGraphics.DrawMode.QUADS,
+    UGraphics.CommonVertexFormats.POSITION_TEXTURE,
+).apply {
+    blendState = BlendState.PREMULTIPLIED_ALPHA
+}.build()
+
+private val SAMPLER_NEAREST = UGpuSampler(
+    UGpuSampler.AddressMode.CLAMP_TO_EDGE,
+    UGpuSampler.AddressMode.CLAMP_TO_EDGE,
+    UGpuSampler.FilterMode.NEAREST,
+    UGpuSampler.FilterMode.NEAREST,
+    false,
+)

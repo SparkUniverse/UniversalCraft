@@ -1,5 +1,8 @@
 package gg.essential.universal
 
+import gg.essential.universal.render.UGpuTextureView
+import java.lang.AutoCloseable
+
 abstract class UScreen(
     val restoreCurrentGuiOnClose: Boolean = false,
     open var newGuiScale: Int = -1,
@@ -45,6 +48,18 @@ abstract class UScreen(
     open fun initScreen(width: Int, height: Int) {
     }
 
+    interface Renderer : AutoCloseable {
+        fun render(state: RenderState): UGpuTextureView
+    }
+
+    interface RenderState {
+        val background: Boolean
+    }
+
+    open fun uCreateRenderer(): Renderer? = null
+
+    open fun uExtractRenderState(mouseX: Int, mouseY: Int, partialTicks: Float): RenderState = throw NotImplementedError()
+
     open fun onDrawScreen(matrixStack: UMatrixStack, mouseX: Int, mouseY: Int, partialTicks: Float) {
     }
 
@@ -88,5 +103,8 @@ abstract class UScreen(
             currentScreen = screen
             currentScreen?.initGui()
         }
+
+        val isRendererRequired: Boolean
+            get() = false
     }
 }

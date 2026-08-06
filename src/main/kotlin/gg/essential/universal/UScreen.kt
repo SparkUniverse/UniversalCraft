@@ -1,6 +1,12 @@
 package gg.essential.universal
 
+import gg.essential.universal.render.UGpuSampler
+import gg.essential.universal.render.UGpuTextureView
+import gg.essential.universal.render.URenderPipeline
+import gg.essential.universal.shader.BlendState
+import gg.essential.universal.vertex.UBufferBuilder
 import net.minecraft.client.gui.GuiScreen
+import java.awt.Color
 
 //#if MC>=12109
 //$$ import net.minecraft.client.gui.Click
@@ -113,6 +119,25 @@ abstract class UScreen(
     //$$
     //#if MC>=12000
     //$$ final override fun render(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float) {
+    //$$     val renderer = renderer ?: uCreateRenderer().also { renderer = it }
+    //$$     if (renderer != null) {
+    //$$         val renderState = uExtractRenderState(mouseX, mouseY, delta)
+    //$$         if (renderState.background) {
+    //$$             drawContexts.add(context)
+    //$$             onDrawBackground(UMatrixStack(context.matrices), 0)
+    //$$             drawContexts.removeLast()
+    //$$         }
+    //$$         val textureView = renderer.render(renderState)
+            //#if MC >= 1.21.6
+            //$$ advancedDrawContext.draw(context, textureView)
+            //#else
+            //$$ drawImmediate(UMatrixStack(context.matrices), textureView)
+            //#endif
+    //$$         return
+    //$$     }
+    //#if MC >= 26.3
+    //$$     throw NullPointerException("uCreateRenderer returned `null` but `onDrawScreen` is not supported on this version")
+    //#else
     //$$     drawContexts.add(context)
         //#if MC>=12106
         //$$ advancedDrawContext.nextFrame()
@@ -125,6 +150,7 @@ abstract class UScreen(
         //$$ onDrawScreenCompat(UMatrixStack(context.matrices), mouseX, mouseY, delta)
         //#endif
     //$$     drawContexts.removeLast()
+    //#endif
     //#elseif MC>=11602
     //$$ final override fun render(matrixStack: MatrixStack, mouseX: Int, mouseY: Int, partialTicks: Float) {
     //$$     onDrawScreenCompat(UMatrixStack(matrixStack), mouseX, mouseY, partialTicks)
@@ -241,6 +267,8 @@ abstract class UScreen(
     //$$ final override fun tick(): Unit = onTick()
     //$$
     //$$ final override fun onClose() {
+    //$$     renderer?.close()
+    //$$     renderer = null
         //#if MC>=12106
         //$$ advancedDrawContext.close()
         //#endif
@@ -317,6 +345,8 @@ abstract class UScreen(
     }
 
     final override fun onGuiClosed() {
+        renderer?.close()
+        renderer = null
         onScreenClose()
         restoreGuiScale()
     }
@@ -366,6 +396,53 @@ abstract class UScreen(
         //#endif
     }
 
+    interface Renderer : AutoCloseable {
+        /**
+         * Renders the given screen state, returns a texture containing the result.
+         *
+         * The given [state] is one returned from [UScreen.uExtractRenderState] of the same screen.
+         * The implementation is free to cast it accordingly.
+         *
+         * The renderer retains ownership over the returned texture, it will not be closed by the caller.
+         * It must remain valid until at least the next [render] call, or [close], whichever happens first.
+         *
+         * Beware that (in a future Minecraft version), this method may be called from a dedicated render thread, and
+         * as such must not access any client state that is not safe to access from multiple threads.
+         * In particular it should use the given [RenderState], that was created on the client thread, rather than
+         * the screen directly.
+         */
+        fun render(state: RenderState): UGpuTextureView
+    }
+
+    /**
+     * A snapshot of all state of this screen which is needed to render it.
+     */
+    interface RenderState {
+        /** Whether the default background should be draw behind this screen. */
+        val background: Boolean
+    }
+
+    /**
+     * Creates a [Renderer] capable of rendering this screen to a texture.
+     * When this method returns non-null, the legacy [onDrawScreen] method will not be used for this screen. Instead
+     * [uExtractRenderState] will be called (and must as such be implemented).
+     *
+     * The [Renderer] returned by this method must be compatible with the [RenderState] type returned by the
+     * [uExtractRenderState] of this screen.
+     */
+    open fun uCreateRenderer(): Renderer? = null
+
+    /**
+     * Takes a snapshot of the current state, as required for rendering it, of this screen.
+     *
+     * Beware that (in a future Minecraft version), the rendering may happen on a dedicated render thread. As such
+     * the returned [RenderState] should be safe to be transferred and used by that thread.
+     *
+     * @see uCreateRenderer
+     * @see RenderState
+     */
+    open fun uExtractRenderState(mouseX: Int, mouseY: Int, partialTicks: Float): RenderState = throw NotImplementedError()
+
     open fun onDrawScreen(matrixStack: UMatrixStack, mouseX: Int, mouseY: Int, partialTicks: Float) {
         //#if MC<12106
         suppressBackground = true
@@ -398,10 +475,40 @@ abstract class UScreen(
         onDrawScreen(UMatrixStack.Compat.get(), mouseX, mouseY, partialTicks)
     }
 
+    private var renderer: Renderer? = null
+
     // Calls the deprecated method (for backwards compat) which then calls the new method (read the deprecation message)
-    private fun onDrawScreenCompat(matrixStack: UMatrixStack, mouseX: Int, mouseY: Int, partialTicks: Float) = UMatrixStack.Compat.runLegacyMethod(matrixStack) {
-        @Suppress("DEPRECATION")
-        onDrawScreen(mouseX, mouseY, partialTicks)
+    private fun onDrawScreenCompat(matrixStack: UMatrixStack, mouseX: Int, mouseY: Int, partialTicks: Float) {
+        val renderer = renderer ?: uCreateRenderer()?.also { renderer = it }
+        if (renderer == null) {
+            UMatrixStack.Compat.runLegacyMethod(matrixStack) {
+                @Suppress("DEPRECATION")
+                onDrawScreen(mouseX, mouseY, partialTicks)
+            }
+            return
+        }
+
+        val state = uExtractRenderState(mouseX, mouseY, partialTicks)
+        if (state.background) {
+            onDrawBackground(matrixStack, 0)
+        }
+        val textureView = renderer.render(state)
+        drawImmediate(matrixStack, textureView)
+    }
+
+    private fun drawImmediate(matrixStack: UMatrixStack, textureView: UGpuTextureView) {
+        val x1 = 0.0
+        val x2 = UResolution.scaledWidth.toDouble()
+        val y1 = 0.0
+        val y2 = UResolution.scaledHeight.toDouble()
+        val buffer = UBufferBuilder.create(UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_TEXTURE)
+        buffer.pos(matrixStack, x1, y2, 0.0).tex(0.0, 0.0).endVertex()
+        buffer.pos(matrixStack, x2, y2, 0.0).tex(1.0, 0.0).endVertex()
+        buffer.pos(matrixStack, x2, y1, 0.0).tex(1.0, 1.0).endVertex()
+        buffer.pos(matrixStack, x1, y1, 0.0).tex(0.0, 1.0).endVertex()
+        buffer.build()?.drawAndClose(PIPELINE_BLIT) {
+            texture(0, textureView, SAMPLER_NEAREST)
+        }
     }
 
     open fun onKeyPressed(keyCode: Int, typedChar: Char, modifiers: UKeyboard.Modifiers?) {
@@ -580,5 +687,29 @@ abstract class UScreen(
         fun displayScreen(screen: GuiScreen?) {
             UMinecraft.currentScreenObj = screen
         }
+
+        /** Whether the [uCreateRenderer] API must be used because the old [onDrawScreen] is no longer supported. */
+        val isRendererRequired: Boolean
+            //#if MC >= 26.3
+            //$$ get() = true
+            //#else
+            get() = false
+            //#endif
+
+        private val PIPELINE_BLIT = URenderPipeline.builderWithDefaultShader(
+            "universalcraft:blit",
+            UGraphics.DrawMode.QUADS,
+            UGraphics.CommonVertexFormats.POSITION_TEXTURE,
+        ).apply {
+            blendState = BlendState.PREMULTIPLIED_ALPHA
+        }.build()
+
+        private val SAMPLER_NEAREST = UGpuSampler(
+            UGpuSampler.AddressMode.CLAMP_TO_EDGE,
+            UGpuSampler.AddressMode.CLAMP_TO_EDGE,
+            UGpuSampler.FilterMode.NEAREST,
+            UGpuSampler.FilterMode.NEAREST,
+            false,
+        )
     }
 }

@@ -930,6 +930,8 @@ public abstract class gg/essential/universal/UScreen : net/minecraft/client/gui/
 	public fun setNewGuiScale (I)V
 	public fun setUnlocalizedName (Ljava/lang/String;)V
 	public final fun tick ()V
+	public fun uCreateRenderer ()Lgg/essential/universal/UScreen$Renderer;
+	public fun uExtractRenderState (IIF)Lgg/essential/universal/UScreen$RenderState;
 	public fun updateGuiScale ()V
 }
 
@@ -1020,6 +1022,8 @@ public abstract class gg/essential/universal/UScreen : net/minecraft/client/gui/
 	public fun setNewGuiScale (I)V
 	public fun setUnlocalizedName (Ljava/lang/String;)V
 	public final fun tick ()V
+	public fun uCreateRenderer ()Lgg/essential/universal/UScreen$Renderer;
+	public fun uExtractRenderState (IIF)Lgg/essential/universal/UScreen$RenderState;
 	public fun updateGuiScale ()V
 }
 
@@ -1065,6 +1069,8 @@ public abstract class gg/essential/universal/UScreen : net/minecraft/client/gui/
 	public final fun restorePreviousScreen ()V
 	public fun setNewGuiScale (I)V
 	public fun setUnlocalizedName (Ljava/lang/String;)V
+	public fun uCreateRenderer ()Lgg/essential/universal/UScreen$Renderer;
+	public fun uExtractRenderState (IIF)Lgg/essential/universal/UScreen$RenderState;
 	public fun updateGuiScale ()V
 	public final fun updateScreen ()V
 }
@@ -1082,6 +1088,15 @@ public final class gg/essential/universal/UScreen$Companion {
 	public final fun displayScreen (Lnet/minecraft/client/gui/GuiScreen;)V
 	@1.12.2-forge,1.8.9-forge
 	public final fun getCurrentScreen ()Lnet/minecraft/client/gui/GuiScreen;
+	public final fun isRendererRequired ()Z
+}
+
+public abstract interface class gg/essential/universal/UScreen$RenderState {
+	public abstract fun getBackground ()Z
+}
+
+public abstract interface class gg/essential/universal/UScreen$Renderer : java/lang/AutoCloseable {
+	public abstract fun render (Lgg/essential/universal/UScreen$RenderState;)Lgg/essential/universal/render/UGpuTextureView;
 }
 
 public final class gg/essential/universal/USound {

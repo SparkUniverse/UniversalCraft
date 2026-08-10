@@ -224,7 +224,7 @@ internal class URenderPassLegacyImpl : AutoCloseable {
             //#if MC >= 1.21.11
             //$$ mc.bindTexture(name, textureView.impl.mc, sampler.impl.mc)
             //#elseif MC >= 1.21.6
-            //$$ sampler.impl.configureTexture((textureView.texture.impl.mc as GlTexture).glId)
+            //$$ sampler.impl.configureTexture(textureView.texture.impl.mc)
             //$$ mc.bindSampler(name, textureView.impl.mc)
             //#else
             //$$ sampler.impl.configureTexture((textureView.texture.impl.mc as GlTexture).glId)

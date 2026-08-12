@@ -61,6 +61,9 @@ internal object UGpuPlatformAdapterImpl : UGpuPlatformAdapter {
             //#endif
     //$$         texture,
     //$$     )
+            //#if MC < 26.2
+            //$$ .also { FboCacheFix.track(it.impl.mc) }
+            //#endif
     //$$ override fun texture(texture: UGpuTexture): GpuTexture =
     //$$     texture.impl.mc
     //#else
@@ -75,6 +78,9 @@ internal object UGpuPlatformAdapterImpl : UGpuPlatformAdapter {
     //#if MC >= 1.21.6 && !STANDALONE
     //$$ override fun textureView(textureView: GpuTextureView): UGpuTextureViewImpl =
     //$$     UGpuTextureViewImpl(texture(textureView.texture()), textureView)
+            //#if MC < 26.2
+            //$$ .also { FboCacheFix.track(it.impl.mc) }
+            //#endif
     //$$ override fun textureView(textureView: UGpuTextureView): GpuTextureView =
     //$$     textureView.impl.mc
     //#endif

@@ -163,7 +163,8 @@ public class UGraphics {
     //$$ public static void init() { /* triggers static initializer */ }
     //$$ @ApiStatus.Internal
     //$$ public static final Gl2Renderer RENDERER = new Gl2Renderer();
-    //$$ private static final NvgFont MC_FONT;
+    //$$ @ApiStatus.Internal
+    //$$ public static final NvgFont MC_FONT;
     //$$ static {
     //$$     URL fontUrl = UGraphics.class.getResource("/fonts/Minecraft-Regular.otf");
     //$$     assert fontUrl != null;

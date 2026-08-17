@@ -19,13 +19,17 @@ internal data class ScissorState(val enabled: Boolean, val x: Int, val y: Int, v
         //$$     RenderSystem.SCISSOR_STATE.disable()
         //$$ }
         //#else
+        glActivate()
+        //#endif
+    }
+
+    fun glActivate() {
         if (enabled) {
             GL11.glEnable(GL11.GL_SCISSOR_TEST)
         } else {
             GL11.glDisable(GL11.GL_SCISSOR_TEST)
         }
         GL11.glScissor(x, y, width, height)
-        //#endif
     }
 
     fun coerceIn(x: Int, y: Int, width: Int, height: Int): ScissorState {
@@ -63,6 +67,11 @@ internal data class ScissorState(val enabled: Boolean, val x: Int, val y: Int, v
             //#elseif MC==12105
             //$$ return with(RenderSystem.SCISSOR_STATE) { ScissorState(isEnabled, x, y, width, height) }
             //#else
+            return glActive()
+            //#endif
+        }
+
+        fun glActive(): ScissorState {
             val bounds = tmpIntBuffer
                 //#if MC>=11600
                 //$$ .also { GL11.glGetIntegerv(GL11.GL_SCISSOR_BOX, it) }
@@ -76,7 +85,6 @@ internal data class ScissorState(val enabled: Boolean, val x: Int, val y: Int, v
                 width = bounds[2],
                 height = bounds[3],
             )
-            //#endif
         }
     }
 }

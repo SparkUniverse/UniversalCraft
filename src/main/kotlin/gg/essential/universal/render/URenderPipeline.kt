@@ -97,19 +97,29 @@ class URenderPipeline private constructor(
     //#if MC>=12105 && !STANDALONE
     //$$ private var shaderSourceGetter: ShaderSourceGetter?,
     //$$ internal val mcRenderPipeline: RenderPipeline,
+    //#if MC < 26.1
+    //$$ private val actualDepthTest: DepthTest?, // may be null for `wrap`ped pipeline
+    //#endif
     //#else
     private val shader: ShaderSupplier?,
     internal val glState: ManagedGlState,
     //#endif
 ) {
     //#if MC>=12105 && !STANDALONE
-    //$$ internal fun draw(renderPass: RenderPass, builtBuffer: BuiltBuffer) {
+    //$$ internal fun compiled(): RenderPipeline? {
+    //$$     val shaderSourceGetter = shaderSourceGetter
     //$$     if (shaderSourceGetter != null) {
     //$$         // Supply our shader sources to the render backend, need to do this each draw (it'll no-op if it's already
     //$$         // cached) because resource reloads will clear it again.
     //$$         RenderSystem.getDevice().precompilePipeline(mcRenderPipeline, shaderSourceGetter)
     //$$     }
-    //$$     renderPass.setPipeline(mcRenderPipeline)
+    //$$     return mcRenderPipeline
+    //$$ }
+    //#endif
+
+    //#if MC>=12105 && !STANDALONE
+    //$$ internal fun draw(renderPass: RenderPass, builtBuffer: BuiltBuffer) {
+    //$$     renderPass.setPipeline(compiled() ?: return)
     //$$
         //#if MC >= 26.2
         //$$ renderPass.drawIndexed(builtBuffer.drawState().indexCount, 1, 0, 0, 0)
@@ -273,6 +283,21 @@ class URenderPipeline private constructor(
         }
     }
     //#endif
+
+    internal val wantsDepthTexture: Boolean
+        // Prior to 26.1, MC's `wantsDepthTexture` also checks `depthMask`, but that defaults to `true` so it's
+        // useless for inferring whether a pipeline wants a depth texture (only those that expect a depth texture but
+        // don't want to overwrite it would ever set it), so we'll ignore that flag in our check.
+        //#if MC >= 26.1 && !STANDALONE
+        //$$ get() = mcRenderPipeline.wantsDepthTexture()
+        //#elseif MC >= 1.21.5 && !STANDALONE
+        //$$ get() = mcRenderPipeline.depthTestFunction != DepthTestFunction.NO_DEPTH_TEST
+        //$$         || (actualDepthTest != null && actualDepthTest != DepthTest.Disabled)
+        //$$         || mcRenderPipeline.depthBiasConstant != 0f
+        //$$         || mcRenderPipeline.depthBiasScaleFactor != 0f
+        //#else
+        get() = glState.depthTest || glState.polygonOffset
+        //#endif
 
     override fun toString(): String {
         return id.toString()
@@ -628,6 +653,9 @@ class URenderPipeline private constructor(
             //$$     format,
             //$$     shaderSourceGetter,
             //$$     mcRenderPipeline,
+                //#if MC < 26.1
+                //$$ depthTest,
+                //#endif
             //$$ )
             //#else
             return URenderPipeline(
@@ -708,7 +736,11 @@ class URenderPipeline private constructor(
             //#if MC >= 26.2
             //$$ URenderPipeline(mc.location, DrawMode.fromMc(mc.primitiveTopology), null, mc.vertexFormatBindings[0]!!, null, mc)
             //#else
-            //$$ URenderPipeline(mc.location, DrawMode.fromMc(mc.vertexFormatMode), null, mc.vertexFormat, null, mc)
+            //$$ URenderPipeline(mc.location, DrawMode.fromMc(mc.vertexFormatMode), null, mc.vertexFormat, null, mc,
+                //#if MC < 26.1
+                //$$ null,
+                //#endif
+            //$$ )
             //#endif
         //#endif
         //#if MC >= 26.2

@@ -44,4 +44,6 @@ sealed interface UGpuDevice {
     )
 
     fun createFence(): UGpuFence
+
+    fun createRenderPass(descriptor: URenderPassDescriptor): URenderPass
 }

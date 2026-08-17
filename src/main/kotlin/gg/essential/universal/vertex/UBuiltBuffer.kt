@@ -4,6 +4,7 @@ import gg.essential.universal.render.DrawCallBuilder
 import gg.essential.universal.render.URenderPassLegacyImpl
 import gg.essential.universal.render.URenderPipeline
 import org.jetbrains.annotations.ApiStatus.NonExtendable
+import java.nio.ByteBuffer
 
 //#if STANDALONE
 //#else
@@ -30,6 +31,13 @@ import net.minecraft.client.renderer.WorldRenderer as BuiltBuffer
  */
 @NonExtendable // will be cast to UBuiltBufferInternal
 interface UBuiltBuffer : AutoCloseable {
+    /**
+     * Returns the raw [ByteBuffer] data.
+     * This consumes the underlying [UBuiltBuffer], no method other than [close] may be called afterwards.
+     * The returned [ByteBuffer] is only guaranteed to be valid until [close] is called.
+     */
+    fun toByteBuffer(): ByteBuffer
+
     fun drawAndClose(pipeline: URenderPipeline, configure: DrawCallBuilder.() -> Unit = {}): Unit =
         use { draw(pipeline, configure) }
 

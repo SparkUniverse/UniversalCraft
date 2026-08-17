@@ -1704,6 +1704,7 @@ public abstract interface class gg/essential/universal/vertex/UBuiltBuffer : jav
 	@1.16.2-fabric,1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.11-fabric,1.21.3-fabric,1.21.4-fabric,1.21.5-fabric,1.21.6-fabric,1.21.7-fabric,1.21.9-fabric
 	public fun drawAndClose (Lnet/minecraft/client/render/RenderLayer;)V
 	public static synthetic fun drawAndClose$default (Lgg/essential/universal/vertex/UBuiltBuffer;Lgg/essential/universal/render/URenderPipeline;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public abstract fun toByteBuffer ()Ljava/nio/ByteBuffer;
 	@1.8.9-forge
 	public static fun wrap (Lnet/minecraft/client/renderer/WorldRenderer;)Lgg/essential/universal/vertex/UBuiltBuffer;
 	@1.21-forge,1.21-neoforge,1.21.11-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.1-neoforge,26.2-fabric

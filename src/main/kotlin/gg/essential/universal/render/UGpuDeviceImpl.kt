@@ -248,6 +248,20 @@ internal object UGpuDeviceImpl : UGpuDevice {
         require(mipLevels <= maxMipLevels) { "Texture of size ${width}x${height} supports at most $maxMipLevels but $mipLevels were requested" }
     }
 
+    override fun clearColor(texture: UGpuTexture, red: Float, green: Float, blue: Float, alpha: Float) {
+        require(UGpuTexture.Usage.COPY_DST in texture.impl.usage) { "Texture must have COPY_DST usage flag" }
+        clearColor(
+            texture,
+            URenderPassDescriptor.RenderArea(0, 0, texture.width, texture.height),
+            URenderPassDescriptor.ClearColor(red, green, blue, alpha),
+        )
+    }
+
+    override fun clearDepth(texture: UGpuTexture, depth: Double) {
+        require(UGpuTexture.Usage.COPY_DST in texture.impl.usage) { "Texture must have COPY_DST usage flag" }
+        clearDepth(texture, URenderPassDescriptor.RenderArea(0, 0, texture.width, texture.height), depth)
+    }
+
     override fun createBuffer(usage: UGpuBuffer.Usage, size: Long): UGpuBuffer {
         require(size <= Int.MAX_VALUE) { "Sizes greater than Int.MAX_VALUE are not supported" } // due to MC 1.21.6-9
         //#if MC >= 1.21.11 && !STANDALONE

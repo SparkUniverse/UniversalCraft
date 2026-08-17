@@ -190,10 +190,6 @@ internal class MCSamplerUniform(val mc: Shader, val name: String) : SamplerUnifo
     override val location: Int = 0
 
     override fun setValue(textureId: Int) {
-        //#if MC>=12102
-        //$$ mc.addSamplerTexture(name, textureId)
-        //#else
         mc.addSampler(name, textureId)
-        //#endif
     }
 }

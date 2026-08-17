@@ -238,7 +238,10 @@ class URenderPipeline private constructor(
             //$$     return
             //$$ }
             //#endif
-            null -> throw IllegalStateException()
+            null -> {
+                val index = name.removePrefix("Sampler").toIntOrNull() ?: return
+                UGraphics.Globals.bindTexture(index, glId)
+            }
         }
     }
 

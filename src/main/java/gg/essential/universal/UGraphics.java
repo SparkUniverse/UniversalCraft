@@ -67,7 +67,7 @@ import net.minecraft.client.renderer.Tessellator;
 //#if MC>=12106
 //$$ import com.mojang.blaze3d.systems.RenderPass;
 //$$ import com.mojang.blaze3d.textures.GpuTextureView;
-//$$ import gg.essential.universal.render.URenderPass;
+//$$ import gg.essential.universal.render.URenderPassLegacyImpl;
 //$$ import gg.essential.universal.render.URenderPipeline;
 //$$ import gg.essential.universal.vertex.UBuiltBuffer;
 //$$ import net.minecraft.client.font.BakedGlyph;
@@ -722,9 +722,9 @@ public class UGraphics {
                 //#else
                 //$$ GpuTextureView lightTexture = MinecraftClient.getInstance().gameRenderer.getLightmapTextureManager().getGlTextureView();
                 //#endif
-    //$$             try (URenderPass renderPass = new URenderPass()) {
+    //$$             try (URenderPassLegacyImpl renderPass = new URenderPassLegacyImpl()) {
     //$$                 renderPass.draw(UBuiltBuffer.wrap(builtBuffer), URenderPipeline.wrap(pipeline), builder -> {
-    //$$                     RenderPass mcRenderPass = ((URenderPass.DrawCallBuilderImpl) builder).getMc();
+    //$$                     RenderPass mcRenderPass = ((URenderPassLegacyImpl.DrawCallBuilderImpl) builder).getMc();
                         //#if MC>=12111
                         //$$ mcRenderPass.bindTexture("Sampler0", texture, RenderSystem.getSamplerCache().get(FilterMode.NEAREST));
                         //$$ mcRenderPass.bindTexture("Sampler2", lightTexture, RenderSystem.getSamplerCache().get(FilterMode.LINEAR));

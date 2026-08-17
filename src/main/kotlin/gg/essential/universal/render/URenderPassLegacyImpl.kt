@@ -38,12 +38,19 @@ import kotlin.ranges.coerceIn
 //#endif
 //#endif
 
-// Kept internal for now because I'm not yet sure how Mojang will evolve their RenderPass.
-// At the moment we can't keep it open across draw calls because MC prevents uploading any new buffers while the render
-// pass is active. Not sure if that's intentional.
-// For older versions it would definitely be useful to issue multiple draw calls via one URenderPass object because
-// we can cache the global GL state between calls and don't need to re-query and reset everything on every draw.
-internal class URenderPass : AutoCloseable {
+/**
+ * Legacy [DrawCallBuilder]-based render pass implementation.
+ * Compared to proper URenderPass, it has the following shortcomings:
+ * - Always draws to the main MC framebuffer (with RenderSystem override on versions that support it).
+ * - Implicitly uses global scissor state if not explicitly specified.
+ * - Implicitly uses global dynamic uniforms (e.g. model-view matrix, texture matrix, model offset, etc.).
+ * - Implicitly uses global default uniforms (e.g. projection matrix).
+ * - Only supports rendering from [UBuiltBuffer]. No way to render the same buffer multiple times. No way to specify
+ *   custom index buffer.
+ * - Uses a separate underlying MC `RenderPass` for each draw because it may need to write to GpuBuffers before each
+ *   draw and writing to buffers is not supported during a `RenderPass`.
+ */
+internal class URenderPassLegacyImpl : AutoCloseable {
     //#if MC>=12105 && !STANDALONE
     //#else
     private val prevGlState = ManagedGlState.active()

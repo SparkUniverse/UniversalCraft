@@ -1,7 +1,7 @@
 package gg.essential.universal.vertex
 
 import gg.essential.universal.render.DrawCallBuilder
-import gg.essential.universal.render.URenderPass
+import gg.essential.universal.render.URenderPassLegacyImpl
 import gg.essential.universal.render.URenderPipeline
 import org.jetbrains.annotations.ApiStatus.NonExtendable
 
@@ -34,7 +34,7 @@ interface UBuiltBuffer : AutoCloseable {
         use { draw(pipeline, configure) }
 
     fun draw(pipeline: URenderPipeline, configure: DrawCallBuilder.() -> Unit = {}) {
-        URenderPass().use { renderPass ->
+        URenderPassLegacyImpl().use { renderPass ->
             renderPass.draw(this, pipeline, configure)
         }
     }

@@ -10,6 +10,20 @@ import org.lwjgl.opengl.GL21
 import org.lwjgl.opengl.GL30
 import org.lwjgl.opengl.GL31
 
+//#if MC>=11700
+//$$ import org.lwjgl.opengl.GL30.glBindFramebuffer
+//$$ import org.lwjgl.opengl.GL30.glFramebufferTexture2D
+//$$ import org.lwjgl.opengl.GL30.glGenFramebuffers
+//#elseif MC>=11400
+//$$ import com.mojang.blaze3d.platform.GlStateManager.bindFramebuffer as glBindFramebuffer
+//$$ import com.mojang.blaze3d.platform.GlStateManager.framebufferTexture2D as glFramebufferTexture2D
+//$$ import com.mojang.blaze3d.platform.GlStateManager.genFramebuffers as glGenFramebuffers
+//#else
+import net.minecraft.client.renderer.OpenGlHelper.glBindFramebuffer
+import net.minecraft.client.renderer.OpenGlHelper.glFramebufferTexture2D
+import net.minecraft.client.renderer.OpenGlHelper.glGenFramebuffers
+//#endif
+
 //#if STANDALONE
 //$$ import org.lwjgl.opengl.GL20C
 //#else
@@ -463,6 +477,97 @@ internal object UGpuDeviceImpl : UGpuDevice {
     override fun createFence(): UGpuFence {
         return UGpuFenceImpl()
     }
+
+    override fun createRenderPass(descriptor: URenderPassDescriptor): URenderPass {
+        return URenderPassImpl(descriptor)
+    }
+
+    //#if MC < 26.2 || STANDALONE
+    private val colorReadFrameBuffer by lazy { glGenFramebuffers() }
+    private val colorWriteFrameBuffer by lazy { glGenFramebuffers() }
+    private val depthReadFrameBuffer by lazy { genDepthOnlyFrameBuffer() }
+    private val depthWriteFrameBuffer by lazy { genDepthOnlyFrameBuffer() }
+    private fun genDepthOnlyFrameBuffer() = glGenFramebuffers().also { id ->
+        val prevDrawFrameBufferBinding = GL11.glGetInteger(GL30.GL_DRAW_FRAMEBUFFER_BINDING)
+        val prevReadFrameBufferBinding = GL11.glGetInteger(GL30.GL_READ_FRAMEBUFFER_BINDING)
+        glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, id)
+        glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, id)
+        // Prior to GL 4.1, read and draw buffers (both!) must be explicitly set to NONE if the framebuffer does not
+        // have a color attachment, otherwise it will not be considered complete and operations on it may error.
+        GL11.glDrawBuffer(GL11.GL_NONE)
+        GL11.glReadBuffer(GL11.GL_NONE)
+        glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, prevDrawFrameBufferBinding)
+        glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, prevReadFrameBufferBinding)
+    }
+
+    inline fun <T> withDrawFramebuffer(color: UGpuTexture?, depth: UGpuTexture?, block: () -> T): T {
+        val prevDrawFrameBufferBinding = GL11.glGetInteger(GL30.GL_DRAW_FRAMEBUFFER_BINDING)
+        glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, if (color == null) depthWriteFrameBuffer else colorWriteFrameBuffer)
+        if (color != null) glFramebufferTexture2D(GL30.GL_DRAW_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, color.impl.glId, 0)
+        if (depth != null) glFramebufferTexture2D(GL30.GL_DRAW_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, depth.impl.glId, 0)
+        try {
+            return block()
+        } finally {
+            glFramebufferTexture2D(GL30.GL_DRAW_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, 0, 0)
+            glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, prevDrawFrameBufferBinding)
+        }
+    }
+    //#endif
+
+    // FIXME 26.2+ doesn't respect `area`; though we also don't yet need it
+    fun clearColor(texture: UGpuTexture, area: URenderPassDescriptor.RenderArea, color: URenderPassDescriptor.ClearColor) {
+        //#if MC >= 26.2 && !STANDALONE
+        //$$ RenderSystem.getDevice().createCommandEncoder()
+        //$$     .clearColorTexture(texture.impl.mc, org.joml.Vector4f(color.red, color.blue, color.green, color.alpha))
+        //#else
+        withDrawFramebuffer(texture, null) {
+            //#if STANDALONE
+            //$$ GL11.glColorMask(true, true, true, true)
+            //#elseif MC >= 26.1
+            //$$ GlStateManager._colorMask(com.mojang.blaze3d.pipeline.ColorTargetState.WRITE_ALL)
+            //#elseif MC>=12105
+            //$$ GlStateManager._colorMask(true, true, true, true)
+            //#else
+            GlStateManager.colorMask(true, true, true, true)
+            //#endif
+            UGraphics.clearColor(color.red, color.green, color.blue, color.alpha)
+            glClear(GL11.GL_COLOR_BUFFER_BIT, area)
+        }
+        //#endif
+    }
+
+    // FIXME 26.2+ doesn't respect `area`; though we also don't yet need it
+    fun clearDepth(texture: UGpuTexture, area: URenderPassDescriptor.RenderArea, depth: Double) {
+        //#if MC >= 26.2 && !STANDALONE
+        //$$ RenderSystem.getDevice().createCommandEncoder()
+        //$$     .clearDepthTexture(texture.impl.mc, depth)
+        //#else
+        withDrawFramebuffer(null, texture) {
+            //#if STANDALONE
+            //$$ GL11.glDepthMask(true)
+            //#elseif MC>=12105
+            //$$ GlStateManager._depthMask(true)
+            //#else
+            GlStateManager.depthMask(true)
+            //#endif
+            UGraphics.clearDepth(depth)
+            glClear(GL11.GL_DEPTH_BUFFER_BIT, area)
+        }
+        //#endif
+    }
+
+    //#if MC < 26.2 || STANDALONE
+    private fun glClear(bits: Int, area: URenderPassDescriptor.RenderArea) {
+        val scissorState = ScissorState(true, area.x, area.y, area.width, area.height)
+
+        val prevScissorState = ScissorState.glActive()
+        if (prevScissorState != scissorState) scissorState.glActivate()
+
+        GL11.glClear(bits)
+
+        if (prevScissorState != scissorState) prevScissorState.glActivate()
+    }
+    //#endif
 
     //#if MC >= 26.2 && !STANDALONE
     //$$ private val lookup = MethodHandles.lookup()

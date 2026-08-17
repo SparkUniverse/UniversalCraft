@@ -1,2 +1,3 @@
 net.minecraft.client.render.VertexFormatElement type() getComponentType()
 net.minecraft.client.render.VertexFormatElement usage() getType()
+net.minecraft.client.render.VertexFormatElement getSizeInBytes() getByteLength()

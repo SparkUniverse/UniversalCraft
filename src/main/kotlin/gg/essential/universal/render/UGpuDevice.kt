@@ -20,6 +20,9 @@ sealed interface UGpuDevice {
         mipLevels: Int = texture.mipLevels,
     ): UGpuTextureView
 
+    fun clearColor(texture: UGpuTexture, red: Float, green: Float, blue: Float, alpha: Float)
+    fun clearDepth(texture: UGpuTexture, depth: Double)
+
     fun createBuffer(usage: UGpuBuffer.Usage, size: Long): UGpuBuffer
     fun createBuffer(usage: UGpuBuffer.Usage, buffer: ByteBuffer): UGpuBuffer
 

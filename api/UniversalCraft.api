@@ -1459,6 +1459,35 @@ public final class gg/essential/universal/render/URenderPipeline$DepthTest : jav
 	public static fun values ()[Lgg/essential/universal/render/URenderPipeline$DepthTest;
 }
 
+public final class gg/essential/universal/render/font/UFontRenderer : java/lang/AutoCloseable {
+	public fun <init> ()V
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.11-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.1-neoforge,26.2-fabric
+	public fun <init> (Lnet/minecraft/client/gui/Font;)V
+	@1.16.2-fabric,1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.11-fabric,1.21.3-fabric,1.21.4-fabric,1.21.5-fabric,1.21.6-fabric,1.21.7-fabric,1.21.9-fabric
+	public fun <init> (Lnet/minecraft/client/font/TextRenderer;)V
+	@1.12.2-forge,1.16.2-forge,1.8.9-forge
+	public fun <init> (Lnet/minecraft/client/gui/FontRenderer;)V
+	public fun close ()V
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.11-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.1-neoforge,26.2-fabric
+	public final fun getMc ()Lnet/minecraft/client/gui/Font;
+	@1.16.2-fabric,1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.11-fabric,1.21.3-fabric,1.21.4-fabric,1.21.5-fabric,1.21.6-fabric,1.21.7-fabric,1.21.9-fabric
+	public final fun getMc ()Lnet/minecraft/client/font/TextRenderer;
+	@1.12.2-forge,1.16.2-forge,1.8.9-forge
+	public final fun getMc ()Lnet/minecraft/client/gui/FontRenderer;
+	public final fun render (Lgg/essential/universal/render/UGpuTextureView;Ljava/util/List;)V
+}
+
+public final class gg/essential/universal/render/font/UFontRenderer$Text {
+	public fun <init> (IIFLjava/lang/String;IZLjava/lang/Integer;)V
+	public final fun getColor ()I
+	public final fun getScale ()F
+	public final fun getShadow ()Z
+	public final fun getShadowColor ()Ljava/lang/Integer;
+	public final fun getText ()Ljava/lang/String;
+	public final fun getX ()I
+	public final fun getY ()I
+}
+
 public final class gg/essential/universal/shader/BlendState {
 	public static final field ALPHA Lgg/essential/universal/shader/BlendState;
 	public static final field Companion Lgg/essential/universal/shader/BlendState$Companion;

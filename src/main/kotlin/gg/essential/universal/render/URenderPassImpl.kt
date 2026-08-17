@@ -234,6 +234,13 @@ internal class URenderPassImpl(val descriptor: URenderPassDescriptor) : URenderP
         this.pipeline = pipeline
     }
 
+    //#if MC < 26.2
+    /** Skips the [URenderPipeline.wantsDepthTexture] check where it is safe to do so. */
+    internal fun pipelineUnchecked(pipeline: URenderPipeline) {
+        this.pipeline = pipeline
+    }
+    //#endif
+
     override fun vertexBuffer(slot: Int, buffer: UGpuBufferSlice) {
         require(slot == 0) { "Slots other than 0 are not yet supported" }
         require(buffer.offset == 0L) { "Buffer offsets are not yet supported" }

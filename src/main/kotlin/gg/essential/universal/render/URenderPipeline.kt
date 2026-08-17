@@ -12,6 +12,7 @@ import org.lwjgl.opengl.GL11
 //$$ import gg.essential.universal.standalone.render.DefaultShader
 //$$ import gg.essential.universal.standalone.render.VertexFormat
 //$$ import gg.essential.universal.vertex.UBuiltBufferInternal
+//$$ import org.lwjgl.opengl.GL20C
 //$$ typealias ResourceLocation = String
 //#else
 import net.minecraft.client.renderer.vertex.VertexFormat
@@ -121,7 +122,7 @@ class URenderPipeline private constructor(
     //#else
     internal fun draw(builtBuffer: UBuiltBufferInternal) {
         //#if STANDALONE
-        //$$ UGraphics.RENDERER.draw(builtBuffer.mc, drawMode, if (shader == null) DefaultShader.get(format.parts) else null)
+        //$$ UGraphics.RENDERER.draw(builtBuffer.mc, drawMode)
         //#else
         val mcBuiltBuffer = builtBuffer.mc
         //#if MC>=11900
@@ -184,18 +185,10 @@ class URenderPipeline private constructor(
 
     internal fun uniform(name: String, vararg values: Float) {
         when (shader) {
-            is ShaderSupplier.LegacySource -> {
-                val shader = shader.shader
-                when (values.size) {
-                    1 -> shader.getFloatUniformOrNull(name)?.setValue(values[0])
-                    2 -> shader.getFloat2UniformOrNull(name)?.setValue(values[0], values[1])
-                    3 -> shader.getFloat3UniformOrNull(name)?.setValue(values[0], values[1], values[2])
-                    4 -> shader.getFloat4UniformOrNull(name)?.setValue(values[0], values[1], values[2], values[3])
-                    9, 16 -> shader.getFloatMatrixUniformOrNull(name)?.setValue(values)
-                    else -> throw UnsupportedOperationException()
-                }
-            }
-            //#if MC>=11700 && !STANDALONE
+            is ShaderSupplier.LegacySource -> uniform(shader.shader, name, values)
+            //#if STANDALONE
+            //$$ is ShaderSupplier.Default -> uniform(shader.shader.shader, name, values)
+            //#elseif MC>=11700
             //$$ is ShaderSupplier.Mc -> {
             //$$     val shader = shader.shader.get()
             //$$     shader.getUniform(name)?.set(values)
@@ -208,14 +201,10 @@ class URenderPipeline private constructor(
 
     internal fun uniform(name: String, vararg values: Int) {
         when (shader) {
-            is ShaderSupplier.LegacySource -> {
-                val shader = shader.shader
-                when (values.size) {
-                    1 -> shader.getIntUniformOrNull(name)?.setValue(values[0])
-                    else -> throw UnsupportedOperationException()
-                }
-            }
-            //#if MC>=11700 && !STANDALONE
+            is ShaderSupplier.LegacySource -> uniform(shader.shader, name, values)
+            //#if STANDALONE
+            //$$ is ShaderSupplier.Default -> uniform(shader.shader.shader, name, values)
+            //#elseif MC>=11700
             //$$ is ShaderSupplier.Mc -> {
             //$$     val shader = shader.shader.get()
             //$$     shader.getUniform(name)?.set(values[0])
@@ -223,6 +212,24 @@ class URenderPipeline private constructor(
             //$$ }
             //#endif
             null -> throw IllegalStateException()
+        }
+    }
+
+    private fun uniform(shader: UShader, name: String, values: FloatArray) {
+        when (values.size) {
+            1 -> shader.getFloatUniformOrNull(name)?.setValue(values[0])
+            2 -> shader.getFloat2UniformOrNull(name)?.setValue(values[0], values[1])
+            3 -> shader.getFloat3UniformOrNull(name)?.setValue(values[0], values[1], values[2])
+            4 -> shader.getFloat4UniformOrNull(name)?.setValue(values[0], values[1], values[2], values[3])
+            9, 16 -> shader.getFloatMatrixUniformOrNull(name)?.setValue(values)
+            else -> throw UnsupportedOperationException()
+        }
+    }
+
+    private fun uniform(shader: UShader, name: String, values: IntArray) {
+        when (values.size) {
+            1 -> shader.getIntUniformOrNull(name)?.setValue(values[0])
+            else -> throw UnsupportedOperationException()
         }
     }
 
@@ -237,6 +244,9 @@ class URenderPipeline private constructor(
             //$$     RenderSystem.setShaderTexture(index, glId)
             //$$     return
             //$$ }
+            //#endif
+            //#if STANDALONE
+            //$$ is ShaderSupplier.Default,
             //#endif
             null -> {
                 val index = name.removePrefix("Sampler").toIntOrNull() ?: return
@@ -255,6 +265,9 @@ class URenderPipeline private constructor(
             //$$     RenderSystem.setShaderTexture(index, glId)
             //$$     return
             //$$ }
+            //#endif
+            //#if STANDALONE
+            //$$ is ShaderSupplier.Default,
             //#endif
             null -> UGraphics.Globals.bindTexture(index, glId)
         }
@@ -333,6 +346,19 @@ class URenderPipeline private constructor(
             }
             //#endif
         }
+
+        //#if STANDALONE
+        //$$ class Default(val shader: DefaultShader) : ShaderSupplier {
+        //$$     override fun bind(blendState: BlendState) {
+        //$$         shader.uSampler?.setValue(GL20C.glGetInteger(GL20C.GL_TEXTURE_BINDING_2D))
+        //$$         (shader.shader as GlShader).bind(skipBlendState = true)
+        //$$     }
+        //$$
+        //$$     override fun unbind() {
+        //$$         (shader.shader as GlShader).unbind(skipBlendState = true)
+        //$$     }
+        //$$ }
+        //#endif
 
         //#if MC>=11700 && !STANDALONE
         //#if MC>=12105

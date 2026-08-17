@@ -1452,7 +1452,16 @@ public class UGraphics {
     //$$     if (vertexFormat == null) {
     //$$         throw new IllegalStateException("Must call `begin` before `draw`.");
     //$$     }
-    //$$     RENDERER.draw(instance, drawMode, shader);
+    //$$     if (shader != null) {
+    //$$         if (shader.getUSampler() != null) {
+    //$$             shader.getUSampler().setValue(GL20.glGetInteger(GL20.GL_TEXTURE_BINDING_2D));
+    //$$         }
+    //$$         shader.getShader().bind();
+    //$$     }
+    //$$     RENDERER.draw(instance, drawMode);
+    //$$     if (shader != null) {
+    //$$         shader.getShader().unbind();
+    //$$     }
     //$$ }
     //#else
     private void doDraw(

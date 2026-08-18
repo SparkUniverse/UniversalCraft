@@ -1117,6 +1117,17 @@ public abstract interface class gg/essential/universal/render/DrawCallBuilder {
 	public abstract fun uniform (Ljava/lang/String;[I)Lgg/essential/universal/render/DrawCallBuilder;
 }
 
+public abstract interface class gg/essential/universal/render/SharedIndexBuffer {
+	public abstract fun invoke (I)Lkotlin/Pair;
+}
+
+public final class gg/essential/universal/render/SharedIndexBuffers {
+	public static final field INSTANCE Lgg/essential/universal/render/SharedIndexBuffers;
+	public final fun getQuads ()Lgg/essential/universal/render/SharedIndexBuffer;
+	public final fun getSequential ()Lgg/essential/universal/render/SharedIndexBuffer;
+	public final fun getTriangleFan ()Lgg/essential/universal/render/SharedIndexBuffer;
+}
+
 public abstract interface class gg/essential/universal/render/UGpuBuffer : java/io/Closeable {
 	public abstract fun getSize ()J
 	public abstract fun isClosed ()Z

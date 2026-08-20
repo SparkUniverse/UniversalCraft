@@ -6,6 +6,8 @@ import gg.essential.universal.render.UGpuSampler.FilterMode
 //#if MC >= 1.21.11 && !STANDALONE
 //$$ import com.mojang.blaze3d.systems.RenderSystem
 //$$ import net.minecraft.client.gl.GpuSampler
+//#elseif MC >= 1.21.6 && !STANDALONE
+//$$ import com.mojang.blaze3d.textures.GpuTexture
 //#else
 import gg.essential.universal.UGraphics
 import org.lwjgl.opengl.GL11
@@ -26,6 +28,23 @@ internal data class UGpuSamplerImpl(
     val useMipmaps: Boolean,
 ) : UGpuSampler {
 
+    //#if MC >= 1.21.6 && !STANDALONE
+    //$$ private val AddressMode.mc: com.mojang.blaze3d.textures.AddressMode
+    //$$     get() = when (this) {
+    //$$         AddressMode.REPEAT -> com.mojang.blaze3d.textures.AddressMode.REPEAT
+    //$$         AddressMode.CLAMP_TO_EDGE -> com.mojang.blaze3d.textures.AddressMode.CLAMP_TO_EDGE
+    //$$     }
+    //$$ private val FilterMode.mc: com.mojang.blaze3d.textures.FilterMode
+    //$$     get() = when (this) {
+    //$$         FilterMode.NEAREST -> com.mojang.blaze3d.textures.FilterMode.NEAREST
+    //$$         FilterMode.LINEAR -> com.mojang.blaze3d.textures.FilterMode.LINEAR
+    //$$     }
+    //$$
+    //$$ fun configureTexture(texture: GpuTexture) {
+    //$$     texture.setAddressMode(addressModeU.mc, addressModeV.mc)
+    //$$     texture.setTextureFilter(minFilter.mc, magFilter.mc, useMipmaps)
+    //$$ }
+    //#else
     private val AddressMode.gl: Int
         get() = when (this) {
             AddressMode.REPEAT -> GL11.GL_REPEAT
@@ -46,5 +65,6 @@ internal data class UGpuSamplerImpl(
             GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MAX_LOD, if (useMipmaps) 1000f else 0f)
         }
     }
+    //#endif
 }
 //#endif

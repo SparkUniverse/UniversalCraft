@@ -1191,7 +1191,17 @@ public abstract interface class gg/essential/universal/render/UGpuDevice {
 	public static synthetic fun createTexture$default (Lgg/essential/universal/render/UGpuDevice;Ljava/lang/String;Lgg/essential/universal/render/UGpuTexture$Usage;Lgg/essential/universal/render/UGpuFormat;IIIILjava/lang/Object;)Lgg/essential/universal/render/UGpuTexture;
 	public abstract fun createTextureView (Lgg/essential/universal/render/UGpuTexture;II)Lgg/essential/universal/render/UGpuTextureView;
 	public static synthetic fun createTextureView$default (Lgg/essential/universal/render/UGpuDevice;Lgg/essential/universal/render/UGpuTexture;IIILjava/lang/Object;)Lgg/essential/universal/render/UGpuTextureView;
+	public abstract fun getInfo ()Lgg/essential/universal/render/UGpuDevice$Info;
 	public abstract fun mapBuffer (Lgg/essential/universal/render/UGpuBufferSlice;ZZ)Lgg/essential/universal/render/UGpuDevice$MappedBuffer;
+}
+
+public abstract interface class gg/essential/universal/render/UGpuDevice$Info {
+	public abstract fun getLimits ()Lgg/essential/universal/render/UGpuDevice$Limits;
+	public abstract fun isZZeroToOne ()Z
+}
+
+public abstract interface class gg/essential/universal/render/UGpuDevice$Limits {
+	public abstract fun maxTextureSize (Lgg/essential/universal/render/UGpuFormat;)I
 }
 
 public abstract interface class gg/essential/universal/render/UGpuDevice$MappedBuffer : java/lang/AutoCloseable {

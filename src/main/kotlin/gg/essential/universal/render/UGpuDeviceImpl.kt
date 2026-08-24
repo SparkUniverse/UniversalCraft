@@ -72,6 +72,62 @@ internal object UGpuDeviceImpl : UGpuDevice {
     val OpenGL30 by lazy { org.lwjgl.opengl.GLContext.getCapabilities().OpenGL30 }
     //#endif
 
+    override val info: UGpuDevice.Info = object : UGpuDevice.Info {
+        override val isZZeroToOne: Boolean
+            //#if MC >= 26.2 && !STANDALONE
+            //$$ get() = RenderSystem.getDevice().deviceInfo.isZZeroToOne
+            //#else
+            get() = false
+            //#endif
+
+        override val limits: UGpuDevice.Limits = object : UGpuDevice.Limits {
+            //#if MC < 26.2 || STANDALONE
+            private val maxTextureSize = mutableMapOf<UGpuFormat, Int>()
+            private fun queryMaxTextureSize(format: UGpuFormat): Int {
+                var size = GL11.glGetInteger(GL11.GL_MAX_TEXTURE_SIZE)
+                // While above is what the GPU can address, that may be much larger than what it can actually
+                // allocate, so we'll scan downwards until we find a size that actually works.
+                while (true) {
+                    // As of OpenGL 3.0 the required minimum is 1024, so if we can't even get that, something's
+                    // probably wrong with the format or driver.
+                    // (Technically, since we support OpenGL 2.1 on MC 1.8.9, the minimum required is just 64; but
+                    //  that is completely unreasonable for a full game; any realistically we'll only be running on
+                    //  3.0+ capable hardware anyway.)
+                    if (size < 1024) {
+                        return 1024
+                    }
+                    // PROXY_TEXTURE_2D is a special target which runs all the validation without actually
+                    // allocating a texture. And if that fails, it simply sets all texture parameters to 0
+                    // instead of emitting an error.
+                    GL11.glTexImage2D(
+                        GL11.GL_PROXY_TEXTURE_2D,
+                        0,
+                        format.impl.internalFormat,
+                        size,
+                        size,
+                        0,
+                        format.impl.format,
+                        format.impl.type,
+                        null as ByteBuffer?,
+                    )
+                    val width = GL11.glGetTexLevelParameteri(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH)
+                    if (width != 0) {
+                        return size
+                    }
+                    size = size shr 1
+                }
+            }
+            //#endif
+
+            override fun maxTextureSize(format: UGpuFormat): Int =
+                //#if MC >= 26.2 && !STANDALONE
+                //$$ RenderSystem.getDevice().deviceInfo.limits.maxTextureSizeForFormat(format.impl.mc)
+                //#else
+                maxTextureSize.getOrPut(format) { queryMaxTextureSize(format) }
+                //#endif
+        }
+    }
+
     private val tmpVao by lazy { GL30.glGenVertexArrays() }
 
     override fun createTexture(

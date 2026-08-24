@@ -52,6 +52,9 @@ internal object UGpuDeviceImpl : UGpuDevice {
         //#else
         return createGlTexture(label, usage, format.impl, width, height, mipLevels)
         //#endif
+            //#if MC >= 1.21.5 && MC < 26.2
+            //$$ .also { FboCacheFix.track(it.impl.mc) }
+            //#endif
     }
 
     //#if MC >= 1.21.5 && !STANDALONE
@@ -182,6 +185,9 @@ internal object UGpuDeviceImpl : UGpuDevice {
         //#else
         return UGpuTextureViewImpl(texture.impl, baseMipLevel, mipLevels)
         //#endif
+            //#if MC >= 1.21.6 && MC < 26.2
+            //$$ .also { FboCacheFix.track(it.impl.mc) }
+            //#endif
     }
 
     internal fun requireValidTextureSize(width: Int, height: Int, mipLevels: Int) {

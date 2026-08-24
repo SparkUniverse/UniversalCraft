@@ -5,6 +5,8 @@ import java.nio.ByteBuffer
 
 @NonExtendable
 sealed interface UGpuDevice {
+    val info: Info
+
     fun createTexture(
         label: String?,
         usage: UGpuTexture.Usage,
@@ -49,4 +51,15 @@ sealed interface UGpuDevice {
     fun createFence(): UGpuFence
 
     fun createRenderPass(descriptor: URenderPassDescriptor): URenderPass
+
+    @NonExtendable
+    interface Info {
+        val isZZeroToOne: Boolean
+        val limits: Limits
+    }
+
+    @NonExtendable
+    interface Limits {
+        fun maxTextureSize(format: UGpuFormat): Int
+    }
 }

@@ -91,7 +91,7 @@ internal object UGpuDeviceImpl : UGpuDevice {
                     // As of OpenGL 3.0 the required minimum is 1024, so if we can't even get that, something's
                     // probably wrong with the format or driver.
                     // (Technically, since we support OpenGL 2.1 on MC 1.8.9, the minimum required is just 64; but
-                    //  that is completely unreasonable for a full game; any realistically we'll only be running on
+                    //  that is completely unreasonable for a full game; and realistically we'll only be running on
                     //  3.0+ capable hardware anyway.)
                     if (size < 1024) {
                         return 1024

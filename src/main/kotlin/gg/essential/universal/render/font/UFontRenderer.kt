@@ -188,6 +188,7 @@ class UFontRenderer(
         //$$         renderPass.drawIndexed(drawCall.indexCount)
         //$$     }
         //$$ }
+        //$$ drawCalls.forEach { it.vertexBuffer.close() }
         //#else
         val texture = destination.texture
         withDrawFramebuffer(texture) {

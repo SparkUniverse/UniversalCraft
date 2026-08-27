@@ -33,7 +33,10 @@ object SharedIndexBuffers {
         //$$ SharedIndexBufferFromMc(UGraphics.DrawMode.QUADS, 4, 6)
         //#else
         object : IndexBufferBuilder() {
-            override fun vertCountToIndexCount(vertices: Int): Int = vertices / 4 * 6
+            override fun vertCountToIndexCount(vertices: Int): Int {
+                require(vertices % 4 == 0)
+                return vertices / 4 * 6
+            }
 
             override fun fill(buf: IntBuffer) {
                 var vert = 0
@@ -56,7 +59,10 @@ object SharedIndexBuffers {
     /** Forms a triangle for each vertex using the previous vertex and the 0th vertex: 0 1 2 0 2 3 0 3 4 0 4 5 */
     val triangleFan: SharedIndexBuffer =
         object : IndexBufferBuilder() {
-            override fun vertCountToIndexCount(vertices: Int): Int = (vertices - 2) * 3
+            override fun vertCountToIndexCount(vertices: Int): Int {
+                require(vertices >= 3)
+                return (vertices - 2) * 3
+            }
 
             override fun fill(buf: IntBuffer) {
                 var vert = 0
@@ -113,6 +119,7 @@ private abstract class IndexBufferBuilder : SharedIndexBuffer {
 //$$     val indicesPerPrimitive: Int,
 //$$ ) : SharedIndexBuffer {
 //$$     override fun invoke(vertices: Int): Pair<UGpuBuffer, URenderPass.IndexType> {
+//$$         require(vertices % verticesPerPrimitive == 0)
 //$$         val indices = vertices / verticesPerPrimitive * indicesPerPrimitive
 //$$         val mc = com.mojang.blaze3d.systems.RenderSystem.getSequentialBuffer(drawMode.mcMode)
 //$$         val gpuBuffer = UGraphics.getPlatformAdapter().buffer(mc.getIndexBuffer(indices))

@@ -129,7 +129,7 @@ internal class URenderPassImpl(val descriptor: URenderPassDescriptor) : URenderP
                 //$$ descriptor.colorAttachments.single().first.texture.impl.mc,
                 //#endif
                 //#if MC >= 26.2
-                //$$ descriptor.colorAttachments.single().second?.let { Optional.of(org.joml.Vector4f(it.red, it.blue, it.green, it.alpha)) } ?: Optional.empty(),
+                //$$ descriptor.colorAttachments.single().second?.let { Optional.of(org.joml.Vector4f(it.red, it.green, it.blue, it.alpha)) } ?: Optional.empty(),
                 //#else
                 //$$ OptionalInt.empty(),
                 //#endif

@@ -588,7 +588,7 @@ internal object UGpuDeviceImpl : UGpuDevice {
     fun clearColor(texture: UGpuTexture, area: URenderPassDescriptor.RenderArea, color: URenderPassDescriptor.ClearColor) {
         //#if MC >= 26.2 && !STANDALONE
         //$$ RenderSystem.getDevice().createCommandEncoder()
-        //$$     .clearColorTexture(texture.impl.mc, org.joml.Vector4f(color.red, color.blue, color.green, color.alpha))
+        //$$     .clearColorTexture(texture.impl.mc, org.joml.Vector4f(color.red, color.green, color.blue, color.alpha))
         //#else
         withDrawFramebuffer(texture, null) {
             //#if STANDALONE

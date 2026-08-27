@@ -454,7 +454,7 @@ internal object UGpuDeviceImpl : UGpuDevice {
         arrayLayer: Int,
     ) {
         val destinationWidth = destination.width shr mipLevel
-        val destinationHeight = destination.width shr mipLevel
+        val destinationHeight = destination.height shr mipLevel
         require(!source.buffer.isClosed) { "Source buffer is closed" }
         require(!destination.isClosed) { "Destination texture is closed" }
         require(UGpuBuffer.Usage.COPY_SRC in source.buffer.impl.usage) { "Source buffer must have COPY_SRC usage flag" }

@@ -88,7 +88,7 @@ private abstract class IndexBufferBuilder : SharedIndexBuffer {
 
     override operator fun invoke(vertices: Int): Pair<UGpuBuffer, URenderPass.IndexType> {
         val indices = vertCountToIndexCount(vertices)
-        val bytesSize = indices * 4
+        val bytesSize = indices * Int.SIZE_BYTES
 
         val existing = gpuBuffer
         if (existing != null && existing.size >= bytesSize) return Pair(existing, URenderPass.IndexType.INT)

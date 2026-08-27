@@ -42,5 +42,5 @@ data class UGpuBufferSlice(val buffer: UGpuBuffer, val offset: Long, val size: L
     }
 
     fun slice(offset: Long = 0, size: Long = this.size - offset) =
-        UGpuBufferSlice(this.buffer, this.offset + offset, this.size + size)
+        UGpuBufferSlice(this.buffer, this.offset + offset, size)
 }

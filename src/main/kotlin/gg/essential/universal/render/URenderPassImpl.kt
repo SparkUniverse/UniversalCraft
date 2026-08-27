@@ -277,14 +277,14 @@ internal class URenderPassImpl(val descriptor: URenderPassDescriptor) : URenderP
     override fun projectionMatrix(matrix: FloatArray) {
         require(matrix.size == 16) { "Matrix must have 16 entries (4x4)"}
         if (matrix.contentEquals(projectionMatrix)) return
-        projectionMatrix = matrix
+        projectionMatrix = matrix.copyOf()
         projectionUboDirty = true
     }
 
     override fun modelViewMatrix(matrix: FloatArray) {
         require(matrix.size == 16) { "Matrix must have 16 entries (4x4)"}
         if (matrix.contentEquals(modelViewMatrix)) return
-        modelViewMatrix = matrix
+        modelViewMatrix = matrix.copyOf()
         dynamicTransformsUboDirty = true
     }
 

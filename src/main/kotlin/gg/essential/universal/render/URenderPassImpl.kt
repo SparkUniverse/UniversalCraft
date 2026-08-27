@@ -668,8 +668,8 @@ internal class URenderPassImpl(val descriptor: URenderPassDescriptor) : URenderP
     @Suppress("DEPRECATION")
     private val UGraphics.DrawMode.actualGlMode: Int
         get() = when (this) {
-            UGraphics.DrawMode.LINES -> GL11.GL_TRIANGLES
-            UGraphics.DrawMode.LINE_STRIP -> GL11.GL_TRIANGLE_STRIP
+            UGraphics.DrawMode.LINES,
+            UGraphics.DrawMode.LINE_STRIP -> throw UnsupportedOperationException("Behavior of lines is inconsistent across versions")
             UGraphics.DrawMode.TRIANGLES -> GL11.GL_TRIANGLES
             UGraphics.DrawMode.TRIANGLE_STRIP -> GL11.GL_TRIANGLE_STRIP
             UGraphics.DrawMode.TRIANGLE_FAN -> GL11.GL_TRIANGLE_FAN

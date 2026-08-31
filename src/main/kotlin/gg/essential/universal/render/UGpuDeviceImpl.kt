@@ -470,7 +470,7 @@ internal object UGpuDeviceImpl : UGpuDevice {
         require(destinationX + copyWidth <= destinationWidth) { "Tried to copy $copyWidth to $destinationX but destination is only $destinationWidth wide" }
         require(destinationY + copyHeight <= destinationHeight) { "Tried to copy $copyHeight to $destinationY but destination is only $destinationHeight high" }
         require(mipLevel >= 0) { "mipLevel must not be negative" }
-        require(mipLevel < destination.mipLevels) { "mipLevel is $mipLevel but texture only has $mipLevel levels" }
+        require(mipLevel < destination.mipLevels) { "mipLevel is $mipLevel but destination only has ${destination.mipLevels} levels" }
         require(arrayLayer == 0) { "arrayLayer other than 0 is not yet supported" }
 
         val format = destination.impl.format

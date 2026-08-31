@@ -595,7 +595,7 @@ internal object UGpuDeviceImpl : UGpuDevice {
             //$$ GL11.glColorMask(true, true, true, true)
             //#elseif MC >= 26.1
             //$$ GlStateManager._colorMask(com.mojang.blaze3d.pipeline.ColorTargetState.WRITE_ALL)
-            //#elseif MC>=12105
+            //#elseif MC >= 1.21.5
             //$$ GlStateManager._colorMask(true, true, true, true)
             //#else
             GlStateManager.colorMask(true, true, true, true)
@@ -615,7 +615,7 @@ internal object UGpuDeviceImpl : UGpuDevice {
         withDrawFramebuffer(null, texture) {
             //#if STANDALONE
             //$$ GL11.glDepthMask(true)
-            //#elseif MC>=12105
+            //#elseif MC >= 1.21.5
             //$$ GlStateManager._depthMask(true)
             //#else
             GlStateManager.depthMask(true)

@@ -87,6 +87,11 @@ class UFontRenderer(
         val text: String,
         val color: Int,
         val shadow: Boolean,
+        /**
+         * When non-null, uses this color for the entire shadow (provided [shadow] is `true`).
+         * Otherwise the color of the shadow is derived from the color of the text, and is therefore also affected by
+         * [formatting codes][ChatColor].
+         */
         val shadowColor: Int?,
     )
 

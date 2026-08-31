@@ -53,7 +53,7 @@ internal data class UGpuFormatImpl(
             GL11.GL_BYTE, GL11.GL_UNSIGNED_BYTE -> 1
             else -> throw UnsupportedOperationException("Format $this not yet supported (or invalid).")
         }
-    //#endif
+        //#endif
     val componentCount: Int
         //#if MC >= 26.2 && !STANDALONE
         //$$ get() = mc.componentCount()

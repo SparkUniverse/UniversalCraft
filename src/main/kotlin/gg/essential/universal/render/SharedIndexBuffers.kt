@@ -81,7 +81,7 @@ interface SharedIndexBuffer {
     /**
      * Returns an index buffer for drawing [vertices] vertices with [URenderPass.drawIndexed].
      *
-     * The returned buffer is shared between muliple calls and must not be closed by the caller.
+     * The returned buffer is shared between multiple calls and must not be closed by the caller.
      * Note: A previously returned buffer may however be invalidated when a larger buffer is requested.
      *       So only the most recently returned buffer may be assumed valid.
      */

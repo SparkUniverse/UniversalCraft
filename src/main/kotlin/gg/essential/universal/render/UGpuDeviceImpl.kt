@@ -10,11 +10,11 @@ import org.lwjgl.opengl.GL21
 import org.lwjgl.opengl.GL30
 import org.lwjgl.opengl.GL31
 
-//#if MC>=11700
+//#if MC >= 1.17
 //$$ import org.lwjgl.opengl.GL30.glBindFramebuffer
 //$$ import org.lwjgl.opengl.GL30.glFramebufferTexture2D
 //$$ import org.lwjgl.opengl.GL30.glGenFramebuffers
-//#elseif MC>=11400
+//#elseif MC >= 1.14
 //$$ import com.mojang.blaze3d.platform.GlStateManager.bindFramebuffer as glBindFramebuffer
 //$$ import com.mojang.blaze3d.platform.GlStateManager.framebufferTexture2D as glFramebufferTexture2D
 //$$ import com.mojang.blaze3d.platform.GlStateManager.genFramebuffers as glGenFramebuffers

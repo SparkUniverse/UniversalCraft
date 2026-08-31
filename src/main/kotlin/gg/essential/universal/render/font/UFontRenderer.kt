@@ -33,6 +33,7 @@ import net.minecraft.client.gui.FontRenderer
 //$$ import gg.essential.universal.render.UGpuSampler
 //$$ import gg.essential.universal.render.URenderPass
 //$$ import gg.essential.universal.render.URenderPassDescriptor
+//$$ import gg.essential.universal.render.URenderPassImpl
 //$$ import gg.essential.universal.render.URenderPipeline
 //$$ import net.minecraft.client.render.BufferBuilder
 //$$ import net.minecraft.client.render.fog.FogRenderer
@@ -174,7 +175,14 @@ class UFontRenderer(
         //$$         false,
         //$$     ))
         //$$     for (drawCall in drawCalls) {
-        //$$         renderPass.pipeline(drawCall.pipeline)
+        //$$         // MC's font renderer only starts using a depth-less pipeline with 1.21.9, so we'll bypass the
+        //$$         // check in `pipeline` on those versions.
+        //$$         // Because the check only becomes relevant with 26.2, that's when we'll switch to the checked call.
+                //#if MC >= 26.2
+                //$$ renderPass.pipeline(drawCall.pipeline)
+                //#else
+                //$$ (renderPass as URenderPassImpl).pipelineUnchecked(drawCall.pipeline)
+                //#endif
         //$$         renderPass.vertexBuffer(0, drawCall.vertexBuffer.slice())
         //$$         renderPass.indexBuffer(
         //$$             adapter.buffer(drawCall.indexBuffer.getIndexBuffer(drawCall.indexCount)),

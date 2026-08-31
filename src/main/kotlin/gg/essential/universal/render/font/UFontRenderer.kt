@@ -104,7 +104,7 @@ class UFontRenderer(
         require(destination.baseMipLevel == 0) { "baseMipLevel other than 0 is not yet supported" }
 
         //#if MC >= 1.21.6 && !STANDALONE
-        //$$ val drawerImpl = GlyphDrawerImpl(destination)
+        //$$ val drawerImpl = GlyphDrawerImpl()
         //$$ for (text in texts) {
         //$$     val scale = text.scale
         //$$     val invScale = 1 / scale
@@ -374,7 +374,7 @@ class UFontRenderer(
     //$$     val texture: GpuTextureView,
     //$$     val builder: BufferBuilder,
     //$$ )
-    //$$ private inner class GlyphDrawerImpl(val destination: UGpuTextureView) : TextRenderer.GlyphDrawer {
+    //$$ private inner class GlyphDrawerImpl : TextRenderer.GlyphDrawer {
         //#if MC >= 26.1
         //$$ val lightTexture = Minecraft.getInstance().gameRenderer.lightmap()
         //$$ // lightmap() may return either the uiLightmap, which is 1x1, or the regular lightmap (like pre-26.1)

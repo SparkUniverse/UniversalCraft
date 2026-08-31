@@ -78,6 +78,7 @@ internal class URenderPassImpl(val descriptor: URenderPassDescriptor) : URenderP
     //#if MC >= 1.21.5 && !STANDALONE
     //$$ private val mc: RenderPass
     //#else
+    private val prevVao: Int
     private val prevViewport = ViewportState.active()
     private var currViewport = prevViewport
     private val prevDrawFrameBufferBinding = GL11.glGetInteger(GL30.GL_DRAW_FRAMEBUFFER_BINDING)
@@ -165,7 +166,10 @@ internal class URenderPassImpl(val descriptor: URenderPassDescriptor) : URenderP
         }
 
         if (UGpuDeviceImpl.OpenGL30) {
+            prevVao = GL11.glGetInteger(GL30.GL_VERTEX_ARRAY_BINDING)
             GL30.glBindVertexArray(vao)
+        } else {
+            prevVao = 0
         }
         //#endif
     }
@@ -187,7 +191,7 @@ internal class URenderPassImpl(val descriptor: URenderPassDescriptor) : URenderP
         glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, prevReadFrameBufferBinding)
         if (prevViewport != currViewport) prevViewport.activate()
         if (UGpuDeviceImpl.OpenGL30) {
-            GL30.glBindVertexArray(0)
+            GL30.glBindVertexArray(prevVao)
         }
         //#endif
 

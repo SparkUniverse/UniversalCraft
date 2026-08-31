@@ -224,6 +224,10 @@ internal class URenderPassImpl(val descriptor: URenderPassDescriptor) : URenderP
     }
 
     override fun pipeline(pipeline: URenderPipeline) {
+        // This check exists because on Vulkan trying to use such a pipeline when no depth texture is provided will
+        // result in undefined behavior (likely segfault).
+        // We apply the check to all versions so one gets notified of one's incorrect code even if one primarily tests
+        // on older versions.
         if (pipeline.wantsDepthTexture) {
             require(descriptor.depthAttachment != null) { "Pipeline requires depth attachment but this render pass does not have one." }
         }

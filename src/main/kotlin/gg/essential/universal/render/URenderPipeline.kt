@@ -12,6 +12,7 @@ import org.lwjgl.opengl.GL11
 //$$ import gg.essential.universal.standalone.render.DefaultShader
 //$$ import gg.essential.universal.standalone.render.VertexFormat
 //$$ import gg.essential.universal.vertex.UBuiltBufferInternal
+//$$ import org.lwjgl.opengl.GL20C
 //$$ typealias ResourceLocation = String
 //#else
 import net.minecraft.client.renderer.vertex.VertexFormat
@@ -90,26 +91,35 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement
 
 class URenderPipeline private constructor(
     private val id: ResourceLocation,
+    val drawMode: DrawMode,
+    val commonVertexFormat: CommonVertexFormats?,
     internal val format: VertexFormat,
-    //#if STANDALONE
-    //$$ private val drawMode: DrawMode,
-    //#endif
     //#if MC>=12105 && !STANDALONE
     //$$ private var shaderSourceGetter: ShaderSourceGetter?,
     //$$ internal val mcRenderPipeline: RenderPipeline,
+    //#if MC < 26.1
+    //$$ private val actualDepthTest: DepthTest?, // may be null for `wrap`ped pipeline
+    //#endif
     //#else
     private val shader: ShaderSupplier?,
     internal val glState: ManagedGlState,
     //#endif
 ) {
     //#if MC>=12105 && !STANDALONE
-    //$$ internal fun draw(renderPass: RenderPass, builtBuffer: BuiltBuffer) {
+    //$$ internal fun compiled(): RenderPipeline? {
+    //$$     val shaderSourceGetter = shaderSourceGetter
     //$$     if (shaderSourceGetter != null) {
     //$$         // Supply our shader sources to the render backend, need to do this each draw (it'll no-op if it's already
     //$$         // cached) because resource reloads will clear it again.
     //$$         RenderSystem.getDevice().precompilePipeline(mcRenderPipeline, shaderSourceGetter)
     //$$     }
-    //$$     renderPass.setPipeline(mcRenderPipeline)
+    //$$     return mcRenderPipeline
+    //$$ }
+    //#endif
+
+    //#if MC>=12105 && !STANDALONE
+    //$$ internal fun draw(renderPass: RenderPass, builtBuffer: BuiltBuffer) {
+    //$$     renderPass.setPipeline(compiled() ?: return)
     //$$
         //#if MC >= 26.2
         //$$ renderPass.drawIndexed(builtBuffer.drawState().indexCount, 1, 0, 0, 0)
@@ -122,7 +132,7 @@ class URenderPipeline private constructor(
     //#else
     internal fun draw(builtBuffer: UBuiltBufferInternal) {
         //#if STANDALONE
-        //$$ UGraphics.RENDERER.draw(builtBuffer.mc, drawMode, if (shader == null) DefaultShader.get(format.parts) else null)
+        //$$ UGraphics.RENDERER.draw(builtBuffer.mc, drawMode)
         //#else
         val mcBuiltBuffer = builtBuffer.mc
         //#if MC>=11900
@@ -185,18 +195,10 @@ class URenderPipeline private constructor(
 
     internal fun uniform(name: String, vararg values: Float) {
         when (shader) {
-            is ShaderSupplier.LegacySource -> {
-                val shader = shader.shader
-                when (values.size) {
-                    1 -> shader.getFloatUniformOrNull(name)?.setValue(values[0])
-                    2 -> shader.getFloat2UniformOrNull(name)?.setValue(values[0], values[1])
-                    3 -> shader.getFloat3UniformOrNull(name)?.setValue(values[0], values[1], values[2])
-                    4 -> shader.getFloat4UniformOrNull(name)?.setValue(values[0], values[1], values[2], values[3])
-                    9, 16 -> shader.getFloatMatrixUniformOrNull(name)?.setValue(values)
-                    else -> throw UnsupportedOperationException()
-                }
-            }
-            //#if MC>=11700 && !STANDALONE
+            is ShaderSupplier.LegacySource -> uniform(shader.shader, name, values)
+            //#if STANDALONE
+            //$$ is ShaderSupplier.Default -> uniform(shader.shader.shader, name, values)
+            //#elseif MC>=11700
             //$$ is ShaderSupplier.Mc -> {
             //$$     val shader = shader.shader.get()
             //$$     shader.getUniform(name)?.set(values)
@@ -209,14 +211,10 @@ class URenderPipeline private constructor(
 
     internal fun uniform(name: String, vararg values: Int) {
         when (shader) {
-            is ShaderSupplier.LegacySource -> {
-                val shader = shader.shader
-                when (values.size) {
-                    1 -> shader.getIntUniformOrNull(name)?.setValue(values[0])
-                    else -> throw UnsupportedOperationException()
-                }
-            }
-            //#if MC>=11700 && !STANDALONE
+            is ShaderSupplier.LegacySource -> uniform(shader.shader, name, values)
+            //#if STANDALONE
+            //$$ is ShaderSupplier.Default -> uniform(shader.shader.shader, name, values)
+            //#elseif MC>=11700
             //$$ is ShaderSupplier.Mc -> {
             //$$     val shader = shader.shader.get()
             //$$     shader.getUniform(name)?.set(values[0])
@@ -224,6 +222,24 @@ class URenderPipeline private constructor(
             //$$ }
             //#endif
             null -> throw IllegalStateException()
+        }
+    }
+
+    private fun uniform(shader: UShader, name: String, values: FloatArray) {
+        when (values.size) {
+            1 -> shader.getFloatUniformOrNull(name)?.setValue(values[0])
+            2 -> shader.getFloat2UniformOrNull(name)?.setValue(values[0], values[1])
+            3 -> shader.getFloat3UniformOrNull(name)?.setValue(values[0], values[1], values[2])
+            4 -> shader.getFloat4UniformOrNull(name)?.setValue(values[0], values[1], values[2], values[3])
+            9, 16 -> shader.getFloatMatrixUniformOrNull(name)?.setValue(values)
+            else -> throw UnsupportedOperationException()
+        }
+    }
+
+    private fun uniform(shader: UShader, name: String, values: IntArray) {
+        when (values.size) {
+            1 -> shader.getIntUniformOrNull(name)?.setValue(values[0])
+            else -> throw UnsupportedOperationException()
         }
     }
 
@@ -239,7 +255,13 @@ class URenderPipeline private constructor(
             //$$     return
             //$$ }
             //#endif
-            null -> throw IllegalStateException()
+            //#if STANDALONE
+            //$$ is ShaderSupplier.Default,
+            //#endif
+            null -> {
+                val index = name.removePrefix("Sampler").toIntOrNull() ?: return
+                UGraphics.Globals.bindTexture(index, glId)
+            }
         }
     }
 
@@ -254,10 +276,28 @@ class URenderPipeline private constructor(
             //$$     return
             //$$ }
             //#endif
+            //#if STANDALONE
+            //$$ is ShaderSupplier.Default,
+            //#endif
             null -> UGraphics.Globals.bindTexture(index, glId)
         }
     }
     //#endif
+
+    internal val wantsDepthTexture: Boolean
+        // Prior to 26.1, MC's `wantsDepthTexture` also checks `depthMask`, but that defaults to `true` so it's
+        // useless for inferring whether a pipeline wants a depth texture (only those that expect a depth texture but
+        // don't want to overwrite it would ever set it), so we'll ignore that flag in our check.
+        //#if MC >= 26.1 && !STANDALONE
+        //$$ get() = mcRenderPipeline.wantsDepthTexture()
+        //#elseif MC >= 1.21.5 && !STANDALONE
+        //$$ get() = mcRenderPipeline.depthTestFunction != DepthTestFunction.NO_DEPTH_TEST
+        //$$         || (actualDepthTest != null && actualDepthTest != DepthTest.Disabled)
+        //$$         || mcRenderPipeline.depthBiasConstant != 0f
+        //$$         || mcRenderPipeline.depthBiasScaleFactor != 0f
+        //#else
+        get() = glState.depthTest || glState.polygonOffset
+        //#endif
 
     override fun toString(): String {
         return id.toString()
@@ -331,6 +371,19 @@ class URenderPipeline private constructor(
             }
             //#endif
         }
+
+        //#if STANDALONE
+        //$$ class Default(val shader: DefaultShader) : ShaderSupplier {
+        //$$     override fun bind(blendState: BlendState) {
+        //$$         shader.uSampler?.setValue(GL20C.glGetInteger(GL20C.GL_TEXTURE_BINDING_2D))
+        //$$         (shader.shader as GlShader).bind(skipBlendState = true)
+        //$$     }
+        //$$
+        //$$     override fun unbind() {
+        //$$         (shader.shader as GlShader).unbind(skipBlendState = true)
+        //$$     }
+        //$$ }
+        //#endif
 
         //#if MC>=11700 && !STANDALONE
         //#if MC>=12105
@@ -410,6 +463,7 @@ class URenderPipeline private constructor(
     private class BuilderImpl(
         private val id: ResourceLocation,
         private val drawMode: DrawMode,
+        private val commonVertexFormat: CommonVertexFormats?,
         private val format: VertexFormat,
         //#if MC>=12105 && !STANDALONE
         //$$ private val shader: ShaderSupplier,
@@ -594,17 +648,21 @@ class URenderPipeline private constructor(
             //$$
             //$$ return URenderPipeline(
             //$$     id,
+            //$$     drawMode,
+            //$$     commonVertexFormat,
             //$$     format,
             //$$     shaderSourceGetter,
             //$$     mcRenderPipeline,
+                //#if MC < 26.1
+                //$$ depthTest,
+                //#endif
             //$$ )
             //#else
             return URenderPipeline(
                 id,
+                drawMode,
+                commonVertexFormat,
                 format,
-                //#if STANDALONE
-                //$$ drawMode,
-                //#endif
                 shader,
                 ManagedGlState(
                     depthTest = depthTest != DepthTest.Disabled,
@@ -676,29 +734,33 @@ class URenderPipeline private constructor(
         //$$ @JvmStatic
         //$$ fun wrap(mc: RenderPipeline): URenderPipeline =
             //#if MC >= 26.2
-            //$$ URenderPipeline(mc.location, mc.vertexFormatBindings[0]!!, null, mc)
+            //$$ URenderPipeline(mc.location, DrawMode.fromMc(mc.primitiveTopology), null, mc.vertexFormatBindings[0]!!, null, mc)
             //#else
-            //$$ URenderPipeline(mc.location, mc.vertexFormat, null, mc)
+            //$$ URenderPipeline(mc.location, DrawMode.fromMc(mc.vertexFormatMode), null, mc.vertexFormat, null, mc,
+                //#if MC < 26.1
+                //$$ null,
+                //#endif
+            //$$ )
             //#endif
         //#endif
         //#if MC >= 26.2
         //$$ fun builder(id: Identifier, drawMode: DrawMode, format: VertexFormat, vert: Identifier, frag: Identifier, bindGroupLayouts: List<BindGroupLayout>): Builder {
-        //$$     return BuilderImpl(id, drawMode, format, ShaderSupplier.Mc(vert, frag, bindGroupLayouts))
+        //$$     return BuilderImpl(id, drawMode, null, format, ShaderSupplier.Mc(vert, frag, bindGroupLayouts))
         //$$ }
         //#elseif MC >= 1.21.5
         //$$ fun builder(id: Identifier, drawMode: DrawMode, format: VertexFormat, vert: Identifier, frag: Identifier, samplers: List<String>, uniforms: Map<String, UniformType>): Builder {
-        //$$     return BuilderImpl(id, drawMode, format, ShaderSupplier.Mc(vert, frag, samplers, uniforms))
+        //$$     return BuilderImpl(id, drawMode, null, format, ShaderSupplier.Mc(vert, frag, samplers, uniforms))
         //$$ }
         //#else
         //#if MC>=11700
         //$$ fun builder(id: Identifier, drawMode: DrawMode, format: VertexFormat, shader: Supplier<Shader>?): Builder {
-        //$$     return BuilderImpl(id, drawMode, format, shader?.let { ShaderSupplier.Mc(it) })
+        //$$     return BuilderImpl(id, drawMode, null, format, shader?.let { ShaderSupplier.Mc(it) })
         //$$ }
         //#endif
         //#if MC>=12102
         //$$ fun builder(id: Identifier, drawMode: DrawMode, format: VertexFormat, shader: ShaderProgramKey): Builder {
         //$$     val shaderSupplier = Supplier { MinecraftClient.getInstance().shaderLoader.getProgramToLoad(shader) }
-        //$$     return BuilderImpl(id, drawMode, format, ShaderSupplier.Mc(shaderSupplier))
+        //$$     return BuilderImpl(id, drawMode, null, format, ShaderSupplier.Mc(shaderSupplier))
         //$$ }
         //#endif
         //#endif
@@ -706,7 +768,7 @@ class URenderPipeline private constructor(
 
         fun builderWithDefaultShader(id: String, drawMode: DrawMode, format: CommonVertexFormats): Builder {
             //#if STANDALONE
-            //$$ return BuilderImpl(id, drawMode, format.mc, null)
+            //$$ return BuilderImpl(id, drawMode, format, format.mc, ShaderSupplier.Default(DefaultShader.get(format.mc.parts)))
             //#else
             //#if MC>=12100
             //$$ val mcId = Identifier.of(id)
@@ -728,7 +790,7 @@ class URenderPipeline private constructor(
             //$$     if (format.mc.contains(DefaultVertexFormat.UV1_SEMANTIC_NAME)) add(BindGroupLayouts.SAMPLER1)
             //$$     if (format.mc.contains(DefaultVertexFormat.UV2_SEMANTIC_NAME)) add(BindGroupLayouts.SAMPLER2)
             //$$ }
-            //$$ return builder(mcId, drawMode, format.mc, shaderId, shaderId, bindGroupLayouts)
+            //$$ return BuilderImpl(mcId, drawMode, format, format.mc, ShaderSupplier.Mc(shaderId, shaderId, bindGroupLayouts))
             //#else
             //$$ val samplers = List(format.mc.elements.count {
                 //#if MC >= 26.1
@@ -747,22 +809,26 @@ class URenderPipeline private constructor(
                 //$$ "ColorModulator" to UniformType.VEC4,
                 //#endif
             //$$ )
-            //$$ return builder(mcId, drawMode, format.mc, shaderId, shaderId, samplers, uniforms)
+            //$$ return BuilderImpl(mcId, drawMode, format, format.mc, ShaderSupplier.Mc(shaderId, shaderId, samplers, uniforms))
             //#endif
             //#else
-            //$$ return builder(mcId, drawMode, format.mc, shader)
+            //$$ return BuilderImpl(mcId, drawMode, format, format.mc, ShaderSupplier.Mc(shader))
             //#endif
             //#else
-            return BuilderImpl(mcId, drawMode, format.mc, null)
+            return BuilderImpl(mcId, drawMode, format, format.mc, null)
             //#endif
             //#endif
         }
 
         fun builderWithLegacyShader(id: String, drawMode: DrawMode, format: CommonVertexFormats, vertSource: String, fragSource: String): Builder {
-            return builderWithLegacyShader(id, drawMode, format.mc, vertSource, fragSource)
+            return builderWithLegacyShader(id, drawMode, format, format.mc, vertSource, fragSource)
         }
 
         fun builderWithLegacyShader(id: String, drawMode: DrawMode, format: VertexFormat, vertSource: String, fragSource: String): Builder {
+            return builderWithLegacyShader(id, drawMode, null, format, vertSource, fragSource)
+        }
+
+        private fun builderWithLegacyShader(id: String, drawMode: DrawMode, commonVertexFormat: CommonVertexFormats?, format: VertexFormat, vertSource: String, fragSource: String): Builder {
             //#if STANDALONE
             //$$ val mcId = id
             //#elseif MC>=12100
@@ -770,7 +836,7 @@ class URenderPipeline private constructor(
             //#else
             val mcId = ResourceLocation(id)
             //#endif
-            return BuilderImpl(mcId, drawMode, format, ShaderSupplier.LegacySource(format, vertSource, fragSource))
+            return BuilderImpl(mcId, drawMode, commonVertexFormat, format, ShaderSupplier.LegacySource(format, vertSource, fragSource))
         }
     }
 }

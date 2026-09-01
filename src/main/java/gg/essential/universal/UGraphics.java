@@ -163,7 +163,8 @@ public class UGraphics {
     //$$ public static void init() { /* triggers static initializer */ }
     //$$ @ApiStatus.Internal
     //$$ public static final Gl2Renderer RENDERER = new Gl2Renderer();
-    //$$ private static final NvgFont MC_FONT;
+    //$$ @ApiStatus.Internal
+    //$$ public static final NvgFont MC_FONT;
     //$$ static {
     //$$     URL fontUrl = UGraphics.class.getResource("/fonts/Minecraft-Regular.otf");
     //$$     assert fontUrl != null;
@@ -1143,8 +1144,13 @@ public class UGraphics {
         //$$ }
         //#endif
 
-        //#if MC >= 1.17 && MC < 26.2
-        //$$ private static DrawMode fromMc(VertexFormat.DrawMode mcMode) {
+        //#if MC >= 1.17 && !STANDALONE
+        //$$ @ApiStatus.Internal
+        //#if MC >= 26.2
+        //$$ public static DrawMode fromMc(PrimitiveTopology mcMode) {
+        //#else
+        //$$ public static DrawMode fromMc(VertexFormat.DrawMode mcMode) {
+        //#endif
         //$$     switch (mcMode) {
         //$$         case LINES: return DrawMode.LINES;
                 //#if MC>=12111
@@ -1447,7 +1453,16 @@ public class UGraphics {
     //$$     if (vertexFormat == null) {
     //$$         throw new IllegalStateException("Must call `begin` before `draw`.");
     //$$     }
-    //$$     RENDERER.draw(instance, drawMode, shader);
+    //$$     if (shader != null) {
+    //$$         if (shader.getUSampler() != null) {
+    //$$             shader.getUSampler().setValue(GL20.glGetInteger(GL20.GL_TEXTURE_BINDING_2D));
+    //$$         }
+    //$$         shader.getShader().bind();
+    //$$     }
+    //$$     RENDERER.draw(instance, drawMode);
+    //$$     if (shader != null) {
+    //$$         shader.getShader().unbind();
+    //$$     }
     //$$ }
     //#else
     private void doDraw(

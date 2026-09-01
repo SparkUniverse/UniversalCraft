@@ -236,11 +236,7 @@ class UMatrixStack private constructor(
         stack.last.model.store(MATRIX_BUFFER)
         // Explicit cast to Buffer required so we do not use the JDK9+ override in FloatBuffer
         (MATRIX_BUFFER as Buffer).rewind()
-        //#if MC>=11500
-        //$$ GL11.glMultMatrixf(MATRIX_BUFFER)
-        //#else
         GL11.glMultMatrix(MATRIX_BUFFER)
-        //#endif
         //#endif
     }
 

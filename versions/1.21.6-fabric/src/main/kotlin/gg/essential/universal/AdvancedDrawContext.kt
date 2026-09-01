@@ -2,6 +2,7 @@ package gg.essential.universal
 
 import com.mojang.blaze3d.systems.ProjectionType
 import com.mojang.blaze3d.systems.RenderSystem
+import gg.essential.universal.render.UGpuTextureView
 import gg.essential.universal.utils.TemporaryTextureAllocator
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gl.RenderPipelines
@@ -97,14 +98,18 @@ internal class AdvancedDrawContext : AutoCloseable {
     }
 
     fun draw(context: DrawContext, texture: TemporaryTextureAllocator.TextureAllocation) {
-        val width = texture.width
-        val height = texture.height
+        draw(context, UGraphics.getPlatformAdapter().textureView(texture.textureView))
+    }
+
+    fun draw(context: DrawContext, textureView: UGpuTextureView) {
+        val width = textureView.texture.width
+        val height = textureView.texture.height
         val scaleFactor = UResolution.scaleFactor.toFloat()
 
         val textureManager = MinecraftClient.getInstance().textureManager
         val identifier = Identifier.of("universalcraft", "__tmp_texture__")
         textureManager.registerTexture(identifier, object : AbstractTexture() {
-            init { glTextureView = texture.textureView }
+            init { this.glTextureView = UGraphics.getPlatformAdapter().textureView(textureView) }
             override fun close() {} // we don't want the later `destroyTexture` to close our texture
         })
 

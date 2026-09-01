@@ -29,3 +29,5 @@ com.mojang.blaze3d.systems.RenderSystem enableColorLogicOp() enableColorLogic()
 com.mojang.blaze3d.systems.RenderSystem logicOp() colorLogicOp()
 com.mojang.blaze3d.systems.RenderSystem polygonOffset() doPolygonOffset()
 net.minecraft.client.renderer.vertex.DefaultVertexFormats POSITION_TEX_LIGHTMAP_COLOR POSITION_TEX_LMAP_COLOR
+org.lwjgl.opengl.GL11 org.lwjgl.opengl.GL11
+org.lwjgl.opengl.GL11 glMultMatrixf(Ljava/nio/FloatBuffer;)V glMultMatrix()

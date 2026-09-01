@@ -10,7 +10,7 @@ internal class Gl2Renderer {
     private val vertexBuffer = GL20C.glGenBuffers()
     private val indexBuffer = GL20C.glGenBuffers()
 
-    fun draw(bufferBuilder: BufferBuilder, drawMode: UGraphics.DrawMode, shader: DefaultShader?) {
+    fun draw(bufferBuilder: BufferBuilder, drawMode: UGraphics.DrawMode) {
         if (GL.getCapabilities().OpenGL30) {
             GL30C.glBindVertexArray(vao)
         }
@@ -18,10 +18,6 @@ internal class Gl2Renderer {
         for (i in bufferBuilder.attributes.indices) {
             GL20C.glEnableVertexAttribArray(i)
         }
-
-        shader?.uSampler?.setValue(GL20C.glGetInteger(GL20C.GL_TEXTURE_BINDING_2D))
-
-        shader?.shader?.bind()
 
         GL20C.glBindBuffer(GL20C.GL_ARRAY_BUFFER, vertexBuffer)
         GL20C.glBufferData(GL20C.GL_ARRAY_BUFFER, bufferBuilder.array, GL20C.GL_STATIC_DRAW)
@@ -47,8 +43,6 @@ internal class Gl2Renderer {
             }
             else -> TODO("Support rendering $drawMode")
         }
-
-        shader?.shader?.unbind()
 
         for (i in bufferBuilder.attributes.indices) {
             GL20C.glDisableVertexAttribArray(i)

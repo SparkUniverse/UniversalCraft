@@ -78,7 +78,15 @@ class UFontRenderer(
 
     //#if MC >= 1.21.6 && !STANDALONE
     //$$ private val allocators = mutableListOf<BufferAllocator>()
-    //$$ private val fogRenderer = FogRenderer()
+    //$$ private val fogRenderer: FogRenderer
+    //$$ init {
+    //$$     // The constructor of FogRenderer overwrites the global shader fog buffer with its own. This might already
+    //$$     // be undesireable by itself, but it gets worse: if no one replaces it by the time we `close`, the buffer
+    //$$     // is then invalidated, and OpenGL will end up reading random memory.
+    //$$     val prevFogUbo = RenderSystem.getShaderFog()
+    //$$     fogRenderer = FogRenderer()
+    //$$     RenderSystem.setShaderFog(prevFogUbo)
+    //$$ }
     //#endif
 
     class Text(

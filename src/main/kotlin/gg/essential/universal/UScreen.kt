@@ -16,6 +16,7 @@ import java.awt.Color
 //#endif
 
 //#if MC>=12106
+//$$ import gg.essential.universal.utils.drawTexture
 //$$ import com.mojang.blaze3d.systems.RenderSystem
 //#endif
 
@@ -132,7 +133,7 @@ abstract class UScreen(
     //$$
     //$$         val textureView = renderer.render(renderState)
             //#if MC >= 1.21.6
-            //$$ advancedDrawContext.draw(context, textureView)
+            //$$ context.drawTexture(textureView)
             //#else
             //$$ drawImmediate(UMatrixStack(context.matrices), textureView)
             //#endif

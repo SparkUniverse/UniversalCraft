@@ -8,6 +8,8 @@ import org.jetbrains.annotations.ApiStatus.NonExtendable
 //$$ import com.mojang.blaze3d.GpuFormat
 //#endif
 //#if MC >= 1.21.6
+//$$ import com.mojang.blaze3d.buffers.GpuBuffer
+//$$ import com.mojang.blaze3d.buffers.GpuBufferSlice
 //$$ import com.mojang.blaze3d.textures.GpuTextureView
 //#endif
 //#if MC >= 1.21.5
@@ -38,5 +40,18 @@ sealed interface UGpuPlatformAdapter {
     //#if MC >= 1.21.6 && !STANDALONE
     //$$ fun textureView(textureView: GpuTextureView): UGpuTextureView
     //$$ fun textureView(textureView: UGpuTextureView): GpuTextureView
+    //#endif
+
+    //#if MC >= 1.21.6 && !STANDALONE
+    //$$ fun buffer(buffer: GpuBuffer): UGpuBuffer
+    //$$ fun buffer(buffer: UGpuBuffer): GpuBuffer
+    //#else
+    fun buffer(glId: Int, usage: UGpuBuffer.Usage, size: Long): UGpuBuffer
+    fun buffer(buffer: UGpuBuffer): Int
+    //#endif
+
+    //#if MC >= 1.21.6 && !STANDALONE
+    //$$ fun bufferSlice(buffer: GpuBufferSlice): UGpuBufferSlice
+    //$$ fun bufferSlice(buffer: UGpuBufferSlice): GpuBufferSlice
     //#endif
 }

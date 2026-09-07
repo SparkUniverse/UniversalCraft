@@ -7,6 +7,8 @@ import org.lwjgl.opengl.GL14
 //#if STANDALONE
 //#else
 //#if MC >= 1.21.6
+//$$ import com.mojang.blaze3d.buffers.GpuBuffer
+//$$ import com.mojang.blaze3d.buffers.GpuBufferSlice
 //$$ import com.mojang.blaze3d.textures.GpuTextureView
 //#endif
 //#if MC >= 1.21.5
@@ -83,5 +85,24 @@ internal object UGpuPlatformAdapterImpl : UGpuPlatformAdapter {
             //#endif
     //$$ override fun textureView(textureView: UGpuTextureView): GpuTextureView =
     //$$     textureView.impl.mc
+    //#endif
+
+    //#if MC >= 1.21.6 && !STANDALONE
+    //$$ override fun buffer(buffer: GpuBuffer): UGpuBufferImpl =
+    //$$     UGpuBufferImpl(buffer)
+    //$$ override fun buffer(buffer: UGpuBuffer): GpuBuffer =
+    //$$     buffer.impl.mc
+    //#else
+    override fun buffer(glId: Int, usage: UGpuBuffer.Usage, size: Long): UGpuBufferImpl =
+        UGpuBufferImpl(usage, size, glId)
+    override fun buffer(buffer: UGpuBuffer): Int =
+        buffer.impl.glId
+    //#endif
+
+    //#if MC >= 1.21.6 && !STANDALONE
+    //$$ override fun bufferSlice(buffer: GpuBufferSlice): UGpuBufferSlice =
+    //$$     UGpuBufferSlice(buffer(buffer.buffer), buffer.offset.toLong(), buffer.length.toLong())
+    //$$ override fun bufferSlice(buffer: UGpuBufferSlice): GpuBufferSlice =
+    //$$     buffer.mc
     //#endif
 }

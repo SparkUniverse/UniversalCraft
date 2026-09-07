@@ -4,10 +4,49 @@ import gg.essential.universal.UGraphics
 import java.nio.ByteBuffer
 import kotlin.math.max
 import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL12
+import org.lwjgl.opengl.GL15
+import org.lwjgl.opengl.GL21
+import org.lwjgl.opengl.GL30
+import org.lwjgl.opengl.GL31
+
+//#if MC >= 1.17
+//$$ import org.lwjgl.opengl.GL30.glBindFramebuffer
+//$$ import org.lwjgl.opengl.GL30.glFramebufferTexture2D
+//$$ import org.lwjgl.opengl.GL30.glGenFramebuffers
+//#elseif MC >= 1.14
+//$$ import com.mojang.blaze3d.platform.GlStateManager.bindFramebuffer as glBindFramebuffer
+//$$ import com.mojang.blaze3d.platform.GlStateManager.framebufferTexture2D as glFramebufferTexture2D
+//$$ import com.mojang.blaze3d.platform.GlStateManager.genFramebuffers as glGenFramebuffers
+//#else
+import net.minecraft.client.renderer.OpenGlHelper.glBindFramebuffer
+import net.minecraft.client.renderer.OpenGlHelper.glFramebufferTexture2D
+import net.minecraft.client.renderer.OpenGlHelper.glGenFramebuffers
+//#endif
 
 //#if STANDALONE
 //$$ import org.lwjgl.opengl.GL20C
 //#else
+
+//#if MC >= 26.2
+//$$ import com.mojang.blaze3d.opengl.GlConst
+//$$ import com.mojang.blaze3d.systems.CommandEncoder
+//$$ import com.mojang.blaze3d.systems.CommandEncoderBackend
+//$$ import com.mojang.blaze3d.systems.GpuDevice
+//$$ import com.mojang.blaze3d.systems.GpuDeviceBackend
+//$$ import com.mojang.blaze3d.vulkan.VulkanBackend
+//$$ import com.mojang.blaze3d.vulkan.VulkanCommandEncoder
+//$$ import com.mojang.blaze3d.vulkan.VulkanDevice
+//$$ import com.mojang.blaze3d.vulkan.VulkanGpuBuffer
+//$$ import com.mojang.blaze3d.vulkan.VulkanGpuTexture
+//$$ import org.lwjgl.system.MemoryStack
+//$$ import org.lwjgl.vulkan.VK10
+//$$ import org.lwjgl.vulkan.VK12
+//$$ import org.lwjgl.vulkan.VkBufferImageCopy
+//$$ import org.lwjgl.vulkan.VkCommandBuffer
+//$$ import java.lang.invoke.MethodHandles
+//#endif
+
 //#if MC >= 1.21.5
 //$$ import com.mojang.blaze3d.textures.TextureFormat
 //$$ import net.minecraft.client.texture.GlTexture
@@ -25,6 +64,74 @@ import net.minecraft.client.renderer.GlStateManager
 //#endif
 
 internal object UGpuDeviceImpl : UGpuDevice {
+    //#if MC >= 1.16
+    //$$ val OpenGL31 by lazy { org.lwjgl.opengl.GL.getCapabilities().OpenGL31 }
+    //$$ val OpenGL30 by lazy { org.lwjgl.opengl.GL.getCapabilities().OpenGL30 }
+    //$$ val ARB_map_buffer_range by lazy { org.lwjgl.opengl.GL.getCapabilities().GL_ARB_map_buffer_range }
+    //#else
+    val OpenGL31 by lazy { org.lwjgl.opengl.GLContext.getCapabilities().OpenGL31 }
+    val OpenGL30 by lazy { org.lwjgl.opengl.GLContext.getCapabilities().OpenGL30 }
+    val ARB_map_buffer_range by lazy { org.lwjgl.opengl.GLContext.getCapabilities().GL_ARB_map_buffer_range }
+    //#endif
+
+    override val info: UGpuDevice.Info = object : UGpuDevice.Info {
+        override val isZZeroToOne: Boolean
+            //#if MC >= 26.2 && !STANDALONE
+            //$$ get() = RenderSystem.getDevice().deviceInfo.isZZeroToOne
+            //#else
+            get() = false
+            //#endif
+
+        override val limits: UGpuDevice.Limits = object : UGpuDevice.Limits {
+            //#if MC < 26.2 || STANDALONE
+            private val maxTextureSize = mutableMapOf<UGpuFormat, Int>()
+            private fun queryMaxTextureSize(format: UGpuFormat): Int {
+                var size = GL11.glGetInteger(GL11.GL_MAX_TEXTURE_SIZE)
+                // While above is what the GPU can address, that may be much larger than what it can actually
+                // allocate, so we'll scan downwards until we find a size that actually works.
+                while (true) {
+                    // As of OpenGL 3.0 the required minimum is 1024, so if we can't even get that, something's
+                    // probably wrong with the format or driver.
+                    // (Technically, since we support OpenGL 2.1 on MC 1.8.9, the minimum required is just 64; but
+                    //  that is completely unreasonable for a full game; and realistically we'll only be running on
+                    //  3.0+ capable hardware anyway.)
+                    if (size < 1024) {
+                        return 1024
+                    }
+                    // PROXY_TEXTURE_2D is a special target which runs all the validation without actually
+                    // allocating a texture. And if that fails, it simply sets all texture parameters to 0
+                    // instead of emitting an error.
+                    GL11.glTexImage2D(
+                        GL11.GL_PROXY_TEXTURE_2D,
+                        0,
+                        format.impl.internalFormat,
+                        size,
+                        size,
+                        0,
+                        format.impl.format,
+                        format.impl.type,
+                        null as ByteBuffer?,
+                    )
+                    val width = GL11.glGetTexLevelParameteri(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH)
+                    if (width != 0) {
+                        return size
+                    }
+                    size = size shr 1
+                }
+            }
+            //#endif
+
+            override fun maxTextureSize(format: UGpuFormat): Int =
+                //#if MC >= 26.2 && !STANDALONE
+                //$$ RenderSystem.getDevice().deviceInfo.limits.maxTextureSizeForFormat(format.impl.mc)
+                //#else
+                maxTextureSize.getOrPut(format) { queryMaxTextureSize(format) }
+                //#endif
+        }
+    }
+
+    private val tmpVao by lazy { GL30.glGenVertexArrays() }
+
     override fun createTexture(
         label: String?,
         usage: UGpuTexture.Usage,
@@ -198,4 +305,396 @@ internal object UGpuDeviceImpl : UGpuDevice {
         val maxMipLevels = log2(max(width, height)) + 1
         require(mipLevels <= maxMipLevels) { "Texture of size ${width}x${height} supports at most $maxMipLevels but $mipLevels were requested" }
     }
+
+    override fun clearColor(texture: UGpuTexture, red: Float, green: Float, blue: Float, alpha: Float) {
+        require(UGpuTexture.Usage.COPY_DST in texture.impl.usage) { "Texture must have COPY_DST usage flag" }
+        clearColor(
+            texture,
+            URenderPassDescriptor.RenderArea(0, 0, texture.width, texture.height),
+            URenderPassDescriptor.ClearColor(red, green, blue, alpha),
+        )
+    }
+
+    override fun clearDepth(texture: UGpuTexture, depth: Double) {
+        require(UGpuTexture.Usage.COPY_DST in texture.impl.usage) { "Texture must have COPY_DST usage flag" }
+        clearDepth(texture, URenderPassDescriptor.RenderArea(0, 0, texture.width, texture.height), depth)
+    }
+
+    override fun createBuffer(usage: UGpuBuffer.Usage, size: Long): UGpuBuffer {
+        require(size <= Int.MAX_VALUE) { "Sizes greater than Int.MAX_VALUE are not supported" } // due to MC 1.21.6-9
+        //#if MC >= 1.21.11 && !STANDALONE
+        //$$ return UGpuBufferImpl(RenderSystem.getDevice().createBuffer(null, usage.bits, size))
+        //#elseif MC >= 1.21.6 && !STANDALONE
+        //$$ return UGpuBufferImpl(RenderSystem.getDevice().createBuffer(null, usage.bits, size.toInt()))
+        //#else
+        val buffer = UGpuBufferImpl(usage, size, GL15.glGenBuffers())
+        withBufferBound(buffer) { bindTarget ->
+            GL15.glBufferData(bindTarget, size, usage.glUsageHint)
+        }
+        return buffer
+        //#endif
+    }
+
+    override fun createBuffer(usage: UGpuBuffer.Usage, buffer: ByteBuffer): UGpuBuffer {
+        //#if MC >= 1.21.6 && !STANDALONE
+        //$$ return UGpuBufferImpl(RenderSystem.getDevice().createBuffer(null, usage.bits, buffer))
+        //#else
+        val gpuBuffer = UGpuBufferImpl(usage, buffer.remaining().toLong(), GL15.glGenBuffers())
+        withBufferBound(gpuBuffer) { bindTarget ->
+            GL15.glBufferData(bindTarget, buffer, usage.glUsageHint)
+        }
+        return gpuBuffer
+        //#endif
+    }
+
+    override fun mapBuffer(gpuBufferSlice: UGpuBufferSlice, read: Boolean, write: Boolean): UGpuDevice.MappedBuffer {
+        check(!gpuBufferSlice.buffer.isClosed) { "Buffer is closed" }
+        if (read) require(UGpuBuffer.Usage.MAP_READ in gpuBufferSlice.buffer.impl.usage) { "Buffer must have MAP_READ usage flag" }
+        if (write) require(UGpuBuffer.Usage.MAP_WRITE in gpuBufferSlice.buffer.impl.usage) { "Buffer must have MAP_WRITE usage flag" }
+
+        require(gpuBufferSlice.offset + gpuBufferSlice.size <= Int.MAX_VALUE) { "Slices further than Int.MAX_VALUE into the buffer are not supported" } // due to pre-GL30 fallback path
+
+        //#if MC >= 1.21.6 && !STANDALONE
+        //#if MC >= 26.2
+        //$$ val view = gpuBufferSlice.mc.map(read, write)
+        //#else
+        //$$ val view = RenderSystem.getDevice().createCommandEncoder().mapBuffer(gpuBufferSlice.mc, read, write)
+        //#endif
+        //$$ return object : UGpuDevice.MappedBuffer {
+        //$$     override val data: ByteBuffer = view.data()
+        //$$     override fun close() = view.close()
+        //$$ }
+        //#else
+        val mapBufferRange = OpenGL30 || ARB_map_buffer_range
+        val access = when {
+            read && write -> if (mapBufferRange) GL30.GL_MAP_READ_BIT + GL30.GL_MAP_WRITE_BIT else GL15.GL_READ_WRITE
+            read -> if (mapBufferRange) GL30.GL_MAP_READ_BIT else GL15.GL_READ_ONLY
+            write -> if (mapBufferRange) GL30.GL_MAP_WRITE_BIT else GL15.GL_WRITE_ONLY
+            else -> throw IllegalArgumentException("At least one of `read` or `write` must be true")
+        }
+        val buffer = withBufferBound(gpuBufferSlice.buffer.impl) { bindTarget ->
+            if (mapBufferRange) {
+                GL30.glMapBufferRange(bindTarget, gpuBufferSlice.offset, gpuBufferSlice.size, access, null)
+            } else {
+                @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS") // old_buffer may be null according to javadocs
+                val fullBuf = GL15.glMapBuffer(bindTarget, access, gpuBufferSlice.offset + gpuBufferSlice.size, null)
+                if (gpuBufferSlice.offset > 0) {
+                    fullBuf?.position(gpuBufferSlice.offset.toInt())
+                    fullBuf?.slice()
+                } else {
+                    fullBuf
+                }
+            }
+        } ?: throw IllegalStateException("Failed to map buffer")
+        gpuBufferSlice.buffer.impl.mappedCount++
+        return object : UGpuDevice.MappedBuffer {
+            override val data: ByteBuffer = buffer
+
+            var closed = false
+
+            override fun close() {
+                if (closed) return
+                closed = true
+                gpuBufferSlice.buffer.impl.mappedCount--
+                withBufferBound(gpuBufferSlice.buffer.impl) { bindTarget ->
+                    GL15.glUnmapBuffer(bindTarget)
+                }
+            }
+        }
+        //#endif
+    }
+
+    //#if MC < 1.21.6 || STANDALONE
+    private inline fun <T> withBufferBound(gpuBuffer: UGpuBufferImpl, block: (bindTarget: Int) -> T): T {
+        val bindTarget = gpuBuffer.usage.bindTarget
+        val bindTargetBinding = when (bindTarget) {
+            GL15.GL_ARRAY_BUFFER -> GL15.GL_ARRAY_BUFFER_BINDING
+            GL15.GL_ELEMENT_ARRAY_BUFFER -> GL15.GL_ELEMENT_ARRAY_BUFFER_BINDING
+            GL31.GL_UNIFORM_BUFFER -> GL31.GL_UNIFORM_BUFFER_BINDING
+            GL31.GL_COPY_WRITE_BUFFER -> 0x8F37 // GL31.GL_COPY_WRITE_BUFFER_BINDING (missing from LWJGL3 for unknown reason?)
+            else -> throw AssertionError("Unexpected bind target $bindTarget")
+        }
+        val prevVao: Int
+        if (bindTarget == GL15.GL_ELEMENT_ARRAY_BUFFER && OpenGL30) {
+            // Requires VAO, see https://stackoverflow.com/questions/20391921/
+            prevVao = GL11.glGetInteger(GL30.GL_VERTEX_ARRAY_BINDING)
+            GL30.glBindVertexArray(tmpVao)
+        } else {
+            prevVao = 0
+        }
+        val prevBinding = GL11.glGetInteger(bindTargetBinding)
+        GL15.glBindBuffer(bindTarget, gpuBuffer.glId)
+        try {
+            return block(bindTarget)
+        } finally {
+            GL15.glBindBuffer(bindTarget, prevBinding)
+            if (bindTarget == GL15.GL_ELEMENT_ARRAY_BUFFER && OpenGL30) {
+                GL30.glBindVertexArray(prevVao)
+            }
+        }
+    }
+
+    // We'll try to pick an appropriate binding target for our buffers because
+    // > Once created, a named buffer object may be re-bound to any target as often as needed. However, the GL
+    // > implementation may make choices about how to optimize the storage of a buffer object based on its initial
+    // > binding target.
+    private val UGpuBuffer.Usage.bindTarget: Int
+        get() = when {
+            UGpuBuffer.Usage.VERTEX in this -> GL15.GL_ARRAY_BUFFER
+            UGpuBuffer.Usage.INDEX in this -> GL15.GL_ELEMENT_ARRAY_BUFFER
+            UGpuBuffer.Usage.UNIFORM in this -> if (OpenGL31) GL31.GL_UNIFORM_BUFFER else GL15.GL_ARRAY_BUFFER
+            else -> if (OpenGL31) GL31.GL_COPY_WRITE_BUFFER else GL15.GL_ARRAY_BUFFER
+        }
+
+    private val UGpuBuffer.Usage.glUsageHint: Int
+        get() = when {
+            UGpuBuffer.Usage.MAP_WRITE in this -> if (UGpuBuffer.Usage.HINT_CLIENT_STORAGE in this) GL15.GL_STREAM_DRAW else GL15.GL_STATIC_DRAW
+            UGpuBuffer.Usage.MAP_READ in this -> if (UGpuBuffer.Usage.HINT_CLIENT_STORAGE in this) GL15.GL_STREAM_READ else GL15.GL_STATIC_READ
+            else -> GL15.GL_STATIC_DRAW
+        }
+    //#endif
+
+    override fun copyBufferToTexture(
+        source: UGpuBufferSlice,
+        sourceX: Int,
+        sourceY: Int,
+        sourceWidth: Int,
+        sourceHeight: Int,
+        destination: UGpuTexture,
+        destinationX: Int,
+        destinationY: Int,
+        copyWidth: Int,
+        copyHeight: Int,
+        mipLevel: Int,
+        arrayLayer: Int,
+    ) {
+        val destinationWidth = (destination.width shr mipLevel).coerceAtLeast(1)
+        val destinationHeight = (destination.height shr mipLevel).coerceAtLeast(1)
+        require(!source.buffer.isClosed) { "Source buffer is closed" }
+        require(!destination.isClosed) { "Destination texture is closed" }
+        require(UGpuBuffer.Usage.COPY_SRC in source.buffer.impl.usage) { "Source buffer must have COPY_SRC usage flag" }
+        require(UGpuTexture.Usage.COPY_DST in destination.impl.usage) { "Destination texture must have COPY_DST usage flag" }
+        require(copyWidth >= 0) { "copyWidth must be positive but was $copyWidth" }
+        require(copyHeight >= 0) { "copyHeight must be positive but was $copyHeight" }
+        require(sourceX >= 0) { "sourceX must be positive but was $sourceX" }
+        require(sourceY >= 0) { "sourceY must be positive but was $sourceY" }
+        require(sourceX + copyWidth <= sourceWidth) { "Tried to copy $copyWidth from $sourceX but source is only $sourceWidth wide" }
+        require(sourceY + copyHeight <= sourceHeight) { "Tried to copy $copyHeight from $sourceY but source is only $sourceHeight high" }
+        require(destinationX >= 0) { "destinationX must be positive but was $destinationX" }
+        require(destinationY >= 0) { "destinationY must be positive but was $destinationY" }
+        require(destinationX + copyWidth <= destinationWidth) { "Tried to copy $copyWidth to $destinationX but destination is only $destinationWidth wide" }
+        require(destinationY + copyHeight <= destinationHeight) { "Tried to copy $copyHeight to $destinationY but destination is only $destinationHeight high" }
+        require(mipLevel >= 0) { "mipLevel must not be negative" }
+        require(mipLevel < destination.mipLevels) { "mipLevel is $mipLevel but destination only has ${destination.mipLevels} levels" }
+        require(arrayLayer == 0) { "arrayLayer other than 0 is not yet supported" }
+
+        val format = destination.impl.format
+        require(source.offset % format.componentByteSize == 0L) { "Source buffer offset must be ${format.componentByteSize}-aligned but was ${source.offset}" }
+        val texelByteSize = format.componentCount * format.componentByteSize
+        val texelCopyRange = sourceX + sourceY * sourceWidth.toLong() until(sourceX + copyWidth) + (sourceY + copyHeight - 1) * sourceWidth.toLong()
+        val bytesCopyRange = texelCopyRange.first * texelByteSize .. texelCopyRange.last * texelByteSize
+        require(bytesCopyRange.last < source.size) { "Copy range $bytesCopyRange is out of bounds for $source"}
+
+        if (isVulkan()) {
+            //#if MC >= 26.2 && !STANDALONE
+            //$$ MemoryStack.stackPush().use { stack ->
+            //$$     VK12.vkCmdCopyBufferToImage(
+            //$$         vkCommandBuffer(),
+            //$$         (source.buffer.impl.mc as VulkanGpuBuffer).vkBuffer(),
+            //$$         (destination.impl.mc as VulkanGpuTexture).vkImage(),
+            //$$         1,
+            //$$         VkBufferImageCopy.calloc(1, stack).also { region ->
+            //$$             region.bufferOffset(source.offset + bytesCopyRange.first)
+            //$$             region.bufferRowLength(sourceWidth)
+            //$$             region.bufferImageHeight(sourceHeight)
+            //$$             region.imageSubresource().let { image ->
+            //$$                 image.aspectMask(VK10.VK_IMAGE_ASPECT_COLOR_BIT)
+            //$$                 image.mipLevel(mipLevel)
+            //$$                 image.baseArrayLayer(arrayLayer)
+            //$$                 image.layerCount(1)
+            //$$             }
+            //$$             region.imageOffset().set(destinationX, destinationY, 0)
+            //$$             region.imageExtent().set(copyWidth, copyHeight, 1)
+            //$$         },
+            //$$     )
+            //$$     vkMemoryBarrier(stack)
+            //$$ }
+            //#endif
+        } else {
+            UGraphics.configureTexture(destination.impl.glId) {
+                GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, sourceWidth)
+                GL11.glPixelStorei(GL12.GL_UNPACK_IMAGE_HEIGHT, sourceHeight)
+                GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, 0)
+                GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, 0)
+                GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, format.componentByteSize)
+
+                GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, source.buffer.impl.glId)
+
+                GL11.glTexSubImage2D(
+                    GL11.GL_TEXTURE_2D,
+                    mipLevel,
+                    destinationX,
+                    destinationY,
+                    copyWidth,
+                    copyHeight,
+                    //#if MC >= 26.2 && !STANDALONE
+                    //$$ GlConst.toGlExternalId(destination.impl.format.mc),
+                    //$$ GlConst.toGlType(destination.impl.format.mc),
+                    //#else
+                    destination.impl.format.format,
+                    destination.impl.format.type,
+                    //#endif
+                    source.offset + bytesCopyRange.first,
+                )
+
+                GL15.glBindBuffer(GL21.GL_PIXEL_UNPACK_BUFFER, 0)
+
+                // We restore these to defaults as well as to not disturb third-party mods which assume defaults
+                GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, 0)
+                GL11.glPixelStorei(GL12.GL_UNPACK_IMAGE_HEIGHT, 0)
+                GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, 0)
+                GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, 0)
+                GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 4)
+            }
+        }
+    }
+
+    override fun createFence(): UGpuFence {
+        return UGpuFenceImpl()
+    }
+
+    override fun createRenderPass(descriptor: URenderPassDescriptor): URenderPass {
+        return URenderPassImpl(descriptor)
+    }
+
+    //#if MC < 26.2 || STANDALONE
+    private val colorReadFrameBuffer by lazy { glGenFramebuffers() }
+    private val colorWriteFrameBuffer by lazy { glGenFramebuffers() }
+    private val depthReadFrameBuffer by lazy { genDepthOnlyFrameBuffer() }
+    private val depthWriteFrameBuffer by lazy { genDepthOnlyFrameBuffer() }
+    private fun genDepthOnlyFrameBuffer() = glGenFramebuffers().also { id ->
+        val prevDrawFrameBufferBinding = GL11.glGetInteger(GL30.GL_DRAW_FRAMEBUFFER_BINDING)
+        val prevReadFrameBufferBinding = GL11.glGetInteger(GL30.GL_READ_FRAMEBUFFER_BINDING)
+        glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, id)
+        glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, id)
+        // Prior to GL 4.1, read and draw buffers (both!) must be explicitly set to NONE if the framebuffer does not
+        // have a color attachment, otherwise it will not be considered complete and operations on it may error.
+        GL11.glDrawBuffer(GL11.GL_NONE)
+        GL11.glReadBuffer(GL11.GL_NONE)
+        glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, prevDrawFrameBufferBinding)
+        glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, prevReadFrameBufferBinding)
+    }
+
+    inline fun <T> withDrawFramebuffer(color: UGpuTexture?, depth: UGpuTexture?, block: () -> T): T {
+        val prevDrawFrameBufferBinding = GL11.glGetInteger(GL30.GL_DRAW_FRAMEBUFFER_BINDING)
+        glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, if (color == null) depthWriteFrameBuffer else colorWriteFrameBuffer)
+        if (color != null) glFramebufferTexture2D(GL30.GL_DRAW_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, color.impl.glId, 0)
+        if (depth != null) glFramebufferTexture2D(GL30.GL_DRAW_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, depth.impl.glId, 0)
+        try {
+            return block()
+        } finally {
+            glFramebufferTexture2D(GL30.GL_DRAW_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, 0, 0)
+            glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, prevDrawFrameBufferBinding)
+        }
+    }
+    //#endif
+
+    // FIXME 26.2+ doesn't respect `area`; though we also don't yet need it
+    fun clearColor(texture: UGpuTexture, area: URenderPassDescriptor.RenderArea, color: URenderPassDescriptor.ClearColor) {
+        //#if MC >= 26.2 && !STANDALONE
+        //$$ RenderSystem.getDevice().createCommandEncoder()
+        //$$     .clearColorTexture(texture.impl.mc, org.joml.Vector4f(color.red, color.green, color.blue, color.alpha))
+        //#else
+        withDrawFramebuffer(texture, null) {
+            //#if STANDALONE
+            //$$ GL11.glColorMask(true, true, true, true)
+            //#elseif MC >= 26.1
+            //$$ GlStateManager._colorMask(com.mojang.blaze3d.pipeline.ColorTargetState.WRITE_ALL)
+            //#elseif MC >= 1.21.5
+            //$$ GlStateManager._colorMask(true, true, true, true)
+            //#else
+            GlStateManager.colorMask(true, true, true, true)
+            //#endif
+            UGraphics.clearColor(color.red, color.green, color.blue, color.alpha)
+            glClear(GL11.GL_COLOR_BUFFER_BIT, area)
+        }
+        //#endif
+    }
+
+    // FIXME 26.2+ doesn't respect `area`; though we also don't yet need it
+    fun clearDepth(texture: UGpuTexture, area: URenderPassDescriptor.RenderArea, depth: Double) {
+        //#if MC >= 26.2 && !STANDALONE
+        //$$ RenderSystem.getDevice().createCommandEncoder()
+        //$$     .clearDepthTexture(texture.impl.mc, depth)
+        //#else
+        withDrawFramebuffer(null, texture) {
+            //#if STANDALONE
+            //$$ GL11.glDepthMask(true)
+            //#elseif MC >= 1.21.5
+            //$$ GlStateManager._depthMask(true)
+            //#else
+            GlStateManager.depthMask(true)
+            //#endif
+            UGraphics.clearDepth(depth)
+            glClear(GL11.GL_DEPTH_BUFFER_BIT, area)
+        }
+        //#endif
+    }
+
+    //#if MC < 26.2 || STANDALONE
+    private fun glClear(bits: Int, area: URenderPassDescriptor.RenderArea) {
+        val scissorState = ScissorState(true, area.x, area.y, area.width, area.height)
+
+        val prevScissorState = ScissorState.glActive()
+        if (prevScissorState != scissorState) scissorState.glActivate()
+
+        GL11.glClear(bits)
+
+        if (prevScissorState != scissorState) prevScissorState.glActivate()
+    }
+    //#endif
+
+    //#if MC >= 26.2 && !STANDALONE
+    //$$ private val lookup = MethodHandles.lookup()
+    //$$ private val GpuDevice_backend by lazy {
+    //$$     val field = GpuDevice::class.java.getDeclaredField("backend")
+    //$$     field.isAccessible = true
+    //$$     lookup.unreflectGetter(field)
+    //$$ }
+    //$$
+    //$$ fun isVulkan() =
+    //$$     RenderSystem.getDevice()
+    //$$         .let { GpuDevice_backend.invoke(it) as GpuDeviceBackend }
+    //$$         .let { it is VulkanDevice }
+    //$$
+    //$$ private val CommandEncoder_backend by lazy {
+    //$$     val field = CommandEncoder::class.java.getDeclaredField("backend")
+    //$$     field.isAccessible = true
+    //$$     lookup.unreflectGetter(field)
+    //$$ }
+    //$$
+    //$$ private val VulkanCommandEncoder_commandBuffer by lazy {
+    //$$     val method = VulkanCommandEncoder::class.java.getDeclaredMethod("commandBuffer")
+    //$$     method.isAccessible = true
+    //$$     lookup.unreflect(method)
+    //$$ }
+    //$$ private fun vkCommandBuffer(): VkCommandBuffer =
+    //$$     RenderSystem.getDevice()
+    //$$         .createCommandEncoder()
+    //$$         .let { CommandEncoder_backend.invoke(it) as CommandEncoderBackend }
+    //$$         .let { VulkanCommandEncoder_commandBuffer.invoke(it) as VkCommandBuffer }
+    //$$
+    //$$ private val VulkanCommandEncoder_memoryBarrier by lazy {
+    //$$     val method = VulkanCommandEncoder::class.java.getDeclaredMethod("memoryBarrier", MemoryStack::class.java)
+    //$$     method.isAccessible = true
+    //$$     lookup.unreflect(method)
+    //$$ }
+    //$$ private fun vkMemoryBarrier(stack: MemoryStack): Unit =
+    //$$     RenderSystem.getDevice()
+    //$$         .createCommandEncoder()
+    //$$         .let { CommandEncoder_backend.invoke(it) as CommandEncoderBackend }
+    //$$         .let { VulkanCommandEncoder_memoryBarrier.invoke(it, stack); Unit }
+    //#else
+    fun isVulkan() = false
+    //#endif
 }

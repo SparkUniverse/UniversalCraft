@@ -3,11 +3,8 @@ package gg.essential.universal
 import com.mojang.blaze3d.systems.ProjectionType
 import com.mojang.blaze3d.systems.RenderSystem
 import gg.essential.universal.utils.TemporaryTextureAllocator
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gl.RenderPipelines
+import gg.essential.universal.utils.drawTexture
 import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.texture.AbstractTexture
-import net.minecraft.util.Identifier
 
 //#if MC >= 26.1
 //#if MC >= 26.2
@@ -97,36 +94,7 @@ internal class AdvancedDrawContext : AutoCloseable {
     }
 
     fun draw(context: DrawContext, texture: TemporaryTextureAllocator.TextureAllocation) {
-        val width = texture.width
-        val height = texture.height
-        val scaleFactor = UResolution.scaleFactor.toFloat()
-
-        val textureManager = MinecraftClient.getInstance().textureManager
-        val identifier = Identifier.of("universalcraft", "__tmp_texture__")
-        textureManager.registerTexture(identifier, object : AbstractTexture() {
-            init { glTextureView = texture.textureView }
-            override fun close() {} // we don't want the later `destroyTexture` to close our texture
-        })
-
-        context.matrices.pushMatrix()
-        context.matrices.scale(1/scaleFactor, 1/scaleFactor) // drawTexture only accepts `int`s
-        context.drawTexture(
-            RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA,
-            identifier,
-            // x, y
-            0, 0,
-            // u, v
-            0f, height.toFloat(),
-            // width, height
-            width, height,
-            // uWidth, vHeight
-            width, -height,
-            // textureWidth, textureHeight
-            width, height,
-        )
-        context.matrices.popMatrix()
-
-        textureManager.destroyTexture(identifier)
+        context.drawTexture(UGraphics.getPlatformAdapter().textureView(texture.textureView))
     }
 
     fun nextFrame() {

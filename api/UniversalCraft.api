@@ -930,6 +930,8 @@ public abstract class gg/essential/universal/UScreen : net/minecraft/client/gui/
 	public fun setNewGuiScale (I)V
 	public fun setUnlocalizedName (Ljava/lang/String;)V
 	public final fun tick ()V
+	public fun uCreateRenderer ()Lgg/essential/universal/UScreen$Renderer;
+	public fun uExtractRenderState (IIF)Lgg/essential/universal/UScreen$RenderState;
 	public fun updateGuiScale ()V
 }
 
@@ -1020,6 +1022,8 @@ public abstract class gg/essential/universal/UScreen : net/minecraft/client/gui/
 	public fun setNewGuiScale (I)V
 	public fun setUnlocalizedName (Ljava/lang/String;)V
 	public final fun tick ()V
+	public fun uCreateRenderer ()Lgg/essential/universal/UScreen$Renderer;
+	public fun uExtractRenderState (IIF)Lgg/essential/universal/UScreen$RenderState;
 	public fun updateGuiScale ()V
 }
 
@@ -1065,6 +1069,8 @@ public abstract class gg/essential/universal/UScreen : net/minecraft/client/gui/
 	public final fun restorePreviousScreen ()V
 	public fun setNewGuiScale (I)V
 	public fun setUnlocalizedName (Ljava/lang/String;)V
+	public fun uCreateRenderer ()Lgg/essential/universal/UScreen$Renderer;
+	public fun uExtractRenderState (IIF)Lgg/essential/universal/UScreen$RenderState;
 	public fun updateGuiScale ()V
 	public final fun updateScreen ()V
 }
@@ -1082,6 +1088,15 @@ public final class gg/essential/universal/UScreen$Companion {
 	public final fun displayScreen (Lnet/minecraft/client/gui/GuiScreen;)V
 	@1.12.2-forge,1.8.9-forge
 	public final fun getCurrentScreen ()Lnet/minecraft/client/gui/GuiScreen;
+	public final fun isRendererRequired ()Z
+}
+
+public abstract interface class gg/essential/universal/UScreen$RenderState {
+	public abstract fun getBackground ()Z
+}
+
+public abstract interface class gg/essential/universal/UScreen$Renderer : java/lang/AutoCloseable {
+	public abstract fun render (Lgg/essential/universal/UScreen$RenderState;)Lgg/essential/universal/render/UGpuTextureView;
 }
 
 public final class gg/essential/universal/USound {
@@ -1117,11 +1132,99 @@ public abstract interface class gg/essential/universal/render/DrawCallBuilder {
 	public abstract fun uniform (Ljava/lang/String;[I)Lgg/essential/universal/render/DrawCallBuilder;
 }
 
+public abstract interface class gg/essential/universal/render/SharedIndexBuffer {
+	public abstract fun invoke (I)Lkotlin/Pair;
+}
+
+public final class gg/essential/universal/render/SharedIndexBuffers {
+	public static final field INSTANCE Lgg/essential/universal/render/SharedIndexBuffers;
+	public final fun getQuads ()Lgg/essential/universal/render/SharedIndexBuffer;
+	public final fun getSequential ()Lgg/essential/universal/render/SharedIndexBuffer;
+	public final fun getTriangleFan ()Lgg/essential/universal/render/SharedIndexBuffer;
+}
+
+public abstract interface class gg/essential/universal/render/UGpuBuffer : java/io/Closeable {
+	public abstract fun getSize ()J
+	public abstract fun isClosed ()Z
+	public fun slice (JJ)Lgg/essential/universal/render/UGpuBufferSlice;
+	public static synthetic fun slice$default (Lgg/essential/universal/render/UGpuBuffer;JJILjava/lang/Object;)Lgg/essential/universal/render/UGpuBufferSlice;
+}
+
+public final class gg/essential/universal/render/UGpuBuffer$Usage {
+	public static final field Companion Lgg/essential/universal/render/UGpuBuffer$Usage$Companion;
+	public fun <init> (I)V
+	public final fun component1 ()I
+	public final fun contains (Lgg/essential/universal/render/UGpuBuffer$Usage;)Z
+	public final fun copy (I)Lgg/essential/universal/render/UGpuBuffer$Usage;
+	public static synthetic fun copy$default (Lgg/essential/universal/render/UGpuBuffer$Usage;IILjava/lang/Object;)Lgg/essential/universal/render/UGpuBuffer$Usage;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBits ()I
+	public fun hashCode ()I
+	public final fun plus (Lgg/essential/universal/render/UGpuBuffer$Usage;)Lgg/essential/universal/render/UGpuBuffer$Usage;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class gg/essential/universal/render/UGpuBuffer$Usage$Companion {
+	public final fun getCOPY_DST ()Lgg/essential/universal/render/UGpuBuffer$Usage;
+	public final fun getCOPY_SRC ()Lgg/essential/universal/render/UGpuBuffer$Usage;
+	public final fun getHINT_CLIENT_STORAGE ()Lgg/essential/universal/render/UGpuBuffer$Usage;
+	public final fun getINDEX ()Lgg/essential/universal/render/UGpuBuffer$Usage;
+	public final fun getINDIRECT_PARAMETERS ()Lgg/essential/universal/render/UGpuBuffer$Usage;
+	public final fun getMAP_READ ()Lgg/essential/universal/render/UGpuBuffer$Usage;
+	public final fun getMAP_WRITE ()Lgg/essential/universal/render/UGpuBuffer$Usage;
+	public final fun getUNIFORM ()Lgg/essential/universal/render/UGpuBuffer$Usage;
+	public final fun getUNIFORM_TEXEL_BUFFER ()Lgg/essential/universal/render/UGpuBuffer$Usage;
+	public final fun getVERTEX ()Lgg/essential/universal/render/UGpuBuffer$Usage;
+}
+
+public final class gg/essential/universal/render/UGpuBufferSlice {
+	public fun <init> (Lgg/essential/universal/render/UGpuBuffer;JJ)V
+	public final fun component1 ()Lgg/essential/universal/render/UGpuBuffer;
+	public final fun component2 ()J
+	public final fun component3 ()J
+	public final fun copy (Lgg/essential/universal/render/UGpuBuffer;JJ)Lgg/essential/universal/render/UGpuBufferSlice;
+	public static synthetic fun copy$default (Lgg/essential/universal/render/UGpuBufferSlice;Lgg/essential/universal/render/UGpuBuffer;JJILjava/lang/Object;)Lgg/essential/universal/render/UGpuBufferSlice;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBuffer ()Lgg/essential/universal/render/UGpuBuffer;
+	public final fun getOffset ()J
+	public final fun getSize ()J
+	public fun hashCode ()I
+	public final fun slice (JJ)Lgg/essential/universal/render/UGpuBufferSlice;
+	public static synthetic fun slice$default (Lgg/essential/universal/render/UGpuBufferSlice;JJILjava/lang/Object;)Lgg/essential/universal/render/UGpuBufferSlice;
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract interface class gg/essential/universal/render/UGpuDevice {
+	public abstract fun clearColor (Lgg/essential/universal/render/UGpuTexture;FFFF)V
+	public abstract fun clearDepth (Lgg/essential/universal/render/UGpuTexture;D)V
+	public abstract fun copyBufferToTexture (Lgg/essential/universal/render/UGpuBufferSlice;IIIILgg/essential/universal/render/UGpuTexture;IIIIII)V
+	public abstract fun createBuffer (Lgg/essential/universal/render/UGpuBuffer$Usage;J)Lgg/essential/universal/render/UGpuBuffer;
+	public abstract fun createBuffer (Lgg/essential/universal/render/UGpuBuffer$Usage;Ljava/nio/ByteBuffer;)Lgg/essential/universal/render/UGpuBuffer;
+	public abstract fun createFence ()Lgg/essential/universal/render/UGpuFence;
+	public abstract fun createRenderPass (Lgg/essential/universal/render/URenderPassDescriptor;)Lgg/essential/universal/render/URenderPass;
 	public abstract fun createTexture (Ljava/lang/String;Lgg/essential/universal/render/UGpuTexture$Usage;Lgg/essential/universal/render/UGpuFormat;III)Lgg/essential/universal/render/UGpuTexture;
 	public static synthetic fun createTexture$default (Lgg/essential/universal/render/UGpuDevice;Ljava/lang/String;Lgg/essential/universal/render/UGpuTexture$Usage;Lgg/essential/universal/render/UGpuFormat;IIIILjava/lang/Object;)Lgg/essential/universal/render/UGpuTexture;
 	public abstract fun createTextureView (Lgg/essential/universal/render/UGpuTexture;II)Lgg/essential/universal/render/UGpuTextureView;
 	public static synthetic fun createTextureView$default (Lgg/essential/universal/render/UGpuDevice;Lgg/essential/universal/render/UGpuTexture;IIILjava/lang/Object;)Lgg/essential/universal/render/UGpuTextureView;
+	public abstract fun getInfo ()Lgg/essential/universal/render/UGpuDevice$Info;
+	public abstract fun mapBuffer (Lgg/essential/universal/render/UGpuBufferSlice;ZZ)Lgg/essential/universal/render/UGpuDevice$MappedBuffer;
+}
+
+public abstract interface class gg/essential/universal/render/UGpuDevice$Info {
+	public abstract fun getLimits ()Lgg/essential/universal/render/UGpuDevice$Limits;
+	public abstract fun isZZeroToOne ()Z
+}
+
+public abstract interface class gg/essential/universal/render/UGpuDevice$Limits {
+	public abstract fun maxTextureSize (Lgg/essential/universal/render/UGpuFormat;)I
+}
+
+public abstract interface class gg/essential/universal/render/UGpuDevice$MappedBuffer : java/lang/AutoCloseable {
+	public abstract fun getData ()Ljava/nio/ByteBuffer;
+}
+
+public abstract interface class gg/essential/universal/render/UGpuFence : java/lang/AutoCloseable {
+	public abstract fun awaitCompletion (J)Z
 }
 
 public abstract interface class gg/essential/universal/render/UGpuFormat {
@@ -1134,6 +1237,18 @@ public final class gg/essential/universal/render/UGpuFormat$Companion {
 }
 
 public abstract interface class gg/essential/universal/render/UGpuPlatformAdapter {
+	@1.21.11-fabric,1.21.11-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.1-neoforge,26.2-fabric
+	public abstract fun buffer (Lcom/mojang/blaze3d/buffers/GpuBuffer;)Lgg/essential/universal/render/UGpuBuffer;
+	@1.21.11-fabric,1.21.11-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.1-neoforge,26.2-fabric
+	public abstract fun buffer (Lgg/essential/universal/render/UGpuBuffer;)Lcom/mojang/blaze3d/buffers/GpuBuffer;
+	@1.21.11-fabric,1.21.11-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.1-neoforge,26.2-fabric
+	public abstract fun bufferSlice (Lcom/mojang/blaze3d/buffers/GpuBufferSlice;)Lgg/essential/universal/render/UGpuBufferSlice;
+	@1.21.11-fabric,1.21.11-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.1-neoforge,26.2-fabric
+	public abstract fun bufferSlice (Lgg/essential/universal/render/UGpuBufferSlice;)Lcom/mojang/blaze3d/buffers/GpuBufferSlice;
+	@1.12.2-forge,1.16.2-fabric,1.16.2-forge,1.17.1-fabric,1.17.1-forge,1.18.1-fabric,1.18.1-forge,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.2-forge,1.19.3-fabric,1.19.3-forge,1.19.4-fabric,1.19.4-forge,1.20-fabric,1.20.1-fabric,1.20.1-forge,1.20.2-fabric,1.20.2-forge,1.20.4-fabric,1.20.4-forge,1.20.4-neoforge,1.20.6-fabric,1.20.6-forge,1.20.6-neoforge,1.21-fabric,1.21-forge,1.21-neoforge,1.21.3-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-fabric,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.8.9-forge
+	public abstract fun buffer (ILgg/essential/universal/render/UGpuBuffer$Usage;J)Lgg/essential/universal/render/UGpuBuffer;
+	@1.12.2-forge,1.16.2-fabric,1.16.2-forge,1.17.1-fabric,1.17.1-forge,1.18.1-fabric,1.18.1-forge,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.2-forge,1.19.3-fabric,1.19.3-forge,1.19.4-fabric,1.19.4-forge,1.20-fabric,1.20.1-fabric,1.20.1-forge,1.20.2-fabric,1.20.2-forge,1.20.4-fabric,1.20.4-forge,1.20.4-neoforge,1.20.6-fabric,1.20.6-forge,1.20.6-neoforge,1.21-fabric,1.21-forge,1.21-neoforge,1.21.3-fabric,1.21.3-forge,1.21.3-neoforge,1.21.4-fabric,1.21.4-forge,1.21.4-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.8.9-forge
+	public abstract fun buffer (Lgg/essential/universal/render/UGpuBuffer;)I
 	public abstract fun getDefaultGpuFormatDepth ()Lgg/essential/universal/render/UGpuFormat;
 	public abstract fun getDefaultGpuFormatRgba ()Lgg/essential/universal/render/UGpuFormat;
 	@26.2-fabric
@@ -1213,22 +1328,94 @@ public abstract interface class gg/essential/universal/render/UGpuTextureView : 
 	public abstract fun isClosed ()Z
 }
 
+public abstract interface class gg/essential/universal/render/URenderPass : java/lang/AutoCloseable {
+	public abstract fun draw (IIII)V
+	public static synthetic fun draw$default (Lgg/essential/universal/render/URenderPass;IIIIILjava/lang/Object;)V
+	public abstract fun drawIndexed (IIIII)V
+	public static synthetic fun drawIndexed$default (Lgg/essential/universal/render/URenderPass;IIIIIILjava/lang/Object;)V
+	public abstract fun indexBuffer (Lgg/essential/universal/render/UGpuBuffer;Lgg/essential/universal/render/URenderPass$IndexType;)V
+	public abstract fun modelViewMatrix ([F)V
+	public abstract fun pipeline (Lgg/essential/universal/render/URenderPipeline;)V
+	public abstract fun projectionMatrix ([F)V
+	public abstract fun scissor (IIII)V
+	public abstract fun texture (Ljava/lang/String;Lgg/essential/universal/render/UGpuTextureView;Lgg/essential/universal/render/UGpuSampler;)V
+	public abstract fun uniform (Ljava/lang/String;Lgg/essential/universal/render/UGpuBufferSlice;)V
+	public abstract fun uniform (Ljava/lang/String;[F)V
+	public abstract fun uniform (Ljava/lang/String;[I)V
+	public abstract fun vertexBuffer (ILgg/essential/universal/render/UGpuBufferSlice;)V
+}
+
+public final class gg/essential/universal/render/URenderPass$IndexType : java/lang/Enum {
+	public static final field INT Lgg/essential/universal/render/URenderPass$IndexType;
+	public static final field SHORT Lgg/essential/universal/render/URenderPass$IndexType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lgg/essential/universal/render/URenderPass$IndexType;
+	public static fun values ()[Lgg/essential/universal/render/URenderPass$IndexType;
+}
+
+public final class gg/essential/universal/render/URenderPassDescriptor {
+	public fun <init> (Ljava/util/function/Supplier;)V
+	public final fun withColorAttachment (Lgg/essential/universal/render/UGpuTextureView;Lgg/essential/universal/render/URenderPassDescriptor$ClearColor;)Lgg/essential/universal/render/URenderPassDescriptor;
+	public static synthetic fun withColorAttachment$default (Lgg/essential/universal/render/URenderPassDescriptor;Lgg/essential/universal/render/UGpuTextureView;Lgg/essential/universal/render/URenderPassDescriptor$ClearColor;ILjava/lang/Object;)Lgg/essential/universal/render/URenderPassDescriptor;
+	public final fun withDepthAttachment (Lgg/essential/universal/render/UGpuTextureView;Ljava/lang/Double;)Lgg/essential/universal/render/URenderPassDescriptor;
+	public static synthetic fun withDepthAttachment$default (Lgg/essential/universal/render/URenderPassDescriptor;Lgg/essential/universal/render/UGpuTextureView;Ljava/lang/Double;ILjava/lang/Object;)Lgg/essential/universal/render/URenderPassDescriptor;
+	public final fun withRenderArea (Lgg/essential/universal/render/URenderPassDescriptor$RenderArea;)Lgg/essential/universal/render/URenderPassDescriptor;
+}
+
+public final class gg/essential/universal/render/URenderPassDescriptor$ClearColor {
+	public fun <init> (FFFF)V
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun component3 ()F
+	public final fun component4 ()F
+	public final fun copy (FFFF)Lgg/essential/universal/render/URenderPassDescriptor$ClearColor;
+	public static synthetic fun copy$default (Lgg/essential/universal/render/URenderPassDescriptor$ClearColor;FFFFILjava/lang/Object;)Lgg/essential/universal/render/URenderPassDescriptor$ClearColor;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAlpha ()F
+	public final fun getBlue ()F
+	public final fun getGreen ()F
+	public final fun getRed ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class gg/essential/universal/render/URenderPassDescriptor$RenderArea {
+	public fun <init> (IIII)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun component4 ()I
+	public final fun copy (IIII)Lgg/essential/universal/render/URenderPassDescriptor$RenderArea;
+	public static synthetic fun copy$default (Lgg/essential/universal/render/URenderPassDescriptor$RenderArea;IIIIILjava/lang/Object;)Lgg/essential/universal/render/URenderPassDescriptor$RenderArea;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHeight ()I
+	public final fun getWidth ()I
+	public final fun getX ()I
+	public final fun getY ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class gg/essential/universal/render/URenderPipeline {
 	public static final field Companion Lgg/essential/universal/render/URenderPipeline$Companion;
+	@26.1-fabric,26.1-neoforge,26.2-fabric
+	public synthetic fun <init> (Lnet/minecraft/resources/Identifier;Lgg/essential/universal/UGraphics$DrawMode;Lgg/essential/universal/UGraphics$CommonVertexFormats;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/shaders/ShaderSource;Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	@1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge
-	public synthetic fun <init> (Lnet/minecraft/resources/ResourceLocation;Lcom/mojang/blaze3d/vertex/VertexFormat;Ljava/util/function/BiFunction;Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lnet/minecraft/resources/ResourceLocation;Lgg/essential/universal/UGraphics$DrawMode;Lgg/essential/universal/UGraphics$CommonVertexFormats;Lcom/mojang/blaze3d/vertex/VertexFormat;Ljava/util/function/BiFunction;Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lgg/essential/universal/render/URenderPipeline$DepthTest;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	@1.21.5-fabric,1.21.6-fabric,1.21.7-fabric,1.21.9-fabric
-	public synthetic fun <init> (Lnet/minecraft/util/Identifier;Lcom/mojang/blaze3d/vertex/VertexFormat;Ljava/util/function/BiFunction;Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	@1.21.11-neoforge,26.1-fabric,26.1-neoforge,26.2-fabric
-	public synthetic fun <init> (Lnet/minecraft/resources/Identifier;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/shaders/ShaderSource;Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lnet/minecraft/util/Identifier;Lgg/essential/universal/UGraphics$DrawMode;Lgg/essential/universal/UGraphics$CommonVertexFormats;Lcom/mojang/blaze3d/vertex/VertexFormat;Ljava/util/function/BiFunction;Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lgg/essential/universal/render/URenderPipeline$DepthTest;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	@1.21.11-neoforge
+	public synthetic fun <init> (Lnet/minecraft/resources/Identifier;Lgg/essential/universal/UGraphics$DrawMode;Lgg/essential/universal/UGraphics$CommonVertexFormats;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/shaders/ShaderSource;Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lgg/essential/universal/render/URenderPipeline$DepthTest;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	@1.21.11-fabric
-	public synthetic fun <init> (Lnet/minecraft/util/Identifier;Lcom/mojang/blaze3d/vertex/VertexFormat;Lnet/minecraft/client/gl/ShaderSourceGetter;Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lnet/minecraft/util/Identifier;Lgg/essential/universal/UGraphics$DrawMode;Lgg/essential/universal/UGraphics$CommonVertexFormats;Lcom/mojang/blaze3d/vertex/VertexFormat;Lnet/minecraft/client/gl/ShaderSourceGetter;Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lgg/essential/universal/render/URenderPipeline$DepthTest;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge
-	public synthetic fun <init> (Lnet/minecraft/resources/ResourceLocation;Lcom/mojang/blaze3d/vertex/VertexFormat;Lgg/essential/universal/render/URenderPipeline$ShaderSupplier;Lgg/essential/universal/render/ManagedGlState;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lnet/minecraft/resources/ResourceLocation;Lgg/essential/universal/UGraphics$DrawMode;Lgg/essential/universal/UGraphics$CommonVertexFormats;Lcom/mojang/blaze3d/vertex/VertexFormat;Lgg/essential/universal/render/URenderPipeline$ShaderSupplier;Lgg/essential/universal/render/ManagedGlState;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	@1.16.2-fabric,1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.3-fabric,1.21.4-fabric
-	public synthetic fun <init> (Lnet/minecraft/util/Identifier;Lnet/minecraft/client/render/VertexFormat;Lgg/essential/universal/render/URenderPipeline$ShaderSupplier;Lgg/essential/universal/render/ManagedGlState;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lnet/minecraft/util/Identifier;Lgg/essential/universal/UGraphics$DrawMode;Lgg/essential/universal/UGraphics$CommonVertexFormats;Lnet/minecraft/client/render/VertexFormat;Lgg/essential/universal/render/URenderPipeline$ShaderSupplier;Lgg/essential/universal/render/ManagedGlState;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	@1.12.2-forge,1.16.2-forge,1.8.9-forge
-	public synthetic fun <init> (Lnet/minecraft/util/ResourceLocation;Lnet/minecraft/client/renderer/vertex/VertexFormat;Lgg/essential/universal/render/URenderPipeline$ShaderSupplier;Lgg/essential/universal/render/ManagedGlState;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lnet/minecraft/util/ResourceLocation;Lgg/essential/universal/UGraphics$DrawMode;Lgg/essential/universal/UGraphics$CommonVertexFormats;Lnet/minecraft/client/renderer/vertex/VertexFormat;Lgg/essential/universal/render/URenderPipeline$ShaderSupplier;Lgg/essential/universal/render/ManagedGlState;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getCommonVertexFormat ()Lgg/essential/universal/UGraphics$CommonVertexFormats;
+	public final fun getDrawMode ()Lgg/essential/universal/UGraphics$DrawMode;
 	public fun toString ()Ljava/lang/String;
 	@1.21.11-fabric,1.21.11-neoforge,1.21.5-fabric,1.21.5-forge,1.21.5-neoforge,1.21.6-fabric,1.21.7-fabric,1.21.7-forge,1.21.7-neoforge,1.21.9-fabric,26.1-fabric,26.1-neoforge,26.2-fabric
 	public static final fun wrap (Lcom/mojang/blaze3d/pipeline/RenderPipeline;)Lgg/essential/universal/render/URenderPipeline;
@@ -1306,6 +1493,35 @@ public final class gg/essential/universal/render/URenderPipeline$DepthTest : jav
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lgg/essential/universal/render/URenderPipeline$DepthTest;
 	public static fun values ()[Lgg/essential/universal/render/URenderPipeline$DepthTest;
+}
+
+public final class gg/essential/universal/render/font/UFontRenderer : java/lang/AutoCloseable {
+	public fun <init> ()V
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.11-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.1-neoforge,26.2-fabric
+	public fun <init> (Lnet/minecraft/client/gui/Font;)V
+	@1.16.2-fabric,1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.11-fabric,1.21.3-fabric,1.21.4-fabric,1.21.5-fabric,1.21.6-fabric,1.21.7-fabric,1.21.9-fabric
+	public fun <init> (Lnet/minecraft/client/font/TextRenderer;)V
+	@1.12.2-forge,1.16.2-forge,1.8.9-forge
+	public fun <init> (Lnet/minecraft/client/gui/FontRenderer;)V
+	public fun close ()V
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.11-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.1-neoforge,26.2-fabric
+	public final fun getMc ()Lnet/minecraft/client/gui/Font;
+	@1.16.2-fabric,1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.11-fabric,1.21.3-fabric,1.21.4-fabric,1.21.5-fabric,1.21.6-fabric,1.21.7-fabric,1.21.9-fabric
+	public final fun getMc ()Lnet/minecraft/client/font/TextRenderer;
+	@1.12.2-forge,1.16.2-forge,1.8.9-forge
+	public final fun getMc ()Lnet/minecraft/client/gui/FontRenderer;
+	public final fun render (Lgg/essential/universal/render/UGpuTextureView;Ljava/util/List;)V
+}
+
+public final class gg/essential/universal/render/font/UFontRenderer$Text {
+	public fun <init> (IIFLjava/lang/String;IZLjava/lang/Integer;)V
+	public final fun getColor ()I
+	public final fun getScale ()F
+	public final fun getShadow ()Z
+	public final fun getShadowColor ()Ljava/lang/Integer;
+	public final fun getText ()Ljava/lang/String;
+	public final fun getX ()I
+	public final fun getY ()I
 }
 
 public final class gg/essential/universal/shader/BlendState {
@@ -1626,6 +1842,7 @@ public abstract interface class gg/essential/universal/vertex/UBuiltBuffer : jav
 	@1.16.2-fabric,1.17.1-fabric,1.18.1-fabric,1.19-fabric,1.19.1-fabric,1.19.2-fabric,1.19.3-fabric,1.19.4-fabric,1.20-fabric,1.20.1-fabric,1.20.2-fabric,1.20.4-fabric,1.20.6-fabric,1.21-fabric,1.21.11-fabric,1.21.3-fabric,1.21.4-fabric,1.21.5-fabric,1.21.6-fabric,1.21.7-fabric,1.21.9-fabric
 	public fun drawAndClose (Lnet/minecraft/client/render/RenderLayer;)V
 	public static synthetic fun drawAndClose$default (Lgg/essential/universal/vertex/UBuiltBuffer;Lgg/essential/universal/render/URenderPipeline;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public abstract fun toByteBuffer ()Ljava/nio/ByteBuffer;
 	@1.8.9-forge
 	public static fun wrap (Lnet/minecraft/client/renderer/WorldRenderer;)Lgg/essential/universal/vertex/UBuiltBuffer;
 	@1.21-forge,1.21-neoforge,1.21.11-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.1-neoforge,26.2-fabric

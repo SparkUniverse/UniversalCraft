@@ -9,6 +9,9 @@ import gg.essential.universal.vertex.UBufferBuilder
 import gg.essential.universal.vertex.UBuiltBuffer
 import gg.essential.universal.vertex.UBuiltBufferInternal
 import gg.essential.universal.vertex.UVertexConsumer
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.nio.FloatBuffer
 
 internal class BufferBuilder(
     val attributes: List<Part>,
@@ -17,7 +20,10 @@ internal class BufferBuilder(
     val stride: Int = attributes.sumOf { it.size }
 
     private var idx: Int = 0
-    internal var array: FloatArray = FloatArray(stride * 64)
+    internal var byteBuffer: ByteBuffer = ByteBuffer.allocateDirect(stride * 64 * 4).order(ByteOrder.nativeOrder())
+    internal var array = byteBuffer.asFloatBuffer()
+
+    private operator fun FloatBuffer.set(index: Int, value: Float) = put(index, value)
 
     /** How many vertices there are in this buffer */
     val count: Int
@@ -70,12 +76,17 @@ internal class BufferBuilder(
     }
 
     override fun endVertex() = apply {
-        if (idx > array.lastIndex) {
-            array = array.copyOf(array.size * 2)
+        if (idx >= array.remaining()) {
+            val clone = ByteBuffer.allocateDirect(byteBuffer.remaining() * 2).order(ByteOrder.nativeOrder())
+            clone.put(byteBuffer)
+            clone.position(0)
+            byteBuffer = clone
+            array = clone.asFloatBuffer()
         }
     }
 
     override fun build(): UBuiltBuffer? {
+        byteBuffer.limit(idx * 4)
         return this.takeIf { count > 0 }
     }
 

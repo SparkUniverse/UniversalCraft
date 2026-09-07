@@ -80,7 +80,7 @@ preprocess {
     fabric12104.link(fabric12103)
     neoForge12103.link(fabric12103)
     forge12103.link(fabric12103)
-    fabric12103.link(fabric12100)
+    fabric12103.link(fabric12100, file("versions/1.21.3-1.21.txt"))
     neoForge12100.link(fabric12100)
     forge12100.link(fabric12100)
     fabric12100.link(fabric12006, file("versions/1.21-1.20.6.txt"))

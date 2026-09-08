@@ -404,7 +404,7 @@ object UKeyboard {
 
     /**
      * Starts text input mode.
-     * Must be called on 26.3+ to receive receive character events.
+     * Must be called on 26.3+ to receive character events.
      * Note that enabling text input may prevent some key events from being received.
      *
      * [owner] is an opaque token representing the input field for which text input is being enabled.

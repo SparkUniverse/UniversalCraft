@@ -588,7 +588,7 @@ abstract class UScreen(
         //$$     lastClick = UMinecraft.getTime()
         //#if MC >= 26.3
         //$$ super.mouseClicked(MouseButtonEvent(mouseX, mouseY, MouseButtonInfo(UMouse.buttonGlfwToSdl(mouseButton), lastMouseInput?.modifiers ?: 0)), lastDoubled ?: false)
-        //#elseif MC>=12109
+        //#elseif MC >= 1.21.9
         //$$ super.mouseClicked(Click(mouseX, mouseY, MouseInput(mouseButton, lastMouseInput?.modifiers ?: 0)), lastDoubled ?: false)
         //#else
         //$$ super.mouseClicked(mouseX, mouseY, mouseButton)

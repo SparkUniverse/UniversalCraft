@@ -1,3 +1,4 @@
+//#if MC < 26.3
 package gg.essential.universal.utils
 
 import com.mojang.blaze3d.systems.RenderSystem
@@ -106,3 +107,4 @@ internal class TemporaryTextureAllocator(
         }
     }
 }
+//#endif

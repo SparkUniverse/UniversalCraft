@@ -18,6 +18,12 @@ import org.lwjgl.opengl.GL11
 import net.minecraft.client.renderer.vertex.VertexFormat
 import net.minecraft.util.ResourceLocation
 
+//#if MC >= 26.3
+//$$ import com.mojang.renderpearl.api.pipeline.CompiledRenderPipeline
+//$$ import com.mojang.renderpearl.api.pipeline.ShaderSource
+//$$ import net.minecraft.util.Util.backgroundExecutor
+//#endif
+
 //#if MC >= 26.2
 //$$ import com.mojang.blaze3d.GpuFormat
 //$$ import com.mojang.blaze3d.pipeline.BindGroupLayout
@@ -105,7 +111,21 @@ class URenderPipeline private constructor(
     internal val glState: ManagedGlState,
     //#endif
 ) {
-    //#if MC>=12105 && !STANDALONE
+    //#if MC >= 26.3 && !STANDALONE
+    //$$ private var compiledRenderPipeline: CompiledRenderPipeline? = null
+    //$$ internal fun compiled(): CompiledRenderPipeline? {
+    //$$     val shaderSourceGetter = shaderSourceGetter
+    //$$     return if (shaderSourceGetter != null) {
+    //$$         compiledRenderPipeline
+    //$$             ?: RenderSystem.getDevice().compilePipeline(mcRenderPipeline, shaderSourceGetter, backgroundExecutor())
+    //$$                 .join()
+    //$$                 .finishCompile()
+    //$$                 ?.also { compiledRenderPipeline = it }
+    //$$     } else {
+    //$$         RenderSystem.getCompiledPipelineNullable(mcRenderPipeline)
+    //$$     }
+    //$$ }
+    //#elseif MC >= 1.21.5 && !STANDALONE
     //$$ internal fun compiled(): RenderPipeline? {
     //$$     val shaderSourceGetter = shaderSourceGetter
     //$$     if (shaderSourceGetter != null) {
@@ -484,7 +504,11 @@ class URenderPipeline private constructor(
                 //#endif
             //$$     when (shader) {
             //$$         is ShaderSupplier.LegacySource -> {
-            //$$             val transformer = ShaderTransformer(format, 150)
+                        //#if MC >= 26.3
+                        //$$ val transformer = ShaderTransformer(format, 330)
+                        //#else
+                        //$$ val transformer = ShaderTransformer(format, 150)
+                        //#endif
             //$$
             //$$             val transformedVertSource = transformer.transform(shader.vertSource)
             //$$             val transformedFragSource = transformer.transform(shader.fragSource)
@@ -492,6 +516,17 @@ class URenderPipeline private constructor(
             //$$             val vertId = Identifier.of("universalcraft", "shader/generated/" + DigestUtils.sha1Hex(transformedVertSource).lowercase())
             //$$             val fragId = Identifier.of("universalcraft", "shader/generated/" + DigestUtils.sha1Hex(transformedFragSource).lowercase())
             //$$
+            //#if MC >= 26.3
+            //$$             shaderSourceGetter = object : ShaderSource {
+            //$$                 override fun getShader(id: Identifier, type: ShaderType): String? = when (id) {
+            //$$                     vertId -> transformedVertSource
+            //$$                     fragId -> transformedFragSource
+            //$$                     else -> null
+            //$$                 }
+            //$$                 override fun getInclude(id: Identifier): ShaderSource.CachedIncludeSource? = null
+            //$$                 override fun close() {}
+            //$$             }
+            //#else
             //$$             shaderSourceGetter = ShaderSourceGetter { id: Identifier, type: ShaderType ->
             //$$                 when (id) {
             //$$                     vertId -> transformedVertSource
@@ -499,13 +534,18 @@ class URenderPipeline private constructor(
             //$$                     else -> MinecraftClient.getInstance().shaderLoader.getSource(id, type)
             //$$                 }
             //$$             }
+            //#endif
             //$$
             //$$             withVertexShader(vertId)
             //$$             withFragmentShader(fragId)
             //$$
                         //#if MC >= 26.2
                         //$$ withBindGroupLayout(BindGroupLayout.builder().apply {
-                        //$$     transformer.samplers.forEach { withSampler(it) }
+                            //#if MC >= 26.3
+                            //$$ transformer.samplers.forEach { withUniform(it, UniformType.COMBINED_IMAGE_SAMPLER) }
+                            //#else
+                            //$$ transformer.samplers.forEach { withSampler(it) }
+                            //#endif
                         //$$     transformer.uniforms.forEach { withUniform(it.key, it.value.mc) }
                         //$$ }.build())
                         //#else
@@ -785,7 +825,12 @@ class URenderPipeline private constructor(
             //$$ val shaderId = Identifier.ofVanilla(shader)
             //#if MC >= 26.2
             //$$ val bindGroupLayouts = buildList(4) {
-            //$$     add(BindGroupLayouts.MATRICES_PROJECTION)
+                //#if MC >= 26.3
+                //$$ add(BindGroupLayouts.DYNAMIC_TRANSFORMS)
+                //$$ add(BindGroupLayouts.PROJECTION)
+                //#else
+                //$$ add(BindGroupLayouts.MATRICES_PROJECTION)
+                //#endif
             //$$     if (format.mc.contains(DefaultVertexFormat.UV0_SEMANTIC_NAME)) add(BindGroupLayouts.SAMPLER0)
             //$$     if (format.mc.contains(DefaultVertexFormat.UV1_SEMANTIC_NAME)) add(BindGroupLayouts.SAMPLER1)
             //$$     if (format.mc.contains(DefaultVertexFormat.UV2_SEMANTIC_NAME)) add(BindGroupLayouts.SAMPLER2)

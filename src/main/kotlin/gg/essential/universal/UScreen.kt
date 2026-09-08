@@ -68,7 +68,7 @@ abstract class UScreen(
     private var suppressBackground = false
     //#endif
 
-    //#if MC>=12106
+    //#if MC >= 1.21.6 && MC < 26.3
     //$$ private val advancedDrawContext = AdvancedDrawContext()
     //#endif
 
@@ -165,13 +165,26 @@ abstract class UScreen(
     //$$ }
     //$$
     //#if MC>=12109
+    //#if MC >= 26.3
+    //$$ private var orgKeyInput: KeyEvent? = null
+    //#endif
     //$$ final override fun keyPressed(input: KeyInput): Boolean {
-    //$$     onKeyPressed(input.key, 0.toChar(), input.modifiers.toModifiers())
+        //#if MC >= 26.3
+        //$$ orgKeyInput = input
+        //$$ onKeyPressed(input.keycode, 0.toChar(), input.modifiers.toModifiers())
+        //$$ orgKeyInput = null
+        //#else
+        //$$ onKeyPressed(input.key, 0.toChar(), input.modifiers.toModifiers())
+        //#endif
     //$$     return false
     //$$ }
     //$$
     //$$ final override fun keyReleased(input: KeyInput): Boolean {
-    //$$     onKeyReleased(input.key, 0.toChar(), input.modifiers.toModifiers())
+        //#if MC >= 26.3
+        //$$ onKeyReleased(input.keycode, 0.toChar(), input.modifiers.toModifiers())
+        //#else
+        //$$ onKeyReleased(input.key, 0.toChar(), input.modifiers.toModifiers())
+        //#endif
     //$$     return false
     //$$ }
     //$$
@@ -198,7 +211,11 @@ abstract class UScreen(
     //$$     lastMouseInput = click.buttonInfo
     //$$     lastDoubled = doubled
     //$$     if (click.button() == 1) lastClick = UMinecraft.getTime()
-    //$$     onMouseClicked(click.x, click.y, click.button())
+        //#if MC >= 26.3
+        //$$ onMouseClicked(click.x, click.y, UMouse.buttonSdlToGlfw(click.button()))
+        //#else
+        //$$ onMouseClicked(click.x, click.y, click.button())
+        //#endif
     //$$     lastMouseInput = null
     //$$     lastDoubled = null
     //$$     return false
@@ -273,7 +290,7 @@ abstract class UScreen(
     //$$ final override fun onClose() {
     //$$     renderer?.close()
     //$$     renderer = null
-        //#if MC>=12106
+        //#if MC >= 1.21.6 && MC < 26.3
         //$$ advancedDrawContext.close()
         //#endif
     //$$     onScreenClose()
@@ -525,7 +542,11 @@ abstract class UScreen(
     open fun onKeyPressed(keyCode: Int, typedChar: Char, modifiers: UKeyboard.Modifiers?) {
         //#if MC>=11502
         //$$ if (keyCode != 0) {
-            //#if MC>=12109
+            //#if MC >= 26.3
+            //$$ // Note: Need to restore the `key` here, because that's what `KeyEvent.isEscape` actually uses
+            //$$ val org = orgKeyInput
+            //$$ super.keyPressed(KeyEvent(if (org?.keycode == keyCode) org.key else 0, keyCode, modifiers.toInt()))
+            //#elseif MC >= 1.21.9
             //$$ super.keyPressed(KeyInput(keyCode, 0, modifiers.toInt()))
             //#else
             //$$ super.keyPressed(keyCode, 0, modifiers.toInt())
@@ -565,7 +586,9 @@ abstract class UScreen(
         //#if MC>=11502
         //$$ if (mouseButton == 1)
         //$$     lastClick = UMinecraft.getTime()
-        //#if MC>=12109
+        //#if MC >= 26.3
+        //$$ super.mouseClicked(MouseButtonEvent(mouseX, mouseY, MouseButtonInfo(UMouse.buttonGlfwToSdl(mouseButton), lastMouseInput?.modifiers ?: 0)), lastDoubled ?: false)
+        //#elseif MC >= 1.21.9
         //$$ super.mouseClicked(Click(mouseX, mouseY, MouseInput(mouseButton, lastMouseInput?.modifiers ?: 0)), lastDoubled ?: false)
         //#else
         //$$ super.mouseClicked(mouseX, mouseY, mouseButton)

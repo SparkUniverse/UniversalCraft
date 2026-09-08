@@ -81,4 +81,21 @@ object UMouse {
     fun getScaledY(): Double {
         return getTrueY() * UResolution.scaledHeight / max(1, UResolution.windowHeight)
     }
+
+    fun buttonGlfwToSdl(glfw: Int): Int = when (glfw) {
+        0 -> 1 // left
+        1 -> 3 // right
+        2 -> 2 // middle
+        3 -> 4 // X1
+        4 -> 5 // X2
+        else -> 1
+    }
+    fun buttonSdlToGlfw(sdl: Int): Int = when (sdl) {
+        1 -> 0 // left
+        3 -> 1 // right
+        2 -> 2 // middle
+        4 -> 3 // X1
+        5 -> 4 // X2
+        else -> 0
+    }
 }

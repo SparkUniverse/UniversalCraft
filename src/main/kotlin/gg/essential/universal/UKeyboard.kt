@@ -12,10 +12,16 @@ import net.minecraft.client.settings.KeyBinding
 //$$ import gg.essential.universal.utils.toUnformattedString
 //#endif
 
-//#if MC>=11502
-//$$ import org.lwjgl.glfw.GLFW
-//$$ import net.minecraft.client.Minecraft
+//#if MC >= 1.13
 //$$ import net.minecraft.client.util.InputMappings
+//#endif
+
+//#if MC >= 26.3
+//$$ import org.lwjgl.sdl.SDLKeyboard
+//$$ import org.lwjgl.sdl.SDLKeycode
+//$$ import org.lwjgl.sdl.SDLScancode
+//#elseif MC >= 1.13
+//$$ import org.lwjgl.glfw.GLFW
 //#else
 import org.lwjgl.input.Keyboard
 import org.lwjgl.input.Mouse
@@ -23,12 +29,122 @@ import org.lwjgl.input.Mouse
 //#endif
 
 object UKeyboard {
-    //#if MC>=11502
     //#if STANDALONE
     //$$ @JvmField val KEY_NONE: Int = noInline { -1 }
-    //#else
+    //#elseif MC >= 1.13
     //$$ @JvmField val KEY_NONE: Int = noInline { InputMappings.INPUT_INVALID.keyCode }
+    //#else
+    @JvmField val KEY_NONE: Int = noInline { Keyboard.KEY_NONE }
     //#endif
+
+    //#if MC >= 26.3 && !STANDALONE
+    //$$ @JvmField val KEY_ESCAPE: Int = noInline { SDLKeycode.SDLK_ESCAPE }
+    //$$ @JvmField val KEY_LMETA: Int = noInline { SDLKeycode.SDLK_LMETA }
+    //$$ @JvmField val KEY_RMETA: Int = noInline { SDLKeycode.SDLK_RMETA }
+    //$$ @JvmField val KEY_LCONTROL: Int = noInline { SDLKeycode.SDLK_LCTRL }
+    //$$ @JvmField val KEY_RCONTROL: Int = noInline { SDLKeycode.SDLK_RCTRL }
+    //$$ @JvmField val KEY_LSHIFT: Int = noInline { SDLKeycode.SDLK_LSHIFT }
+    //$$ @JvmField val KEY_RSHIFT: Int = noInline { SDLKeycode.SDLK_RSHIFT }
+    //$$ @JvmField val KEY_LMENU: Int = noInline { SDLKeycode.SDLK_LALT }
+    //$$ @JvmField val KEY_RMENU: Int = noInline { SDLKeycode.SDLK_RALT }
+    //$$ @JvmField val KEY_MENU: Int = noInline { SDLKeycode.SDLK_MENU }
+    //$$ @JvmField val KEY_MINUS: Int = noInline { SDLKeycode.SDLK_MINUS }
+    //$$ @JvmField val KEY_EQUALS: Int = noInline { SDLKeycode.SDLK_EQUALS }
+    //$$ @JvmField val KEY_BACKSPACE: Int = noInline { SDLKeycode.SDLK_BACKSPACE }
+    //$$ @JvmField val KEY_ENTER: Int = noInline { SDLKeycode.SDLK_RETURN }
+    //$$ @JvmField val KEY_TAB: Int = noInline { SDLKeycode.SDLK_TAB }
+    //$$ @JvmField val KEY_LBRACKET: Int = noInline { SDLKeycode.SDLK_LEFTBRACKET }
+    //$$ @JvmField val KEY_RBRACKET: Int = noInline { SDLKeycode.SDLK_RIGHTBRACKET }
+    //$$ @JvmField val KEY_SEMICOLON: Int = noInline { SDLKeycode.SDLK_SEMICOLON }
+    //$$ @JvmField val KEY_APOSTROPHE: Int = noInline { SDLKeycode.SDLK_APOSTROPHE }
+    //$$ @JvmField val KEY_GRAVE: Int = noInline { SDLKeycode.SDLK_GRAVE }
+    //$$ @JvmField val KEY_BACKSLASH: Int = noInline { SDLKeycode.SDLK_BACKSLASH }
+    //$$ @JvmField val KEY_COMMA: Int = noInline { SDLKeycode.SDLK_COMMA }
+    //$$ @JvmField val KEY_PERIOD: Int = noInline { SDLKeycode.SDLK_PERIOD }
+    //$$ @JvmField val KEY_SLASH: Int = noInline { SDLKeycode.SDLK_SLASH }
+    //$$ @JvmField val KEY_MULTIPLY: Int = noInline { SDLKeycode.SDLK_KP_MULTIPLY }
+    //$$ @JvmField val KEY_SPACE: Int = noInline { SDLKeycode.SDLK_SPACE }
+    //$$ @JvmField val KEY_CAPITAL: Int = noInline { SDLKeycode.SDLK_CAPSLOCK }
+    //$$ @JvmField val KEY_LEFT: Int = noInline { SDLKeycode.SDLK_LEFT }
+    //$$ @JvmField val KEY_UP: Int = noInline { SDLKeycode.SDLK_UP }
+    //$$ @JvmField val KEY_RIGHT: Int = noInline { SDLKeycode.SDLK_RIGHT }
+    //$$ @JvmField val KEY_DOWN: Int = noInline { SDLKeycode.SDLK_DOWN }
+    //$$ @JvmField val KEY_NUMLOCK: Int = noInline { SDLKeycode.SDLK_NUMLOCKCLEAR }
+    //$$ @JvmField val KEY_SCROLL: Int = noInline { SDLKeycode.SDLK_SCROLLLOCK }
+    //$$ @JvmField val KEY_SUBTRACT: Int = noInline { SDLKeycode.SDLK_KP_MINUS }
+    //$$ @JvmField val KEY_ADD: Int = noInline { SDLKeycode.SDLK_KP_PLUS }
+    //$$ @JvmField val KEY_DIVIDE: Int = noInline { SDLKeycode.SDLK_KP_DIVIDE }
+    //$$ @JvmField val KEY_DECIMAL: Int = noInline { SDLKeycode.SDLK_KP_PERIOD }
+    //$$ @JvmField val KEY_NUMPAD0: Int = noInline { SDLKeycode.SDLK_KP_0 }
+    //$$ @JvmField val KEY_NUMPAD1: Int = noInline { SDLKeycode.SDLK_KP_1 }
+    //$$ @JvmField val KEY_NUMPAD2: Int = noInline { SDLKeycode.SDLK_KP_2 }
+    //$$ @JvmField val KEY_NUMPAD3: Int = noInline { SDLKeycode.SDLK_KP_3 }
+    //$$ @JvmField val KEY_NUMPAD4: Int = noInline { SDLKeycode.SDLK_KP_4 }
+    //$$ @JvmField val KEY_NUMPAD5: Int = noInline { SDLKeycode.SDLK_KP_5 }
+    //$$ @JvmField val KEY_NUMPAD6: Int = noInline { SDLKeycode.SDLK_KP_6 }
+    //$$ @JvmField val KEY_NUMPAD7: Int = noInline { SDLKeycode.SDLK_KP_7 }
+    //$$ @JvmField val KEY_NUMPAD8: Int = noInline { SDLKeycode.SDLK_KP_8 }
+    //$$ @JvmField val KEY_NUMPAD9: Int = noInline { SDLKeycode.SDLK_KP_9 }
+    //$$ @JvmField val KEY_NUMPADENTER: Int = noInline { SDLKeycode.SDLK_KP_ENTER }
+    //$$ @JvmField val KEY_A: Int = noInline { SDLKeycode.SDLK_A }
+    //$$ @JvmField val KEY_B: Int = noInline { SDLKeycode.SDLK_B }
+    //$$ @JvmField val KEY_C: Int = noInline { SDLKeycode.SDLK_C }
+    //$$ @JvmField val KEY_D: Int = noInline { SDLKeycode.SDLK_D }
+    //$$ @JvmField val KEY_E: Int = noInline { SDLKeycode.SDLK_E }
+    //$$ @JvmField val KEY_F: Int = noInline { SDLKeycode.SDLK_F }
+    //$$ @JvmField val KEY_G: Int = noInline { SDLKeycode.SDLK_G }
+    //$$ @JvmField val KEY_H: Int = noInline { SDLKeycode.SDLK_H }
+    //$$ @JvmField val KEY_I: Int = noInline { SDLKeycode.SDLK_I }
+    //$$ @JvmField val KEY_J: Int = noInline { SDLKeycode.SDLK_J }
+    //$$ @JvmField val KEY_K: Int = noInline { SDLKeycode.SDLK_K }
+    //$$ @JvmField val KEY_L: Int = noInline { SDLKeycode.SDLK_L }
+    //$$ @JvmField val KEY_M: Int = noInline { SDLKeycode.SDLK_M }
+    //$$ @JvmField val KEY_N: Int = noInline { SDLKeycode.SDLK_N }
+    //$$ @JvmField val KEY_O: Int = noInline { SDLKeycode.SDLK_O }
+    //$$ @JvmField val KEY_P: Int = noInline { SDLKeycode.SDLK_P }
+    //$$ @JvmField val KEY_Q: Int = noInline { SDLKeycode.SDLK_Q }
+    //$$ @JvmField val KEY_R: Int = noInline { SDLKeycode.SDLK_R }
+    //$$ @JvmField val KEY_S: Int = noInline { SDLKeycode.SDLK_S }
+    //$$ @JvmField val KEY_T: Int = noInline { SDLKeycode.SDLK_T }
+    //$$ @JvmField val KEY_U: Int = noInline { SDLKeycode.SDLK_U }
+    //$$ @JvmField val KEY_V: Int = noInline { SDLKeycode.SDLK_V }
+    //$$ @JvmField val KEY_W: Int = noInline { SDLKeycode.SDLK_W }
+    //$$ @JvmField val KEY_X: Int = noInline { SDLKeycode.SDLK_X }
+    //$$ @JvmField val KEY_Y: Int = noInline { SDLKeycode.SDLK_Y }
+    //$$ @JvmField val KEY_Z: Int = noInline { SDLKeycode.SDLK_Z }
+    //$$ @JvmField val KEY_0: Int = noInline { SDLKeycode.SDLK_0 }
+    //$$ @JvmField val KEY_1: Int = noInline { SDLKeycode.SDLK_1 }
+    //$$ @JvmField val KEY_2: Int = noInline { SDLKeycode.SDLK_2 }
+    //$$ @JvmField val KEY_3: Int = noInline { SDLKeycode.SDLK_3 }
+    //$$ @JvmField val KEY_4: Int = noInline { SDLKeycode.SDLK_4 }
+    //$$ @JvmField val KEY_5: Int = noInline { SDLKeycode.SDLK_5 }
+    //$$ @JvmField val KEY_6: Int = noInline { SDLKeycode.SDLK_6 }
+    //$$ @JvmField val KEY_7: Int = noInline { SDLKeycode.SDLK_7 }
+    //$$ @JvmField val KEY_8: Int = noInline { SDLKeycode.SDLK_8 }
+    //$$ @JvmField val KEY_9: Int = noInline { SDLKeycode.SDLK_9 }
+    //$$ @JvmField val KEY_F1: Int = noInline { SDLKeycode.SDLK_F1 }
+    //$$ @JvmField val KEY_F2: Int = noInline { SDLKeycode.SDLK_F2 }
+    //$$ @JvmField val KEY_F3: Int = noInline { SDLKeycode.SDLK_F3 }
+    //$$ @JvmField val KEY_F4: Int = noInline { SDLKeycode.SDLK_F4 }
+    //$$ @JvmField val KEY_F5: Int = noInline { SDLKeycode.SDLK_F5 }
+    //$$ @JvmField val KEY_F6: Int = noInline { SDLKeycode.SDLK_F6 }
+    //$$ @JvmField val KEY_F7: Int = noInline { SDLKeycode.SDLK_F7 }
+    //$$ @JvmField val KEY_F8: Int = noInline { SDLKeycode.SDLK_F8 }
+    //$$ @JvmField val KEY_F9: Int = noInline { SDLKeycode.SDLK_F9 }
+    //$$ @JvmField val KEY_F10: Int = noInline { SDLKeycode.SDLK_F10 }
+    //$$ @JvmField val KEY_F11: Int = noInline { SDLKeycode.SDLK_F11 }
+    //$$ @JvmField val KEY_F12: Int = noInline { SDLKeycode.SDLK_F12 }
+    //$$ @JvmField val KEY_F13: Int = noInline { SDLKeycode.SDLK_F13 }
+    //$$ @JvmField val KEY_F14: Int = noInline { SDLKeycode.SDLK_F14 }
+    //$$ @JvmField val KEY_F15: Int = noInline { SDLKeycode.SDLK_F15 }
+    //$$ @JvmField val KEY_F16: Int = noInline { SDLKeycode.SDLK_F16 }
+    //$$ @JvmField val KEY_F17: Int = noInline { SDLKeycode.SDLK_F17 }
+    //$$ @JvmField val KEY_F18: Int = noInline { SDLKeycode.SDLK_F18 }
+    //$$ @JvmField val KEY_F19: Int = noInline { SDLKeycode.SDLK_F19 }
+    //$$ @JvmField val KEY_DELETE: Int = noInline { SDLKeycode.SDLK_DELETE }
+    //$$ @JvmField val KEY_HOME: Int = noInline { SDLKeycode.SDLK_HOME }
+    //$$ @JvmField val KEY_END: Int = noInline { SDLKeycode.SDLK_END }
+    //#elseif MC >= 1.13
     //$$ @JvmField val KEY_ESCAPE: Int = noInline { GLFW.GLFW_KEY_ESCAPE }
     //$$ @JvmField val KEY_LMETA: Int = noInline { GLFW.GLFW_KEY_LEFT_SUPER } // TODO: Correct?
     //$$ @JvmField val KEY_RMETA: Int = noInline { GLFW.GLFW_KEY_RIGHT_SUPER } // TODO: Correct?
@@ -136,7 +252,6 @@ object UKeyboard {
     //$$ @JvmField val KEY_HOME: Int = noInline { GLFW.GLFW_KEY_HOME }
     //$$ @JvmField val KEY_END: Int = noInline { GLFW.GLFW_KEY_END }
     //#else
-    @JvmField val KEY_NONE: Int = noInline { Keyboard.KEY_NONE }
     @JvmField val KEY_ESCAPE: Int = noInline { Keyboard.KEY_ESCAPE }
     @JvmField val KEY_LMETA: Int = noInline { Keyboard.KEY_LMETA }
     @JvmField val KEY_RMETA: Int = noInline { Keyboard.KEY_RMETA }
@@ -270,6 +385,61 @@ object UKeyboard {
         //#endif
     }
 
+    /**
+     * Sets the text input area. Native input methods may display a window with text suggestions near this.
+     *
+     * It should ordinarily be right next to the cursor.
+     * The width will usually be 1, the height will usually be the line height.
+     */
+    fun setTextInputArea(x1: Int, y1: Int, x2: Int, y2: Int) {
+        //#if MC >= 26.3 && !STANDALONE
+        //$$ UMinecraft.getMinecraft().textInputManager().setTextInputArea(x1, y1, x2, y2)
+        //#else
+        @Suppress("UNUSED_EXPRESSION") x1
+        @Suppress("UNUSED_EXPRESSION") y1
+        @Suppress("UNUSED_EXPRESSION") x2
+        @Suppress("UNUSED_EXPRESSION") y2
+        //#endif
+    }
+
+    /**
+     * Starts text input mode.
+     * Must be called on 26.3+ to receive character events.
+     * Note that enabling text input may prevent some key events from being received.
+     *
+     * [owner] is an opaque token representing the input field for which text input is being enabled.
+     * The same token must be passed to [stopTextInput].
+     * If this method is called while text input mode is already active, ownership is transferred to the new [owner].
+     */
+    fun startTextInput(owner: Any) {
+        //#if MC >= 26.3 && !STANDALONE
+        //$$ UMinecraft.getMinecraft().textInputManager().startTextInput(owner)
+        //#else
+        @Suppress("UNUSED_EXPRESSION") owner
+        //#endif
+    }
+
+    /**
+     * Stops text input mode if the current owner matches the passed [owner].
+     * Does nothing if the current owner does not match.
+     */
+    fun stopTextInput(owner: Any) {
+        //#if MC >= 26.3 && !STANDALONE
+        //$$ UMinecraft.getMinecraft().textInputManager().stopTextInput(owner)
+        //#else
+        @Suppress("UNUSED_EXPRESSION") owner
+        //#endif
+    }
+
+    /**
+     * Stops text input mode.
+     */
+    fun stopTextInput() {
+        //#if MC >= 26.3 && !STANDALONE
+        //$$ UMinecraft.getMinecraft().textInputManager().stopTextInput()
+        //#endif
+    }
+
     @JvmStatic
     fun isCtrlKeyDown(): Boolean = if (UMinecraft.isRunningOnMac) {
         isKeyDown(KEY_LMETA) || isKeyDown(KEY_RMETA)
@@ -319,7 +489,12 @@ object UKeyboard {
     @JvmStatic
     fun isKeyDown(key: Int): Boolean {
         if (key == KEY_NONE) return false
-        //#if MC>=11502
+        //#if MC >= 26.3
+        //$$ val scancode = SDLKeyboard.SDL_GetScancodeFromKey(key, null)
+        //$$ if (scancode == SDLScancode.SDL_SCANCODE_UNKNOWN) return false
+        //$$ val keyboardState = SDLKeyboard.SDL_GetKeyboardState() ?: return false
+        //$$ return scancode < keyboardState.remaining() && keyboardState[scancode] != 0.toByte()
+        //#elseif MC >= 1.13
         //$$ val window = UMinecraft.getMinecraft().mainWindow.handle
         //$$ val state = if (key < 20) GLFW.glfwGetMouseButton(window, key) else GLFW.glfwGetKey(window, key)
         //$$ return state == GLFW.GLFW_PRESS
@@ -345,7 +520,9 @@ object UKeyboard {
      */
     @JvmStatic
     fun getKeyName(keyBinding: KeyBinding): String? {
-        //#if MC>=11400
+        //#if MC >= 26.3
+        //$$ return keyBinding.translatedKeyMessage.toUnformattedString()
+        //#elseif MC>=11400
         //#if MC>=11600
         //$$ return keyBinding.func_238171_j_().toUnformattedString().let {
         //#else
@@ -368,7 +545,14 @@ object UKeyboard {
     @Deprecated("Does not work for mouse bindings", replaceWith = ReplaceWith("getKeyName(keyBinding)"))
     @JvmStatic
     fun getKeyName(keyCode: Int, scanCode: Int): String? {
-        //#if MC>=11502
+        //#if MC >= 26.3 && !STANDALONE
+        //$$ var key = keyCode
+        //$$ if (key == KEY_NONE) {
+        //$$     key = SDLKeyboard.SDL_GetKeyFromScancode(scanCode, 0, false)
+        //$$ }
+        //$$ val sdlName = SDLKeyboard.SDL_GetKeyName(key) ?: return null
+        //$$ return if (sdlName.codePointCount(0, sdlName.length) == 1) sdlName.uppercase() else sdlName
+        //#elseif MC >= 1.13
         //#if STANDALONE
         //$$ val glfwName = runBlocking(Dispatchers.Glfw.immediate) { GLFW.glfwGetKeyName(keyCode, scanCode) }
         //#else
@@ -394,15 +578,27 @@ object UKeyboard {
 
     //#if MC>=11502
     //$$ internal fun Modifiers?.toInt() = listOf(
-    //$$     this?.isCtrl to GLFW.GLFW_MOD_CONTROL,
-    //$$     this?.isShift to GLFW.GLFW_MOD_SHIFT,
-    //$$     this?.isAlt to GLFW.GLFW_MOD_ALT,
+        //#if MC >= 26.3 && !STANDALONE
+        //$$ this?.isCtrl to SDLKeycode.SDL_KMOD_CTRL,
+        //$$ this?.isShift to SDLKeycode.SDL_KMOD_SHIFT,
+        //$$ this?.isAlt to SDLKeycode.SDL_KMOD_ALT,
+        //#else
+        //$$ this?.isCtrl to GLFW.GLFW_MOD_CONTROL,
+        //$$ this?.isShift to GLFW.GLFW_MOD_SHIFT,
+        //$$ this?.isAlt to GLFW.GLFW_MOD_ALT,
+        //#endif
     //$$ ).sumOf { (modifier, value) -> if (modifier == true) value else 0 }
     //$$
     //$$ internal fun Int.toModifiers() = Modifiers(
-    //$$     isCtrl = (this and GLFW.GLFW_MOD_CONTROL) != 0,
-    //$$     isShift = (this and GLFW.GLFW_MOD_SHIFT) != 0,
-    //$$     isAlt = (this and GLFW.GLFW_MOD_ALT) != 0,
+        //#if MC >= 26.3 && !STANDALONE
+        //$$ isCtrl = (this and SDLKeycode.SDL_KMOD_CTRL) != 0,
+        //$$ isShift = (this and SDLKeycode.SDL_KMOD_SHIFT) != 0,
+        //$$ isAlt = (this and SDLKeycode.SDL_KMOD_ALT) != 0,
+        //#else
+        //$$ isCtrl = (this and GLFW.GLFW_MOD_CONTROL) != 0,
+        //$$ isShift = (this and GLFW.GLFW_MOD_SHIFT) != 0,
+        //$$ isAlt = (this and GLFW.GLFW_MOD_ALT) != 0,
+        //#endif
     //$$ )
     //#endif
 }

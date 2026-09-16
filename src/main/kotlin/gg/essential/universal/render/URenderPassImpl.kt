@@ -777,7 +777,7 @@ internal class URenderPassImpl(val descriptor: URenderPassDescriptor) : URenderP
 //$$ }
 //#endif
 
-//#if MC >= 1.17 && MC < 1.21.8
+//#if MC >= 1.17 && MC < 1.21.5
 //$$ // Optifine on at least 1.18 to 1.21.4 binds the vertex attributes at indices independent of their
 //$$ // position within the VertexFormat. So we need to use its indices when binding our buffers.
 //$$ private val getAttributeIndex: ((element: VertexFormatElement, indexOfElement: Int) -> Int) by lazy {

@@ -551,7 +551,7 @@ internal class URenderPassImpl(val descriptor: URenderPassDescriptor) : URenderP
     //#if MC < 1.21.5 || STANDALONE
     private fun bind(vertexFormat: VertexFormat) {
         //#if MC >= 1.17
-        //$$ var index = 0
+        //$$ var indexOfElement = 0
         //#endif
         //#if STANDALONE
         //$$ val stride = vertexFormat.stride * 4
@@ -580,6 +580,11 @@ internal class URenderPassImpl(val descriptor: URenderPassDescriptor) : URenderP
             nextOffset += element.size
         //#endif
             //#if MC >= 1.17
+            //#if STANDALONE
+            //$$ val index = indexOfElement
+            //#else
+            //$$ val index = getAttributeIndex(element, indexOfElement)
+            //#endif
             //$$ GL20.glEnableVertexAttribArray(index)
             //#if STANDALONE
             //$$ GL20.glVertexAttribPointer(index, size, type, normalized, stride, offset)
@@ -590,7 +595,7 @@ internal class URenderPassImpl(val descriptor: URenderPassDescriptor) : URenderP
             //$$     GL20.glVertexAttribPointer(index, size, type, normalized, stride, offset)
             //$$ }
             //#endif
-            //$$ index++
+            //$$ indexOfElement++
             //#else
             when (element.usage) {
                 VertexFormatElement.EnumUsage.POSITION -> {
@@ -623,7 +628,7 @@ internal class URenderPassImpl(val descriptor: URenderPassDescriptor) : URenderP
 
     private fun unbind(vertexFormat: VertexFormat) {
         //#if MC >= 1.17
-        //$$ var index = 0
+        //$$ var indexOfElement = 0
         //#endif
         //#if STANDALONE
         //$$ for (part in vertexFormat.parts) {
@@ -634,8 +639,13 @@ internal class URenderPassImpl(val descriptor: URenderPassDescriptor) : URenderP
             //#endif
         //#endif
             //#if MC >= 1.17
+            //#if STANDALONE
+            //$$ val index = indexOfElement
+            //#else
+            //$$ val index = getAttributeIndex(element, indexOfElement)
+            //#endif
             //$$ GL20.glDisableVertexAttribArray(index)
-            //$$ index++
+            //$$ indexOfElement++
             //#else
             when (element.usage) {
                 VertexFormatElement.EnumUsage.POSITION -> {
@@ -763,6 +773,24 @@ internal class URenderPassImpl(val descriptor: URenderPassDescriptor) : URenderP
 //$$         program.lineWidth = lineWidth
 //$$         program.gameTime = gameTime
 //$$         program.modelOffset = modelOffset
+//$$     }
+//$$ }
+//#endif
+
+//#if MC >= 1.17 && MC < 1.21.8
+//$$ // Optifine on at least 1.18 to 1.21.4 binds the vertex attributes at indices independent of their
+//$$ // position within the VertexFormat. So we need to use its indices when binding our buffers.
+//$$ private val getAttributeIndex: ((element: VertexFormatElement, indexOfElement: Int) -> Int) by lazy {
+//$$     // The method OptiFine adds is `int getAttributeIndex(int elementIndex)`
+//$$     val lookup = java.lang.invoke.MethodHandles.lookup()
+//$$     val type = java.lang.invoke.MethodType.methodType(Int::class.java, Int::class.java)
+//$$     val handle = try {
+//$$         lookup.findVirtual(VertexFormatElement::class.java, "getAttributeIndex", type)
+//$$     } catch (_: NoSuchMethodException) { null }
+//$$     if (handle != null) {
+//$$         { element, indexOfElement -> handle.invokeExact(element, indexOfElement) as Int }
+//$$     } else {
+//$$         { _, indexOfElement -> indexOfElement }
 //$$     }
 //$$ }
 //#endif

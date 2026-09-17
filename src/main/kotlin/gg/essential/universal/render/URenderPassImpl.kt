@@ -781,16 +781,19 @@ internal class URenderPassImpl(val descriptor: URenderPassDescriptor) : URenderP
 //$$ // Optifine on at least 1.18 to 1.21.4 binds the vertex attributes at indices independent of their
 //$$ // position within the VertexFormat. So we need to use its indices when binding our buffers.
 //$$ private val getAttributeIndex: ((element: VertexFormatElement, indexOfElement: Int) -> Int) by lazy {
-//$$     // The method OptiFine adds is `int getAttributeIndex(int elementIndex)`
 //$$     val lookup = java.lang.invoke.MethodHandles.lookup()
-//$$     val type = java.lang.invoke.MethodType.methodType(Int::class.java, Int::class.java)
-//$$     val handle = try {
-//$$         lookup.findVirtual(VertexFormatElement::class.java, "getAttributeIndex", type)
-//$$     } catch (_: NoSuchMethodException) { null }
-//$$     if (handle != null) {
-//$$         { element, indexOfElement -> handle.invokeExact(element, indexOfElement) as Int }
-//$$     } else {
-//$$         { _, indexOfElement -> indexOfElement }
-//$$     }
+//$$     try {
+//$$         // The method OptiFine adds is `int getAttributeIndex(int elementIndex)`
+//$$         val type = java.lang.invoke.MethodType.methodType(Int::class.java, Int::class.java)
+//$$         val handle = lookup.findVirtual(VertexFormatElement::class.java, "getAttributeIndex", type)
+//$$         return@lazy { element, indexOfElement -> handle.invokeExact(element, indexOfElement) as Int }
+//$$     } catch (_: NoSuchMethodException) {}
+//$$     try {
+//$$         // except on more recent versions (~1.21.1+) where it's `int getAttributeIndex()`
+//$$         val type = java.lang.invoke.MethodType.methodType(Int::class.java)
+//$$         val handle = lookup.findVirtual(VertexFormatElement::class.java, "getAttributeIndex", type)
+//$$         return@lazy { element, _ -> handle.invokeExact(element) as Int }
+//$$     } catch (_: NoSuchMethodException) {}
+//$$     return@lazy { _, indexOfElement -> indexOfElement }
 //$$ }
 //#endif

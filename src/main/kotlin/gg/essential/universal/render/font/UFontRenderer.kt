@@ -168,6 +168,11 @@ class UFontRenderer(
         //$$         -1f,  1f,    0f,   1f,
         //$$     ))
         //$$     renderPass.uniform("Fog", UGraphics.getPlatformAdapter().bufferSlice(fogGpuBuffer))
+        //$$     // These two are not actually used by vanilla. But vanilla happens to bind them and some servers
+        //$$     // override the core font shader to draw highly custom stuff in their UI. And they use at least the
+        //$$     // game time as part of that. So we'll have to bind them as well.
+        //$$     RenderSystem.getGlobalSettingsUniform()?.let { renderPass.uniform("Globals", UGraphics.getPlatformAdapter().buffer(it).slice()) }
+        //$$     RenderSystem.getShaderLights()?.let { renderPass.uniform("Lighting", UGraphics.getPlatformAdapter().bufferSlice(it)) }
         //$$     val samplerNearest = UGpuSampler(
         //$$         UGpuSampler.AddressMode.CLAMP_TO_EDGE,
         //$$         UGpuSampler.AddressMode.CLAMP_TO_EDGE,

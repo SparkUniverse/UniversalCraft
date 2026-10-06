@@ -144,7 +144,11 @@ class ReleasedDynamicTexture private constructor(
                 //#endif
             //$$ }
             //#endif
+            //#if MC >= 26.4
+            //$$ textureData!!.writeToGpuTexture(device.createCommandEncoder(), texture.mc)
+            //#else
             //$$ device.createCommandEncoder().writeToTexture(texture.mc, textureData!!)
+            //#endif
             //$$ this.glTexture = texture.mc
             //#else
             //#if MC>=11400

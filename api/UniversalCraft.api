@@ -1721,6 +1721,24 @@ public final class gg/essential/universal/shader/UShader$Companion {
 	public final fun fromLegacyShader (Ljava/lang/String;Ljava/lang/String;Lgg/essential/universal/shader/BlendState;Lnet/minecraft/client/renderer/vertex/VertexFormat;)Lgg/essential/universal/shader/UShader;
 }
 
+@26.4-fabric
+public final class gg/essential/universal/utils/ReleasedDynamicTexture : java/lang/AutoCloseable, net/minecraft/client/renderer/texture/TextureHandle {
+	public fun <init> (II)V
+	public fun <init> (Lcom/mojang/blaze3d/platform/NativeImage;)V
+	public fun close ()V
+	public final fun getDynamicGlId ()I
+	public final fun getGpuTexture ()Lgg/essential/universal/render/UGpuTexture;
+	public final fun getGpuTextureView ()Lgg/essential/universal/render/UGpuTextureView;
+	public final fun getHeight ()I
+	public final fun getUploaded ()Z
+	public final fun getWidth ()I
+	public fun sampler ()Lcom/mojang/renderpearl/api/textures/GpuSampler;
+	public final fun setUploaded (Z)V
+	public fun textureView ()Lcom/mojang/renderpearl/api/textures/GpuTextureView;
+	public final fun updateDynamicTexture ()V
+	public final fun uploadTexture ()V
+}
+
 @1.16.2-forge
 public final class gg/essential/universal/utils/ReleasedDynamicTexture : net/minecraft/client/renderer/texture/Texture {
 	public fun <init> (II)V
@@ -1783,12 +1801,12 @@ public final class gg/essential/universal/shader/UShader$DefaultImpls {
 	public static fun getSamplerUniform (Lgg/essential/universal/shader/UShader;Ljava/lang/String;)Lgg/essential/universal/shader/SamplerUniform;
 }
 
-@1.12.2-forge,1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.11-forge,1.21.11-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,1.8.9-forge,26.1-fabric,26.1-forge,26.1-neoforge,26.2-fabric,26.2-forge,26.2-neoforge,26.3-fabric,26.3-forge,26.3-neoforge,26.4-fabric
+@1.12.2-forge,1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.11-forge,1.21.11-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,1.8.9-forge,26.1-fabric,26.1-forge,26.1-neoforge,26.2-fabric,26.2-forge,26.2-neoforge,26.3-fabric,26.3-forge,26.3-neoforge
 public final class gg/essential/universal/utils/ReleasedDynamicTexture : net/minecraft/client/renderer/texture/AbstractTexture {
 	public fun <init> (II)V
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.11-forge,1.21.11-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.1-forge,26.1-neoforge,26.2-fabric,26.2-forge,26.2-neoforge,26.3-fabric,26.3-forge,26.3-neoforge,26.4-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.11-forge,1.21.11-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.1-forge,26.1-neoforge,26.2-fabric,26.2-forge,26.2-neoforge,26.3-fabric,26.3-forge,26.3-neoforge
 	public fun <init> (Lcom/mojang/blaze3d/platform/NativeImage;)V
-	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.11-forge,1.21.11-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.1-forge,26.1-neoforge,26.2-fabric,26.2-forge,26.2-neoforge,26.3-fabric,26.3-forge,26.3-neoforge,26.4-fabric
+	@1.17.1-forge,1.18.1-forge,1.19.2-forge,1.19.3-forge,1.19.4-forge,1.20.1-forge,1.20.2-forge,1.20.4-forge,1.20.4-neoforge,1.20.6-forge,1.20.6-neoforge,1.21-forge,1.21-neoforge,1.21.11-forge,1.21.11-neoforge,1.21.3-forge,1.21.3-neoforge,1.21.4-forge,1.21.4-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.1-forge,26.1-neoforge,26.2-fabric,26.2-forge,26.2-neoforge,26.3-fabric,26.3-forge,26.3-neoforge
 	public fun close ()V
 	@1.12.2-forge,1.8.9-forge
 	public fun <init> (Ljava/awt/image/BufferedImage;)V
@@ -1800,9 +1818,9 @@ public final class gg/essential/universal/utils/ReleasedDynamicTexture : net/min
 	public final fun getGpuTexture ()Lgg/essential/universal/render/UGpuTexture;
 	public final fun getGpuTextureView ()Lgg/essential/universal/render/UGpuTextureView;
 	public final fun getHeight ()I
-	@26.3-fabric,26.3-forge,26.3-neoforge,26.4-fabric
+	@26.3-fabric,26.3-forge,26.3-neoforge
 	public fun getTexture ()Lcom/mojang/renderpearl/api/textures/GpuTexture;
-	@26.3-fabric,26.3-forge,26.3-neoforge,26.4-fabric
+	@26.3-fabric,26.3-forge,26.3-neoforge
 	public fun getTextureView ()Lcom/mojang/renderpearl/api/textures/GpuTextureView;
 	@1.21.11-forge,1.21.11-neoforge,1.21.5-forge,1.21.5-neoforge,1.21.7-forge,1.21.7-neoforge,26.1-fabric,26.1-forge,26.1-neoforge,26.2-fabric,26.2-forge,26.2-neoforge
 	public fun getTexture ()Lcom/mojang/blaze3d/textures/GpuTexture;

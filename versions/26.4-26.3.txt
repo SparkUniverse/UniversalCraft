@@ -2,3 +2,4 @@ com.mojang.blaze3d.pipeline.RenderPipeline com.mojang.renderpearl.api.pipeline.R
 com.mojang.blaze3d.pipeline.ShaderSource com.mojang.renderpearl.api.pipeline.ShaderSource
 com.mojang.blaze3d.vertex.VertexFormat com.mojang.renderpearl.api.vertex.VertexFormat
 com.mojang.blaze3d.vertex.VertexFormatElement com.mojang.renderpearl.api.vertex.VertexFormatElement
+net.minecraft.client.renderer.texture.TextureHandle net.minecraft.client.renderer.texture.AbstractTexture

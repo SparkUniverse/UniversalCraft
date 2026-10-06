@@ -11,6 +11,10 @@ import gg.essential.universal.render.impl
 //$$ import org.lwjgl.opengl.GL20C
 //$$ import java.nio.Buffer
 //#else
+//#if MC >= 26.4
+//$$ import com.mojang.renderpearl.api.textures.GpuSampler
+//#endif
+
 //#if MC>=12111
 //$$ import com.mojang.blaze3d.textures.AddressMode
 //#endif
@@ -61,6 +65,8 @@ class ReleasedDynamicTexture private constructor(
     //#endif
 //#if STANDALONE
 //$$ ) {
+//#elseif MC >= 26.4
+//$$ ) : TextureHandle, AutoCloseable {
 //#else
 ) : AbstractTexture() {
 //#endif
@@ -132,7 +138,8 @@ class ReleasedDynamicTexture private constructor(
             //$$ )
             //#elseif MC>=12105
             //$$ val device = RenderSystem.getDevice()
-            //#if MC>=12111
+            //#if MC >= 26.4
+            //#elseif MC >= 1.21.11
             //$$ sampler = RenderSystem.getSamplerCache().get(AddressMode.REPEAT, AddressMode.REPEAT, FilterMode.LINEAR, FilterMode.NEAREST, true);
             //#else
             //$$ texture.mc.setTextureFilter(FilterMode.NEAREST, true)
@@ -148,8 +155,8 @@ class ReleasedDynamicTexture private constructor(
             //$$ textureData!!.writeToGpuTexture(device.createCommandEncoder(), texture.mc)
             //#else
             //$$ device.createCommandEncoder().writeToTexture(texture.mc, textureData!!)
-            //#endif
             //$$ this.glTexture = texture.mc
+            //#endif
             //#else
             //#if MC>=11400
             //$$ UGraphics.configureTexture(texture.glId) {
@@ -168,7 +175,7 @@ class ReleasedDynamicTexture private constructor(
 
             val textureView = UGraphics.getDevice().createTextureView(texture)
             resources.gpuTextureView = textureView
-            //#if MC>=12106 && !STANDALONE
+            //#if MC >= 1.21.6 && MC < 26.4
             //$$ this.glTextureView = textureView.impl.mc
             //#endif
 
@@ -206,6 +213,7 @@ class ReleasedDynamicTexture private constructor(
         get() = getGlTextureId()
         //#endif
 
+
     //#if STANDALONE
     //$$ fun getGlTextureId(): Int {
     //$$     uploadTexture()
@@ -215,6 +223,9 @@ class ReleasedDynamicTexture private constructor(
     //$$ fun deleteGlTexture() {
     //$$     resources.gpuTextureView = null
     //$$ }
+    //#elseif MC >= 26.4
+    //$$ override fun textureView(): GpuTextureView = UGraphics.getPlatformAdapter().textureView(gpuTextureView)
+    //$$ override fun sampler(): GpuSampler = RenderSystem.getSamplerCache().getSampler(AddressMode.REPEAT, AddressMode.REPEAT, FilterMode.LINEAR, FilterMode.NEAREST, true)
     //#elseif MC>=12105
     //#if MC>=12106
     //$$ override fun getGlTextureView(): GpuTextureView {
@@ -261,7 +272,9 @@ class ReleasedDynamicTexture private constructor(
     //#if STANDALONE
     //#elseif MC>=12105
     //$$ override fun close() {
-    //$$     super.close()
+        //#if MC < 26.4
+        //$$ super.close()
+        //#endif
     //$$     resources.close()
     //$$ }
     //#elseif MC>=11600

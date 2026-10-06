@@ -117,7 +117,12 @@ class URenderPipeline private constructor(
     //$$     val shaderSourceGetter = shaderSourceGetter
     //$$     return if (shaderSourceGetter != null) {
     //$$         compiledRenderPipeline
-    //$$             ?: RenderSystem.getDevice().compilePipeline(mcRenderPipeline, shaderSourceGetter, backgroundExecutor())
+                //#if MC >= 26.4
+                //$$ ?: RenderSystem.getPipelineBuilder()
+                //#else
+                //$$ ?: RenderSystem.getDevice()
+                //#endif
+    //$$                 .compilePipeline(mcRenderPipeline, shaderSourceGetter, backgroundExecutor())
     //$$                 .join()
     //$$                 .finishCompile()
     //$$                 ?.also { compiledRenderPipeline = it }

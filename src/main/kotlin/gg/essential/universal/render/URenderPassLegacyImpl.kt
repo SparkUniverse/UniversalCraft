@@ -32,7 +32,9 @@ import kotlin.ranges.coerceIn
 //$$ import com.mojang.blaze3d.textures.TextureFormat
 //$$ import gg.essential.universal.vertex.UBufferBuilder
 //$$ import net.minecraft.client.MinecraftClient
+//#if MC < 26.4
 //$$ import net.minecraft.client.texture.GlTexture
+//#endif
 //#if MC >= 26.2
 //$$ import java.util.Optional
 //#else
@@ -261,8 +263,11 @@ internal class URenderPassLegacyImpl : AutoCloseable {
             //#endif
         }
 
-        @Deprecated("Does not support Vulkan; uses hard-coded sampler on 1.21.11+, relies on texture configuration on older versions.")
+        @Deprecated("Unsupported on 26.4+. Does not support Vulkan; uses hard-coded sampler on 1.21.11+, relies on texture configuration on older versions.")
         override fun texture(name: String, textureGlId: Int): DrawCallBuilder = apply {
+            //#if MC >= 26.4
+            //$$ throw UnsupportedOperationException()
+            //#else
             //#if MC>=12105 && !STANDALONE
             //#if MC >= 26.2
             //$$ val texture = object : GlTexture(USAGE_TEXTURE_BINDING, "", GpuFormat.RGBA8_UNORM, 0, 0, 0, 1, textureGlId, null) {
@@ -288,9 +293,10 @@ internal class URenderPassLegacyImpl : AutoCloseable {
             //#else
             pipeline.texture(name, textureGlId)
             //#endif
+            //#endif
         }
 
-        @Deprecated("Does not support Vulkan; uses hard-coded sampler on 1.21.11+, relies on texture configuration on older versions.")
+        @Deprecated("Unsupported on 26.4+. Does not support Vulkan; uses hard-coded sampler on 1.21.11+, relies on texture configuration on older versions.")
         override fun texture(index: Int, textureGlId: Int): DrawCallBuilder = apply {
             //#if MC>=12105 && !STANDALONE
             //$$ @Suppress("DEPRECATION")

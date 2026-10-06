@@ -104,7 +104,11 @@ internal class UGpuTextureImpl(
     //$$ override val width: Int get() = mc.getWidth(0)
     //$$ override val height: Int get() = mc.getHeight(0)
     //$$ override val mipLevels: Int get() = mc.mipLevels
+    //#if MC >= 26.4
+    //$$ val glId: Int get() = (mc as com.mojang.renderpearl.backend.opengl.FrameBufferAttachment).glId()
+    //#else
     //$$ val glId: Int get() = (mc as net.minecraft.client.texture.GlTexture).glId
+    //#endif
     //#endif
 
     //#if MC >= 1.21.6 && !STANDALONE

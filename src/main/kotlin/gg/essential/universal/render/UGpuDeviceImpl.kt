@@ -49,7 +49,9 @@ import net.minecraft.client.renderer.OpenGlHelper.glGenFramebuffers
 
 //#if MC >= 1.21.5
 //$$ import com.mojang.blaze3d.textures.TextureFormat
+//#if MC < 26.2
 //$$ import net.minecraft.client.texture.GlTexture
+//#endif
 //#endif
 
 //#if MC >= 1.21.5 && MC < 26.1

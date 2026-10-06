@@ -24,7 +24,9 @@ import gg.essential.universal.render.impl
 //$$ import com.mojang.blaze3d.textures.FilterMode
 //$$ import com.mojang.blaze3d.textures.GpuTexture
 //$$ import com.mojang.blaze3d.textures.TextureFormat
+//#if MC < 26.4
 //$$ import net.minecraft.client.texture.GlTexture
+//#endif
 //#endif
 
 import net.minecraft.client.renderer.texture.AbstractTexture
@@ -187,8 +189,11 @@ class ReleasedDynamicTexture private constructor(
             return resources.gpuTextureView ?: throw IllegalStateException("Texture has been closed.")
         }
 
+    @Deprecated("Unsupported on 26.4+. Does not support Vulkan. Use `gpuTexture(View)` instead.")
     val dynamicGlId: Int
-        //#if MC>=12105 && !STANDALONE
+        //#if MC >= 26.4 && !STANDALONE
+        //$$ get() = throw UnsupportedOperationException()
+        //#elseif MC>=12105 && !STANDALONE
         //$$ get() {
         //$$     uploadTexture()
         //$$     return (resources.gpuTextureView?.texture?.impl?.mc as GlTexture?)?.glId ?: -1

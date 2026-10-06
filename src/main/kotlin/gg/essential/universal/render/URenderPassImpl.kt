@@ -38,7 +38,6 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement
 //#if MC >= 1.21.5
 //$$ import com.mojang.blaze3d.systems.RenderPass
 //$$ import com.mojang.blaze3d.systems.RenderSystem
-//$$ import net.minecraft.client.texture.GlTexture
 //#if MC >= 26.2
 //$$ import java.util.Optional
 //#else
@@ -429,7 +428,7 @@ internal class URenderPassImpl(val descriptor: URenderPassDescriptor) : URenderP
             //$$ sampler.impl.configureTexture(textureView.texture.impl.mc)
             //$$ mc.bindSampler(name, textureView.impl.mc)
             //#else
-            //$$ sampler.impl.configureTexture((textureView.texture.impl.mc as GlTexture).glId)
+            //$$ sampler.impl.configureTexture((textureView.texture.impl.mc as net.minecraft.client.texture.GlTexture).glId)
             //$$ mc.bindSampler(name, textureView.texture.impl.mc)
             //#endif
             //#else

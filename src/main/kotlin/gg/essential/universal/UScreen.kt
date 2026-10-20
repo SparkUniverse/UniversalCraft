@@ -119,7 +119,14 @@ abstract class UScreen(
     //#endif
     //$$
     //#if MC>=12000
+    //#if MC >= 26.4
+    //$$ override fun extractRenderState(context: GuiGraphicsExtractor) {
+    //$$     val mouseX = context.mouseX()
+    //$$     val mouseY = context.mouseY()
+    //$$     val delta = context.partialTicks()
+    //#else
     //$$ final override fun render(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float) {
+    //#endif
     //$$     val renderer = renderer ?: uCreateRenderer().also { renderer = it }
     //$$     if (renderer != null) {
     //$$         val renderState = uExtractRenderState(mouseX, mouseY, delta)
@@ -298,7 +305,10 @@ abstract class UScreen(
     //$$ }
     //$$
     //#if MC>=12000
-    //#if MC>=12002
+    //#if MC >= 26.4
+    //$$ override fun extractBackground(context: GuiGraphicsExtractor) {
+    //$$     if (suppressBackground) return
+    //#elseif MC >= 1.20.2
     //$$ private var lastBackgroundMouseX = 0
     //$$ private var lastBackgroundMouseY = 0
     //$$ private var lastBackgroundDelta = 0f
@@ -474,7 +484,11 @@ abstract class UScreen(
         //#endif
         //#if MC>=12000
         //$$ withDrawContext(matrixStack) { drawContext ->
-        //$$     super.render(drawContext, mouseX, mouseY, partialTicks)
+            //#if MC >= 26.4
+            //$$ super.extractRenderState(drawContext)
+            //#else
+            //$$ super.render(drawContext, mouseX, mouseY, partialTicks)
+            //#endif
         //$$ }
         //#elseif MC>=11602
         //$$ super.render(matrixStack.toMC(), mouseX, mouseY, partialTicks)
@@ -672,7 +686,9 @@ abstract class UScreen(
             //$$ val orgProjectionMatrixBuffer = RenderSystem.getProjectionMatrixBuffer()
             //$$ val orgProjectionType = RenderSystem.getProjectionType()
             //#endif
-            //#if MC>=12002
+            //#if MC >= 26.4
+            //$$ super.extractBackground(drawContext)
+            //#elseif MC >= 1.20.2
             //$$ super.renderBackground(drawContext, lastBackgroundMouseX, lastBackgroundMouseY, lastBackgroundDelta)
             //#else
             //$$ super.renderBackground(drawContext)

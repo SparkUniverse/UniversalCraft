@@ -559,7 +559,11 @@ abstract class UScreen(
             //#if MC >= 26.3
             //$$ // Note: Need to restore the `key` here, because that's what `KeyEvent.isEscape` actually uses
             //$$ val org = orgKeyInput
+            //#if MC >= 26.4
+            //$$ super.keyPressed(KeyEvent(if (org?.keycode == keyCode) org.key else 0, keyCode, modifiers.toInt(), org?.repeat ?: false))
+            //#else
             //$$ super.keyPressed(KeyEvent(if (org?.keycode == keyCode) org.key else 0, keyCode, modifiers.toInt()))
+            //#endif
             //#elseif MC >= 1.21.9
             //$$ super.keyPressed(KeyInput(keyCode, 0, modifiers.toInt()))
             //#else
@@ -587,7 +591,9 @@ abstract class UScreen(
     open fun onKeyReleased(keyCode: Int, typedChar: Char, modifiers: UKeyboard.Modifiers?) {
         //#if MC>=11502
         //$$ if (keyCode != 0) {
-            //#if MC>=12109
+            //#if MC >= 26.4
+            //$$ super.keyReleased(KeyEvent(keyCode, 0, modifiers.toInt(), false))
+            //#elseif MC >= 1.21.9
             //$$ super.keyReleased(KeyInput(keyCode, 0, modifiers.toInt()))
             //#else
             //$$ super.keyReleased(keyCode, 0, modifiers.toInt())

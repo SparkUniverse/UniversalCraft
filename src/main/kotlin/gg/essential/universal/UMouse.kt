@@ -1,5 +1,9 @@
 package gg.essential.universal
 
+//#if MC >= 26.4 && !STANDALONE
+//$$ import net.minecraft.client.MouseHandler
+//#endif
+
 //#if MC<=11202
 import org.lwjgl.input.Mouse
 //#endif
@@ -19,7 +23,11 @@ object UMouse {
         @JvmStatic
         val x: Double
             get() {
-                //#if MC>=11502
+                //#if MC >= 26.4
+                //$$ val mc = UMinecraft.getMinecraft()
+                //$$ val window = mc.window
+                //$$ return mc.mouseHandler.getScaledXPos(window) / MouseHandler.getScaledXPos(window, 1.0)
+                //#elseif MC >= 1.14
                 //$$ return UMinecraft.getMinecraft().mouseHelper.mouseX
                 //#else
                 return Mouse.getX().toDouble()
@@ -29,7 +37,11 @@ object UMouse {
         @JvmStatic
         val y: Double
             get() {
-                //#if MC>=11400
+                //#if MC >= 26.4
+                //$$ val mc = UMinecraft.getMinecraft()
+                //$$ val window = mc.window
+                //$$ return mc.mouseHandler.getScaledYPos(window) / MouseHandler.getScaledYPos(window, 1.0)
+                //#elseif MC >= 1.14
                 //$$ return UMinecraft.getMinecraft().mouseHelper.mouseY
                 //#else
                 return UResolution.windowHeight - Mouse.getY().toDouble() - 1

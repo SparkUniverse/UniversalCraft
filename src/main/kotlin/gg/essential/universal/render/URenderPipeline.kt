@@ -18,6 +18,10 @@ import org.lwjgl.opengl.GL11
 import net.minecraft.client.renderer.vertex.VertexFormat
 import net.minecraft.util.ResourceLocation
 
+//#if MC >= 26.4
+//$$ import com.mojang.renderpearl.api.pipeline.RenderPassLayout
+//#endif
+
 //#if MC >= 26.3
 //$$ import com.mojang.renderpearl.api.pipeline.CompiledRenderPipeline
 //$$ import com.mojang.renderpearl.api.pipeline.ShaderSource
@@ -111,18 +115,29 @@ class URenderPipeline private constructor(
     internal val glState: ManagedGlState,
     //#endif
 ) {
-    //#if MC >= 26.3 && !STANDALONE
+    //#if MC >= 26.4 && !STANDALONE
+    //$$ private val compiledRenderPipelines = mutableMapOf<RenderPassLayout.Subpass, CompiledRenderPipeline>()
+    //$$ internal fun compiled(subpass: RenderPassLayout.Subpass): CompiledRenderPipeline? {
+    //$$     val shaderSourceGetter = shaderSourceGetter
+    //$$     return if (shaderSourceGetter != null) {
+    //$$         compiledRenderPipelines.getOrPut(subpass) {
+    //$$             RenderSystem.getPipelineBuilder()
+    //$$                 .compilePipeline(mcRenderPipeline, subpass, shaderSourceGetter, backgroundExecutor())
+    //$$                 .join()
+    //$$                 .finishCompile()
+    //$$                 ?: return null
+    //$$         }
+    //$$     } else {
+    //$$         RenderSystem.getCompiledPipelineNullable(mcRenderPipeline, subpass)
+    //$$     }
+    //$$ }
+    //#elseif MC >= 26.3 && !STANDALONE
     //$$ private var compiledRenderPipeline: CompiledRenderPipeline? = null
     //$$ internal fun compiled(): CompiledRenderPipeline? {
     //$$     val shaderSourceGetter = shaderSourceGetter
     //$$     return if (shaderSourceGetter != null) {
     //$$         compiledRenderPipeline
-                //#if MC >= 26.4
-                //$$ ?: RenderSystem.getPipelineBuilder()
-                //#else
-                //$$ ?: RenderSystem.getDevice()
-                //#endif
-    //$$                 .compilePipeline(mcRenderPipeline, shaderSourceGetter, backgroundExecutor())
+    //$$             ?: RenderSystem.getDevice().compilePipeline(mcRenderPipeline, shaderSourceGetter, backgroundExecutor())
     //$$                 .join()
     //$$                 .finishCompile()
     //$$                 ?.also { compiledRenderPipeline = it }
@@ -144,7 +159,11 @@ class URenderPipeline private constructor(
 
     //#if MC>=12105 && !STANDALONE
     //$$ internal fun draw(renderPass: RenderPass, builtBuffer: BuiltBuffer) {
-    //$$     renderPass.setPipeline(compiled() ?: return)
+        //#if MC >= 26.4
+        //$$ renderPass.setPipeline(compiled(renderPass.activeSubpass()) ?: return)
+        //#else
+        //$$ renderPass.setPipeline(compiled() ?: return)
+        //#endif
     //$$
         //#if MC >= 26.2
         //$$ renderPass.drawIndexed(builtBuffer.drawState().indexCount, 1, 0, 0, 0)
@@ -637,7 +656,7 @@ class URenderPipeline private constructor(
             //$$             blendState.srcAlpha.mcSourceFactor,
             //$$             blendState.dstAlpha.mcDestFactor,
             //$$         ) else null),
-                    //#if MC >= 26.2
+                    //#if MC >= 26.2 && MC < 26.4
                     //$$ GpuFormat.RGBA8_UNORM,
                     //#endif
             //$$         colorMask.let { (colorMask, alphaMask) ->

@@ -610,11 +610,13 @@ public class UGraphics {
         //#endif
     }
 
+    //#if MC < 26.4
     @Deprecated // Pass UMatrixStack as first arg, required for 1.17+
     public static void drawString(String text, float x, float y, int color, boolean shadow) {
         drawString(UNIT_STACK, text, x, y, color, shadow);
     }
 
+    @Deprecated // No longer supported on 26.4. Use UFontRenderer instead
     public static void drawString(UMatrixStack stack, String text, float x, float y, int color, boolean shadow) {
         if ((color >> 24 & 255) <= 10) return;
         //#if STANDALONE
@@ -656,6 +658,7 @@ public class UGraphics {
         drawString(UNIT_STACK, text, x, y, color, shadowColor);
     }
 
+    @Deprecated // No longer supported on 26.4. Use UFontRenderer instead
     public static void drawString(UMatrixStack stack, String text, float x, float y, int color, int shadowColor) {
         if ((color >> 24 & 255) <= 10) return;
         String shadowText = ChatColor.Companion.stripColorCodes(text);
@@ -799,6 +802,7 @@ public class UGraphics {
     //#endif
     //$$ }
     //#endif
+    //#endif
 
     public static List<String> listFormattedStringToWidth(String str, int wrapWidth) {
         return listFormattedStringToWidth(str, wrapWidth, true);
@@ -827,7 +831,11 @@ public class UGraphics {
         //$$ ITextProperties properties = charManager.func_238358_a_(new StringTextComponent(str).mergeStyle(EMPTY_WITH_FONT_ID), wrapWidth, Style.EMPTY);
         //#endif
         //$$ // From net.minecraft.util.text.ITextProperties line 88
+        //#if MC >= 26.4
+        //$$ properties.visitWithoutResult(string -> {
+        //#else
         //$$ properties.getComponent(string -> {
+        //#endif
         //$$     strings.add(string);
         //$$     return Optional.empty();
         //$$ });

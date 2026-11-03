@@ -6,6 +6,10 @@ import kotlin.ranges.coerceIn
 
 //#if STANDALONE
 //#else
+//#if MC >= 26.4
+//$$ import net.minecraft.client.renderer.RenderPassLayouts
+//#endif
+
 //#if MC >= 26.3
 //$$ import com.mojang.renderpearl.api.pipeline.UniformType
 //#endif
@@ -147,6 +151,9 @@ internal class URenderPassLegacyImpl : AutoCloseable {
         //$$         RenderSystem.getDevice().createCommandEncoder().createRenderPass(
                     //#if MC>=12106
                     //$$ { "Immediate draw for $pipeline" },
+                    //#endif
+                    //#if MC >= 26.4
+                    //$$ if (outputDepthTexture != null) RenderPassLayouts.COLOR_DEPTH else RenderPassLayouts.COLOR_ONLY,
                     //#endif
         //$$             outputColorTexture,
                     //#if MC >= 26.2

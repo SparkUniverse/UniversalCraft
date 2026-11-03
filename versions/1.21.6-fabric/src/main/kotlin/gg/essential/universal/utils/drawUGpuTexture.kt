@@ -12,6 +12,7 @@ import net.minecraft.util.Identifier
 //#if MC >= 26.4
 //$$ import com.mojang.blaze3d.systems.RenderSystem
 //$$ import com.mojang.renderpearl.api.textures.FilterMode
+//$$ import net.minecraft.client.gui.GuiPipeline
 //$$ import net.minecraft.client.renderer.texture.TextureManager
 //$$ import net.minecraft.client.renderer.texture.TextureResources
 //$$ import java.lang.invoke.MethodHandles
@@ -41,7 +42,11 @@ private fun drawTextureImpl(context: DrawContext, textureView: UGpuTextureView) 
     context.matrices.pushMatrix()
     context.matrices.scale(1 / scaleFactor, 1 / scaleFactor) // drawTexture only accepts `int`s
     context.drawTexture(
+        //#if MC >= 26.4
+        //$$ GuiPipeline.TEXTURED_PREMULTIPLIED_ALPHA,
+        //#else
         RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA,
+        //#endif
         identifier,
         // x, y
         0, 0,

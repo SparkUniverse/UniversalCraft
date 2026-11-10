@@ -107,6 +107,12 @@ internal class UGpuTextureImpl(
     //$$ val glId: Int get() = (mc as net.minecraft.client.texture.GlTexture).glId
     //#endif
 
+    //#if MC >= 26.4 && !STANDALONE
+    //$$ val isOpenGl: Boolean get() = mc is com.mojang.renderpearl.backend.opengl.FrameBufferAttachment
+    //#elseif MC >= 1.21.5 && !STANDALONE
+    //$$ val isOpenGl: Boolean get() = mc is net.minecraft.client.texture.GlTexture
+    //#endif
+
     //#if MC >= 1.21.6 && !STANDALONE
     //$$ override val isClosed: Boolean get() = mc.isClosed
     //$$ override fun close() = mc.close()

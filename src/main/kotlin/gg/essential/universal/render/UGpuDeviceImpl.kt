@@ -582,6 +582,209 @@ internal object UGpuDeviceImpl : UGpuDevice {
         //#endif
     }
 
+    override fun copyTextureToBuffer(
+        source: UGpuTexture,
+        sourceX: Int,
+        sourceY: Int,
+        destination: UGpuBufferSlice,
+        destinationX: Int,
+        destinationY: Int,
+        destinationWidth: Int,
+        destinationHeight: Int,
+        copyWidth: Int,
+        copyHeight: Int,
+        mipLevel: Int,
+        arrayLayer: Int,
+    ) {
+        val sourceWidth = (source.width shr mipLevel).coerceAtLeast(1)
+        val sourceHeight = (source.height shr mipLevel).coerceAtLeast(1)
+        require(!source.isClosed) { "Source texture is closed" }
+        require(!destination.buffer.isClosed) { "Destination buffer is closed" }
+        require(UGpuTexture.Usage.COPY_SRC in source.impl.usage) { "Source texture must have COPY_SRC usage flag" }
+        require(UGpuBuffer.Usage.COPY_DST in destination.buffer.impl.usage) { "Destination buffer must have COPY_DST usage flag" }
+        require(copyWidth >= 0) { "copyWidth must be positive but was $copyWidth" }
+        require(copyHeight >= 0) { "copyHeight must be positive but was $copyHeight" }
+        require(sourceX >= 0) { "sourceX must be positive but was $sourceX" }
+        require(sourceY >= 0) { "sourceY must be positive but was $sourceY" }
+        require(sourceX + copyWidth <= sourceWidth) { "Tried to copy $copyWidth from $sourceX but source is only $sourceWidth wide" }
+        require(sourceY + copyHeight <= sourceHeight) { "Tried to copy $copyHeight from $sourceY but source is only $sourceHeight high" }
+        require(destinationX >= 0) { "destinationX must be positive but was $destinationX" }
+        require(destinationY >= 0) { "destinationY must be positive but was $destinationY" }
+        require(destinationX + copyWidth <= destinationWidth) { "Tried to copy $copyWidth to $destinationX but destination is only $destinationWidth wide" }
+        require(destinationY + copyHeight <= destinationHeight) { "Tried to copy $copyHeight to $destinationY but destination is only $destinationHeight high" }
+        require(mipLevel >= 0) { "mipLevel must not be negative" }
+        require(mipLevel < source.mipLevels) { "mipLevel is $mipLevel but source only has ${source.mipLevels} levels" }
+        require(arrayLayer == 0) { "arrayLayer other than 0 is not yet supported" }
+        require(destinationWidth == copyWidth || copyHeight == 1) { "destinationWidth which does not match copyWidth when more than one line is being copied is no yet supported" } // due to B3D
+
+        val format = source.impl.format
+        require(destination.offset % format.componentByteSize == 0L) { "Destination buffer offset must be ${format.componentByteSize}-aligned but was ${destination.offset}" }
+        val texelByteSize = format.componentCount * format.componentByteSize
+        val texelCopyRange = destinationX + destinationY * destinationWidth.toLong() until (destinationX + copyWidth) + (destinationY + copyHeight - 1) * destinationWidth.toLong()
+        val bytesCopyRange = texelCopyRange.first * texelByteSize..texelCopyRange.last * texelByteSize
+        require(bytesCopyRange.last < destination.size) { "Copy range $bytesCopyRange is out of bounds for $destination" }
+
+        fun doCopyOpenGl() {
+            val attachment = if (format.hasColor) GL30.GL_COLOR_ATTACHMENT0 else GL30.GL_DEPTH_ATTACHMENT
+
+            val prevReadFrameBufferBinding = GL11.glGetInteger(GL30.GL_READ_FRAMEBUFFER_BINDING)
+            glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, if (format.hasDepth) depthReadFrameBuffer else colorReadFrameBuffer)
+            glFramebufferTexture2D(GL30.GL_READ_FRAMEBUFFER, attachment, GL11.GL_TEXTURE_2D, source.impl.glId, mipLevel)
+
+            GL11.glPixelStorei(GL11.GL_PACK_ROW_LENGTH, destinationWidth)
+            GL11.glPixelStorei(GL12.GL_PACK_IMAGE_HEIGHT, destinationHeight)
+            GL11.glPixelStorei(GL11.GL_PACK_SKIP_PIXELS, 0)
+            GL11.glPixelStorei(GL11.GL_PACK_SKIP_ROWS, 0)
+            GL11.glPixelStorei(GL11.GL_PACK_ALIGNMENT, format.componentByteSize)
+
+            GL15.glBindBuffer(GL21.GL_PIXEL_PACK_BUFFER, destination.buffer.impl.glId)
+
+            GL11.glReadPixels(
+                sourceX,
+                sourceY,
+                copyWidth,
+                copyHeight,
+                //#if MC >= 26.2 && !STANDALONE
+                //$$ GlConst.toGlExternalId(format.mc),
+                //$$ GlConst.toGlType(format.mc),
+                //#else
+                format.format,
+                format.type,
+                //#endif
+                destination.offset + bytesCopyRange.first,
+            )
+
+            GL15.glBindBuffer(GL21.GL_PIXEL_PACK_BUFFER, 0)
+
+            // We restore these to defaults as well as to not disturb third-party mods which assume defaults
+            GL11.glPixelStorei(GL11.GL_PACK_ROW_LENGTH, 0)
+            GL11.glPixelStorei(GL12.GL_PACK_IMAGE_HEIGHT, 0)
+            GL11.glPixelStorei(GL11.GL_PACK_SKIP_PIXELS, 0)
+            GL11.glPixelStorei(GL11.GL_PACK_SKIP_ROWS, 0)
+            GL11.glPixelStorei(GL11.GL_PACK_ALIGNMENT, 4)
+
+            glFramebufferTexture2D(GL30.GL_READ_FRAMEBUFFER, attachment, GL11.GL_TEXTURE_2D, 0, 0)
+            glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, prevReadFrameBufferBinding)
+        }
+
+        //#if STANDALONE
+        //$$ doCopyOpenGl()
+        //#elseif MC >= 26.2
+        //$$ // B3D's OpenGL implementation of copyTextureToBuffer is broken for depth textures:
+        //$$ // - on 26.2 it always uses the color attachment; fixed in 26.3-snapshot-10
+        //$$ // - on 26.3 it sets glReadBuffer(GL_NONE) but never un-sets it, breaking copyTextureToBuffer for color
+        //$$ //   textures; fixed in 26.4-snapshot-7 by completely removing the call
+        //$$ // - on all versions it fails to set glDrawBuffer(GL_NONE) and on all but 26.3 also glReadBuffer(GL_NONE)
+        //$$ //   both of which are required for the framebuffer to be considered complete prior to OpenGL 4.1 (and the
+        //$$ //   game technically only requires 3.3)
+        //$$ if (format.hasDepth && source.impl.isOpenGl) {
+        //$$     return doCopyOpenGl()
+        //$$ }
+        //$$ RenderSystem.getDevice().createCommandEncoder().copyTextureToBuffer(
+        //$$     source.impl.mc,
+        //$$     destination.buffer.impl.mc,
+        //$$     destination.offset + bytesCopyRange.first,
+            //#if MC < 26.4
+            //$$ {},
+            //#endif
+        //$$     mipLevel,
+        //$$     sourceX,
+        //$$     sourceY,
+        //$$     copyWidth,
+        //$$     copyHeight,
+        //$$ )
+        //#else
+        doCopyOpenGl()
+        //#endif
+    }
+
+    override fun copyTextureToTexture(
+        source: UGpuTexture,
+        sourceX: Int,
+        sourceY: Int,
+        sourceMipLevel: Int,
+        sourceArrayLayer: Int,
+        destination: UGpuTexture,
+        destinationX: Int,
+        destinationY: Int,
+        destinationMipLevel: Int,
+        destinationArrayLayer: Int,
+        copyWidth: Int,
+        copyHeight: Int
+    ) {
+        val sourceWidth = (source.width shr sourceMipLevel).coerceAtLeast(1)
+        val sourceHeight = (source.height shr sourceMipLevel).coerceAtLeast(1)
+        val destinationWidth = (destination.width shr destinationMipLevel).coerceAtLeast(1)
+        val destinationHeight = (destination.height shr destinationMipLevel).coerceAtLeast(1)
+        require(!source.isClosed) { "Source texture is closed" }
+        require(!destination.isClosed) { "Destination texture is closed" }
+        require(UGpuTexture.Usage.COPY_SRC in source.impl.usage) { "Source texture must have COPY_SRC usage flag" }
+        require(UGpuTexture.Usage.COPY_DST in destination.impl.usage) { "Destination texture must have COPY_DST usage flag" }
+        require(source.impl.format == destination.impl.format) { "Source format (${source.impl.format}) does not match destination format (${destination.impl.format})." }
+        require(copyWidth >= 0) { "copyWidth must be positive but was $copyWidth" }
+        require(copyHeight >= 0) { "copyHeight must be positive but was $copyHeight" }
+        require(sourceX >= 0) { "sourceX must be positive but was $sourceX" }
+        require(sourceY >= 0) { "sourceY must be positive but was $sourceY" }
+        require(sourceX + copyWidth <= sourceWidth) { "Tried to copy $copyWidth from $sourceX but source is only $sourceWidth wide" }
+        require(sourceY + copyHeight <= sourceHeight) { "Tried to copy $copyHeight from $sourceY but source is only $sourceHeight high" }
+        require(destinationX >= 0) { "destinationX must be positive but was $destinationX" }
+        require(destinationY >= 0) { "destinationY must be positive but was $destinationY" }
+        require(destinationX + copyWidth <= destinationWidth) { "Tried to copy $copyWidth to $destinationX but destination is only $destinationWidth wide" }
+        require(destinationY + copyHeight <= destinationHeight) { "Tried to copy $copyHeight to $destinationY but destination is only $destinationHeight high" }
+        require(sourceMipLevel >= 0) { "sourceMipLevel must not be negative" }
+        require(sourceMipLevel < source.mipLevels) { "sourceMipLevel is $sourceMipLevel but source only has ${source.mipLevels} levels" }
+        require(destinationMipLevel >= 0) { "destinationMipLevel must not be negative" }
+        require(destinationMipLevel < destination.mipLevels) { "destinationMipLevel is $destinationMipLevel but destination only has ${destination.mipLevels} levels" }
+        require(sourceMipLevel == destinationMipLevel) { "sourceMipLevel which does not match destinationMipLevel is no yet supported" } // due to B3D
+        require(sourceArrayLayer == 0) { "sourceArrayLayer other than 0 is not yet supported" }
+        require(destinationArrayLayer == 0) { "destinationArrayLayer other than 0 is not yet supported" }
+
+        val format = source.impl.format
+
+        fun doCopyOpenGl() {
+            val prevScissor = GL11.glGetBoolean(GL11.GL_SCISSOR_TEST)
+            if (prevScissor) GL11.glDisable(GL11.GL_SCISSOR_TEST)
+
+            val prevReadFrameBufferBinding = GL11.glGetInteger(GL30.GL_READ_FRAMEBUFFER_BINDING)
+            val prevDrawFrameBufferBinding = GL11.glGetInteger(GL30.GL_DRAW_FRAMEBUFFER_BINDING)
+
+            val attachment = if (format.hasColor) GL30.GL_COLOR_ATTACHMENT0 else GL30.GL_DEPTH_ATTACHMENT
+            val bufferBit = if (format.hasColor) GL11.GL_COLOR_BUFFER_BIT else GL11.GL_DEPTH_BUFFER_BIT
+
+            glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, if (format.hasColor) colorReadFrameBuffer else depthReadFrameBuffer)
+            glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, if (format.hasColor) colorWriteFrameBuffer else depthWriteFrameBuffer)
+            glFramebufferTexture2D(GL30.GL_READ_FRAMEBUFFER, attachment, GL11.GL_TEXTURE_2D, source.impl.glId, sourceMipLevel)
+            glFramebufferTexture2D(GL30.GL_DRAW_FRAMEBUFFER, attachment, GL11.GL_TEXTURE_2D, destination.impl.glId, destinationMipLevel)
+
+            GL30.glBlitFramebuffer(
+                sourceX, sourceY, sourceX + copyWidth, sourceY + copyHeight,
+                destinationX, destinationY, destinationX + copyWidth, destinationY + copyHeight,
+                bufferBit,
+                GL11.GL_NEAREST,
+            )
+
+            glFramebufferTexture2D(GL30.GL_READ_FRAMEBUFFER, attachment, GL11.GL_TEXTURE_2D, 0, 0)
+            glFramebufferTexture2D(GL30.GL_DRAW_FRAMEBUFFER, attachment, GL11.GL_TEXTURE_2D, 0, 0)
+            glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, prevReadFrameBufferBinding)
+            glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, prevDrawFrameBufferBinding)
+
+            if (prevScissor) GL11.glEnable(GL11.GL_SCISSOR_TEST)
+        }
+
+        //#if STANDALONE
+        doCopyOpenGl()
+        //#elseif MC >= 26.2
+        //$$ // B3D's copyTextureToTexture is broken on OpenGL, it passes the wrong arguments to the lower layer
+        //$$ if (source.impl.isOpenGl) {
+        //$$     return doCopyOpenGl()
+        //$$ }
+        //$$ RenderSystem.getDevice().createCommandEncoder()
+        //$$     .copyTextureToTexture(source.impl.mc, destination.impl.mc, sourceMipLevel, destinationX, destinationY, sourceX, sourceY, copyWidth, copyHeight)
+        //#else
+        doCopyOpenGl()
+        //#endif
+    }
+
     override fun createFence(): UGpuFence {
         return UGpuFenceImpl()
     }
@@ -590,7 +793,6 @@ internal object UGpuDeviceImpl : UGpuDevice {
         return URenderPassImpl(descriptor)
     }
 
-    //#if MC < 26.2 || STANDALONE
     private val colorReadFrameBuffer by lazy { glGenFramebuffers() }
     private val colorWriteFrameBuffer by lazy { glGenFramebuffers() }
     private val depthReadFrameBuffer by lazy { genDepthOnlyFrameBuffer() }
@@ -608,6 +810,7 @@ internal object UGpuDeviceImpl : UGpuDevice {
         glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, prevReadFrameBufferBinding)
     }
 
+    //#if MC < 26.2 || STANDALONE
     inline fun <T> withDrawFramebuffer(color: UGpuTexture?, depth: UGpuTexture?, block: () -> T): T {
         val prevDrawFrameBufferBinding = GL11.glGetInteger(GL30.GL_DRAW_FRAMEBUFFER_BINDING)
         glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, if (color == null) depthWriteFrameBuffer else colorWriteFrameBuffer)

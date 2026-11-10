@@ -278,14 +278,14 @@ internal class URenderPassImpl(val descriptor: URenderPassDescriptor) : URenderP
     //$$         val byteBuf = stack.malloc(values.size * Float.SIZE_BYTES)
     //$$         values.forEach { byteBuf.putFloat(it) }
     //$$         byteBuf.flip()
-    //$$         RenderSystem.getDevice().createBuffer({ "$name UBO" }, GpuBuffer.USAGE_UNIFORM, byteBuf)
+    //$$         UGpuDeviceImpl.createBufferWithData({ "$name UBO" }, GpuBuffer.USAGE_UNIFORM, byteBuf)
     //$$     }.also { tmpBuffers.add(it) }
     //$$ private fun allocUBO(name: String, values: IntArray) =
     //$$     MemoryStack.stackPush().use { stack ->
     //$$         val byteBuf = stack.malloc(values.size * Int.SIZE_BYTES)
     //$$         values.forEach { byteBuf.putInt(it) }
     //$$         byteBuf.flip()
-    //$$         RenderSystem.getDevice().createBuffer({ "$name UBO" }, GpuBuffer.USAGE_UNIFORM, byteBuf)
+    //$$         UGpuDeviceImpl.createBufferWithData({ "$name UBO" }, GpuBuffer.USAGE_UNIFORM, byteBuf)
     //$$     }.also { tmpBuffers.add(it) }
     //#endif
 
@@ -461,7 +461,7 @@ internal class URenderPassImpl(val descriptor: URenderPassDescriptor) : URenderP
                     //#endif
         //$$         ).write(byteBuf)
         //$$         byteBuf.flip()
-        //$$         RenderSystem.getDevice().createBuffer({ "DynamicTransforms UBO" }, GpuBuffer.USAGE_UNIFORM, byteBuf)
+        //$$         UGpuDeviceImpl.createBufferWithData({ "DynamicTransforms UBO" }, GpuBuffer.USAGE_UNIFORM, byteBuf)
         //$$     }.also { tmpBuffers.add(it) })
         //$$     dynamicTransformsUboDirty = false
         //$$ }
@@ -719,6 +719,9 @@ internal class URenderPassImpl(val descriptor: URenderPassDescriptor) : URenderP
         }
 
         private var active = false
+
+        val isActive: Boolean
+            get() = active
     }
 }
 

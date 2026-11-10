@@ -1415,7 +1415,9 @@ public class UGraphics {
         //#if MC>=12100
         //$$ BuiltBuffer builtBuffer = instance.endNullable();
         //$$ if (builtBuffer == null) return;
-        //#if MC>=12102
+        //#if MC >= 26.2
+        //$$ // no longer supported; the `doDraw` call below will throw an UnsupportedOperationException
+        //#elseif MC>= 1.21.2
         //$$ builtBuffer.sortQuads(ALLOCATOR, RenderSystem.getProjectionType().getVertexSorter());
         //#else
         //$$ builtBuffer.sortQuads(ALLOCATOR, RenderSystem.getVertexSorting());

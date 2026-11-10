@@ -166,6 +166,7 @@ internal class URenderPassLegacyImpl : AutoCloseable {
             //$$ RenderSystem.bindDefaultUniforms(mc)
             //$$ mc.setUniform("DynamicTransforms", dynamicUniforms);
             //#endif
+        //$$     active = true
         //$$ }
         //#else
         init {
@@ -190,7 +191,7 @@ internal class URenderPassLegacyImpl : AutoCloseable {
             //$$     val byteBuf = stack.malloc(values.size * 4)
             //$$     values.forEach { byteBuf.putFloat(it) }
             //$$     byteBuf.flip()
-            //$$     RenderSystem.getDevice().createBuffer({ "$name UBO" }, GpuBuffer.USAGE_UNIFORM, byteBuf)
+            //$$     UGpuDeviceImpl.createBufferWithData({ "$name UBO" }, GpuBuffer.USAGE_UNIFORM, byteBuf)
             //$$ }.also { tmpBuffers.add(it) })
             //#else
             //$$ mc.setUniform(name, *values)
@@ -207,7 +208,7 @@ internal class URenderPassLegacyImpl : AutoCloseable {
             //$$     val byteBuf = stack.malloc(values.size * 4)
             //$$     values.forEach { byteBuf.putInt(it) }
             //$$     byteBuf.flip()
-            //$$     RenderSystem.getDevice().createBuffer({ "$name UBO" }, GpuBuffer.USAGE_UNIFORM, byteBuf)
+            //$$     UGpuDeviceImpl.createBufferWithData({ "$name UBO" }, GpuBuffer.USAGE_UNIFORM, byteBuf)
             //$$ }.also { tmpBuffers.add(it) })
             //#else
             //$$ mc.setUniform(name, *values)
@@ -337,6 +338,7 @@ internal class URenderPassLegacyImpl : AutoCloseable {
         override fun close() {
             //#if MC >= 1.21.5 && !STANDALONE
             //$$ mc.close()
+            //$$ active = false
             //#else
             pipeline.unbind()
             //#endif
@@ -345,5 +347,12 @@ internal class URenderPassLegacyImpl : AutoCloseable {
             //$$ tmpBuffers.forEach { it.close() }
             //#endif
         }
+    }
+
+    companion object {
+        private var active = false
+
+        val isActive: Boolean
+            get() = active
     }
 }

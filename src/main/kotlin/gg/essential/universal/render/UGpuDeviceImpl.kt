@@ -354,8 +354,8 @@ internal object UGpuDeviceImpl : UGpuDevice {
     //$$     data: ByteBuffer,
     //$$ ): com.mojang.blaze3d.buffers.GpuBuffer {
     //$$     val device = RenderSystem.getDevice()
-        //#if MC >= 26.2
-        //$$ if (URenderPassImpl.isActive) {
+        //#if MC >= 26.2 && MC < 26.3
+        //$$ if (URenderPassImpl.isActive || URenderPassLegacyImpl.isActive) {
         //$$     val buffer = device.createBuffer(label, usage or com.mojang.blaze3d.buffers.GpuBuffer.USAGE_MAP_WRITE, data.remaining().toLong())
         //$$     buffer.map(false, true).use { it.data().put(data) }
         //$$     return buffer

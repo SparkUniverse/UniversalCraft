@@ -337,7 +337,7 @@ internal object UGpuDeviceImpl : UGpuDevice {
 
     override fun createBuffer(usage: UGpuBuffer.Usage, buffer: ByteBuffer): UGpuBuffer {
         //#if MC >= 1.21.6 && !STANDALONE
-        //$$ return UGpuBufferImpl(RenderSystem.getDevice().createBuffer(null, usage.bits, buffer))
+        //$$ return UGpuBufferImpl(createBufferWithData(null, usage.bits, buffer))
         //#else
         val gpuBuffer = UGpuBufferImpl(usage, buffer.remaining().toLong(), GL15.glGenBuffers())
         withBufferBound(gpuBuffer) { bindTarget ->
@@ -346,6 +346,24 @@ internal object UGpuDeviceImpl : UGpuDevice {
         return gpuBuffer
         //#endif
     }
+
+    //#if MC >= 1.21.6 && !STANDALONE
+    //$$ fun createBufferWithData(
+    //$$     label: java.util.function.Supplier<String>?,
+    //$$     usage: Int,
+    //$$     data: ByteBuffer,
+    //$$ ): com.mojang.blaze3d.buffers.GpuBuffer {
+    //$$     val device = RenderSystem.getDevice()
+        //#if MC >= 26.2 && MC < 26.3
+        //$$ if (URenderPassImpl.isActive || URenderPassLegacyImpl.isActive) {
+        //$$     val buffer = device.createBuffer(label, usage or com.mojang.blaze3d.buffers.GpuBuffer.USAGE_MAP_WRITE, data.remaining().toLong())
+        //$$     buffer.map(false, true).use { it.data().put(data) }
+        //$$     return buffer
+        //$$ }
+        //#endif
+    //$$     return device.createBuffer(label, usage, data)
+    //$$ }
+    //#endif
 
     override fun mapBuffer(gpuBufferSlice: UGpuBufferSlice, read: Boolean, write: Boolean): UGpuDevice.MappedBuffer {
         check(!gpuBufferSlice.buffer.isClosed) { "Buffer is closed" }

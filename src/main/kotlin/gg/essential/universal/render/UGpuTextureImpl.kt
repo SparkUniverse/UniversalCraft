@@ -1,6 +1,7 @@
 package gg.essential.universal.render
 
 import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL12
 import org.lwjgl.opengl.GL30
 
 //#if STANDALONE
@@ -51,6 +52,9 @@ internal data class UGpuFormatImpl(
         //#else
         get() = when (type) {
             GL11.GL_BYTE, GL11.GL_UNSIGNED_BYTE -> 1
+            GL11.GL_SHORT, GL11.GL_UNSIGNED_SHORT -> 2
+            GL11.GL_INT, GL11.GL_UNSIGNED_INT, GL11.GL_FLOAT -> 4
+            GL12.GL_UNSIGNED_INT_8_8_8_8, GL12.GL_UNSIGNED_INT_8_8_8_8_REV -> 1
             else -> throw UnsupportedOperationException("Format $this not yet supported (or invalid).")
         }
         //#endif
@@ -59,7 +63,11 @@ internal data class UGpuFormatImpl(
         //$$ get() = mc.componentCount()
         //#else
         get() = when (format) {
-            GL11.GL_RGBA -> 4
+            GL11.GL_RED, GL30.GL_RED_INTEGER -> 1
+            GL30.GL_RG, GL30.GL_RG_INTEGER -> 2
+            GL11.GL_RGB, GL12.GL_BGR, GL30.GL_RGB_INTEGER, GL30.GL_BGR_INTEGER -> 3
+            GL11.GL_RGBA, GL12.GL_BGRA, GL30.GL_RGBA_INTEGER, GL30.GL_BGRA_INTEGER -> 4
+            GL11.GL_DEPTH_COMPONENT, GL11.GL_STENCIL_INDEX -> 1
             else -> throw UnsupportedOperationException("Format $this not yet supported (or invalid).")
         }
         //#endif

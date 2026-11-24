@@ -11,10 +11,18 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Constructor;
 
+//#if MC >= 26.4
+//$$ import net.minecraft.core.Holder;
+//#endif
+
 class PositionedSoundRecordFactory {
     //#if MC>10809
     //$$ public static PositionedSoundRecord makeRecord(SoundEvent event, float volume, float pitch) {
-    //$$     return PositionedSoundRecord.func_194007_a(event, pitch, volume);
+        //#if MC >= 26.4
+        //$$ return SimpleSoundInstance.forUI(Holder.direct(event), pitch, volume);
+        //#else
+        //$$ return PositionedSoundRecord.func_194007_a(event, pitch, volume);
+        //#endif
     //$$ }
     //#else
     private static final MethodHandle constructor;

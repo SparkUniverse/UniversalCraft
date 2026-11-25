@@ -510,7 +510,7 @@ internal object UGpuDeviceImpl : UGpuDevice {
         require(source.offset % format.componentByteSize == 0L) { "Source buffer offset must be ${format.componentByteSize}-aligned but was ${source.offset}" }
         val texelByteSize = format.componentCount * format.componentByteSize
         val texelCopyRange = sourceX + sourceY * sourceWidth.toLong() until(sourceX + copyWidth) + (sourceY + copyHeight - 1) * sourceWidth.toLong()
-        val bytesCopyRange = texelCopyRange.first * texelByteSize .. texelCopyRange.last * texelByteSize
+        val bytesCopyRange = texelCopyRange.first * texelByteSize until (texelCopyRange.last + 1) * texelByteSize
         require(bytesCopyRange.last < source.size) { "Copy range $bytesCopyRange is out of bounds for $source"}
 
         //#if MC >= 26.3 && !STANDALONE
@@ -621,7 +621,7 @@ internal object UGpuDeviceImpl : UGpuDevice {
         require(destination.offset % format.componentByteSize == 0L) { "Destination buffer offset must be ${format.componentByteSize}-aligned but was ${destination.offset}" }
         val texelByteSize = format.componentCount * format.componentByteSize
         val texelCopyRange = destinationX + destinationY * destinationWidth.toLong() until (destinationX + copyWidth) + (destinationY + copyHeight - 1) * destinationWidth.toLong()
-        val bytesCopyRange = texelCopyRange.first * texelByteSize..texelCopyRange.last * texelByteSize
+        val bytesCopyRange = texelCopyRange.first * texelByteSize until (texelCopyRange.last + 1) * texelByteSize
         require(bytesCopyRange.last < destination.size) { "Copy range $bytesCopyRange is out of bounds for $destination" }
 
         fun doCopyOpenGl() {

@@ -120,7 +120,7 @@ abstract class UScreen(
     //$$
     //#if MC>=12000
     //#if MC >= 26.4
-    //$$ override fun extractRenderState(context: GuiGraphicsExtractor) {
+    //$$ final override fun extractRenderState(context: GuiGraphicsExtractor) {
     //$$     val mouseX = context.mouseX()
     //$$     val mouseY = context.mouseY()
     //$$     val delta = context.partialTicks()
@@ -306,7 +306,7 @@ abstract class UScreen(
     //$$
     //#if MC>=12000
     //#if MC >= 26.4
-    //$$ override fun extractBackground(context: GuiGraphicsExtractor) {
+    //$$ final override fun extractBackground(context: GuiGraphicsExtractor) {
     //$$     if (suppressBackground) return
     //#elseif MC >= 1.20.2
     //$$ private var lastBackgroundMouseX = 0

@@ -610,7 +610,7 @@ public class UGraphics {
         //#endif
     }
 
-    //#if MC < 26.4
+    //#if MC < 26.4 || STANDALONE
     @Deprecated // Pass UMatrixStack as first arg, required for 1.17+
     public static void drawString(String text, float x, float y, int color, boolean shadow) {
         drawString(UNIT_STACK, text, x, y, color, shadow);

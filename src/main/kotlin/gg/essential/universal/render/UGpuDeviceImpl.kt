@@ -615,7 +615,7 @@ internal object UGpuDeviceImpl : UGpuDevice {
         require(mipLevel >= 0) { "mipLevel must not be negative" }
         require(mipLevel < source.mipLevels) { "mipLevel is $mipLevel but source only has ${source.mipLevels} levels" }
         require(arrayLayer == 0) { "arrayLayer other than 0 is not yet supported" }
-        require(destinationWidth == copyWidth || copyHeight == 1) { "destinationWidth which does not match copyWidth when more than one line is being copied is no yet supported" } // due to B3D
+        require(destinationWidth == copyWidth || copyHeight == 1) { "destinationWidth which does not match copyWidth when more than one line is being copied is not yet supported" } // due to B3D
 
         val format = source.impl.format
         require(destination.offset % format.componentByteSize == 0L) { "Destination buffer offset must be ${format.componentByteSize}-aligned but was ${destination.offset}" }
@@ -735,7 +735,7 @@ internal object UGpuDeviceImpl : UGpuDevice {
         require(sourceMipLevel < source.mipLevels) { "sourceMipLevel is $sourceMipLevel but source only has ${source.mipLevels} levels" }
         require(destinationMipLevel >= 0) { "destinationMipLevel must not be negative" }
         require(destinationMipLevel < destination.mipLevels) { "destinationMipLevel is $destinationMipLevel but destination only has ${destination.mipLevels} levels" }
-        require(sourceMipLevel == destinationMipLevel) { "sourceMipLevel which does not match destinationMipLevel is no yet supported" } // due to B3D
+        require(sourceMipLevel == destinationMipLevel) { "sourceMipLevel which does not match destinationMipLevel is not yet supported" } // due to B3D
         require(sourceArrayLayer == 0) { "sourceArrayLayer other than 0 is not yet supported" }
         require(destinationArrayLayer == 0) { "destinationArrayLayer other than 0 is not yet supported" }
 

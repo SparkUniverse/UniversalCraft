@@ -772,7 +772,7 @@ internal object UGpuDeviceImpl : UGpuDevice {
         }
 
         //#if STANDALONE
-        doCopyOpenGl()
+        //$$ doCopyOpenGl()
         //#elseif MC >= 26.2
         //$$ // B3D's copyTextureToTexture is broken on OpenGL, it passes the wrong arguments to the lower layer
         //$$ if (source.impl.isOpenGl) {

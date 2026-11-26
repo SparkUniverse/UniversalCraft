@@ -28,6 +28,11 @@ import net.minecraft.client.renderer.OpenGlHelper.glGenFramebuffers
 import net.minecraft.client.renderer.vertex.VertexFormat
 import net.minecraft.client.renderer.vertex.VertexFormatElement
 
+//#if MC >= 26.4
+//$$ import com.mojang.renderpearl.api.pipeline.RenderPassLayout
+//$$ import net.minecraft.client.renderer.RenderPassLayouts
+//#endif
+
 //#if MC >= 1.21.6
 //$$ import com.mojang.blaze3d.buffers.GpuBuffer
 //$$ import com.mojang.blaze3d.buffers.GpuBufferSlice
@@ -38,7 +43,6 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement
 //#if MC >= 1.21.5
 //$$ import com.mojang.blaze3d.systems.RenderPass
 //$$ import com.mojang.blaze3d.systems.RenderSystem
-//$$ import net.minecraft.client.texture.GlTexture
 //#if MC >= 26.2
 //$$ import java.util.Optional
 //#else
@@ -123,6 +127,9 @@ internal class URenderPassImpl(val descriptor: URenderPassDescriptor) : URenderP
         //$$     .createRenderPass(
                 //#if MC >= 1.21.6
                 //$$ descriptor.label,
+                //#endif
+                //#if MC >= 26.4
+                //$$ descriptor.toRenderPassLayout(),
                 //#endif
                 //#if MC >= 1.21.6
                 //$$ descriptor.colorAttachments.single().first.impl.mc,
@@ -399,7 +406,9 @@ internal class URenderPassImpl(val descriptor: URenderPassDescriptor) : URenderP
     }
 
     private fun drawCall(pipeline: URenderPipeline, draw: () -> Unit) {
-        //#if MC >= 1.21.5 && !STANDALONE
+        //#if MC >= 26.4 && !STANDALONE
+        //$$ mc.setPipeline(pipeline.compiled(mc.activeSubpass()) ?: return)
+        //#elseif MC >= 1.21.5 && !STANDALONE
         //$$ mc.setPipeline(pipeline.compiled() ?: return)
         //#else
         if (currPipeline != pipeline) {
@@ -429,7 +438,7 @@ internal class URenderPassImpl(val descriptor: URenderPassDescriptor) : URenderP
             //$$ sampler.impl.configureTexture(textureView.texture.impl.mc)
             //$$ mc.bindSampler(name, textureView.impl.mc)
             //#else
-            //$$ sampler.impl.configureTexture((textureView.texture.impl.mc as GlTexture).glId)
+            //$$ sampler.impl.configureTexture((textureView.texture.impl.mc as net.minecraft.client.texture.GlTexture).glId)
             //$$ mc.bindSampler(name, textureView.texture.impl.mc)
             //#endif
             //#else
@@ -798,5 +807,29 @@ internal class URenderPassImpl(val descriptor: URenderPassDescriptor) : URenderP
 //$$         return@lazy { element, _ -> handle.invokeExact(element) as Int }
 //$$     } catch (_: NoSuchMethodException) {}
 //$$     return@lazy { _, indexOfElement -> indexOfElement }
+//$$ }
+//#endif
+
+//#if MC >= 26.4 && !STANDALONE
+//$$ private fun URenderPassDescriptor.toRenderPassLayout(): RenderPassLayout {
+//$$     val isDefaultColor = colorAttachments.singleOrNull()?.first?.texture?.impl?.format == UGpuFormat.DEFAULT_RGBA
+//$$     val isDefaultDepth = depthAttachment?.first?.texture?.impl?.format == UGpuFormat.DEFAULT_DEPTH
+//$$     return when {
+//$$         isDefaultColor && isDefaultDepth -> RenderPassLayouts.COLOR_DEPTH
+//$$         depthAttachment == null && isDefaultColor -> RenderPassLayouts.COLOR_ONLY
+//$$         colorAttachments.isEmpty() && isDefaultDepth -> RenderPassLayouts.DEPTH_ONLY
+//$$         else -> {
+//$$             val name = "Layout for " + label.get()
+//$$             RenderPassLayout.builder(name).also { builder ->
+//$$                 val subpass = builder.withSubpass(name)
+//$$                 colorAttachments.forEach {
+//$$                     subpass.withColorAttachment(builder.withAttachment(it.first.texture.impl.format.mc))
+//$$                 }
+//$$                 depthAttachment?.let {
+//$$                     subpass.withDepthAttachment(builder.withAttachment(it.first.texture.impl.format.mc))
+//$$                 }
+//$$             }.build()
+//$$         }
+//$$     }
 //$$ }
 //#endif

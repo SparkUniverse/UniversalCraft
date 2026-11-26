@@ -37,8 +37,10 @@ import java.util.regex.Pattern;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.WorldRenderer;
+//#if MC < 1.21.11
 import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
+//#endif
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.shader.Framebuffer;
@@ -48,6 +50,11 @@ import org.lwjgl.opengl.GL11;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_BINDING_2D;
 import static org.lwjgl.opengl.GL13.GL_ACTIVE_TEXTURE;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+
+//#if MC >= 26.4
+//$$ import org.lwjgl.opengl.GL20;
+//$$ import static org.lwjgl.opengl.GL14.*;
+//#endif
 
 //#if MC >= 26.2
 //$$ import com.mojang.blaze3d.PrimitiveTopology;
@@ -76,7 +83,9 @@ import net.minecraft.client.renderer.Tessellator;
 //#if MC>=12105
 //$$ import com.mojang.blaze3d.pipeline.RenderPipeline;
 //$$ import com.mojang.blaze3d.textures.TextureFormat;
+//#if MC < 26.4
 //$$ import net.minecraft.client.texture.GlTexture;
+//#endif
 //#endif
 
 //#if MC>=12102
@@ -454,7 +463,7 @@ public class UGraphics {
 
     public static void configureTexture(int glTextureId, Runnable block) {
         int prevTextureBinding = GL11.glGetInteger(GL_TEXTURE_BINDING_2D);
-        //#if STANDALONE
+        //#if MC >= 26.4
         //$$ glBindTexture(GL_TEXTURE_2D, glTextureId);
         //#elseif MC>=12105
         //$$ GlStateManager._bindTexture(glTextureId);
@@ -464,7 +473,7 @@ public class UGraphics {
 
         block.run();
 
-        //#if STANDALONE
+        //#if MC >= 26.4
         //$$ glBindTexture(GL_TEXTURE_2D, prevTextureBinding);
         //#elseif MC>=12105
         //$$ GlStateManager._bindTexture(prevTextureBinding);
@@ -500,7 +509,7 @@ public class UGraphics {
     }
 
     public static void setActiveTexture(int glId) {
-        //#if STANDALONE
+        //#if MC >= 26.4
         //$$ glActiveTexture(glId);
         //#elseif MC>=11700
         //$$ GlStateManager._activeTexture(glId);
@@ -563,6 +572,9 @@ public class UGraphics {
     }
 
     private static int getOrLoadTextureId(ResourceLocation resourceLocation) {
+        //#if MC >= 1.21.11
+        //$$ throw new UnsupportedOperationException("No longer supported on 1.21.11+, use `UBufferBuilder`/`URenderPipeline` instead.");
+        //#else
         TextureManager textureManager = UMinecraft.getMinecraft().getTextureManager();
         //#if MC>=11400
         //$$ Texture texture = textureManager.getTexture(resourceLocation);
@@ -577,6 +589,7 @@ public class UGraphics {
         //$$ return ((GlTexture) texture.getGlTexture()).getGlId();
         //#else
         return texture.getGlTextureId();
+        //#endif
         //#endif
     }
     //#endif
@@ -597,11 +610,13 @@ public class UGraphics {
         //#endif
     }
 
+    //#if MC < 26.4 || STANDALONE
     @Deprecated // Pass UMatrixStack as first arg, required for 1.17+
     public static void drawString(String text, float x, float y, int color, boolean shadow) {
         drawString(UNIT_STACK, text, x, y, color, shadow);
     }
 
+    @Deprecated // No longer supported on 26.4. Use UFontRenderer instead
     public static void drawString(UMatrixStack stack, String text, float x, float y, int color, boolean shadow) {
         if ((color >> 24 & 255) <= 10) return;
         //#if STANDALONE
@@ -643,6 +658,7 @@ public class UGraphics {
         drawString(UNIT_STACK, text, x, y, color, shadowColor);
     }
 
+    @Deprecated // No longer supported on 26.4. Use UFontRenderer instead
     public static void drawString(UMatrixStack stack, String text, float x, float y, int color, int shadowColor) {
         if ((color >> 24 & 255) <= 10) return;
         String shadowText = ChatColor.Companion.stripColorCodes(text);
@@ -786,6 +802,7 @@ public class UGraphics {
     //#endif
     //$$ }
     //#endif
+    //#endif
 
     public static List<String> listFormattedStringToWidth(String str, int wrapWidth) {
         return listFormattedStringToWidth(str, wrapWidth, true);
@@ -814,7 +831,11 @@ public class UGraphics {
         //$$ ITextProperties properties = charManager.func_238358_a_(new StringTextComponent(str).mergeStyle(EMPTY_WITH_FONT_ID), wrapWidth, Style.EMPTY);
         //#endif
         //$$ // From net.minecraft.util.text.ITextProperties line 88
+        //#if MC >= 26.4
+        //$$ properties.visitWithoutResult(string -> {
+        //#else
         //$$ properties.getComponent(string -> {
+        //#endif
         //$$     strings.add(string);
         //$$     return Optional.empty();
         //$$ });
@@ -892,7 +913,7 @@ public class UGraphics {
     }
 
     public static void glUseProgram(int program) {
-        //#if STANDALONE
+        //#if MC >= 26.4
         //$$ GL20.glUseProgram(program);
         //#elseif MC>=11502
         //$$ GlStateManager.useProgram(program);
@@ -918,7 +939,7 @@ public class UGraphics {
     }
 
     public static int glCreateProgram() {
-        //#if STANDALONE
+        //#if MC >= 26.4
         //$$ return GL20.glCreateProgram();
         //#elseif MC>=11502
         //$$ return GlStateManager.createProgram();
@@ -928,7 +949,7 @@ public class UGraphics {
     }
 
     public static int glCreateShader(int type) {
-        //#if STANDALONE
+        //#if MC >= 26.4
         //$$ return GL20.glCreateShader(type);
         //#elseif MC>=11502
         //$$ return GlStateManager.createShader(type);
@@ -938,7 +959,7 @@ public class UGraphics {
     }
 
     public static void glCompileShader(int shaderIn) {
-        //#if STANDALONE
+        //#if MC >= 26.4
         //$$ GL20.glCompileShader(shaderIn);
         //#elseif MC>=11502
         //$$ GlStateManager.compileShader(shaderIn);
@@ -948,7 +969,7 @@ public class UGraphics {
     }
 
     public static int glGetShaderi(int shaderIn, int pname) {
-        //#if STANDALONE
+        //#if MC >= 26.4
         //$$ return GL20.glGetShaderi(shaderIn, pname);
         //#elseif MC>=11502
         //$$ return GlStateManager.getShader(shaderIn,pname);
@@ -958,7 +979,7 @@ public class UGraphics {
     }
 
     public static String glGetShaderInfoLog(int shader, int maxLen) {
-        //#if STANDALONE
+        //#if MC >= 26.4
         //$$ return GL20.glGetShaderInfoLog(shader, maxLen);
         //#elseif MC>=11502
         //$$ return GlStateManager.getShaderInfoLog( shader,maxLen);
@@ -968,7 +989,7 @@ public class UGraphics {
     }
 
     public static void glAttachShader(int program, int shaderIn) {
-        //#if STANDALONE
+        //#if MC >= 26.4
         //$$ GL20.glAttachShader(program, shaderIn);
         //#elseif MC>=11502
         //$$ GlStateManager.attachShader(program,shaderIn);
@@ -978,7 +999,7 @@ public class UGraphics {
     }
 
     public static void glLinkProgram(int program) {
-        //#if STANDALONE
+        //#if MC >= 26.4
         //$$ GL20.glLinkProgram(program);
         //#elseif MC>=11502
         //$$ GlStateManager.linkProgram(program);
@@ -988,7 +1009,7 @@ public class UGraphics {
     }
 
     public static int glGetProgrami(int program, int pname) {
-        //#if STANDALONE
+        //#if MC >= 26.4
         //$$ return GL20.glGetProgrami(program, pname);
         //#elseif MC>=11502
         //$$ return GlStateManager.getProgram(program,pname);
@@ -998,7 +1019,7 @@ public class UGraphics {
     }
 
     public static String glGetProgramInfoLog(int program, int maxLen) {
-        //#if STANDALONE
+        //#if MC >= 26.4
         //$$ return GL20.glGetProgramInfoLog(program, maxLen);
         //#elseif MC>=11502
         //$$ return GlStateManager.getProgramInfoLog(program, maxLen);
@@ -1394,7 +1415,9 @@ public class UGraphics {
         //#if MC>=12100
         //$$ BuiltBuffer builtBuffer = instance.endNullable();
         //$$ if (builtBuffer == null) return;
-        //#if MC>=12102
+        //#if MC >= 26.2
+        //$$ // no longer supported; the `doDraw` call below will throw an UnsupportedOperationException
+        //#elseif MC>= 1.21.2
         //$$ builtBuffer.sortQuads(ALLOCATOR, RenderSystem.getProjectionType().getVertexSorter());
         //#else
         //$$ builtBuffer.sortQuads(ALLOCATOR, RenderSystem.getVertexSorting());

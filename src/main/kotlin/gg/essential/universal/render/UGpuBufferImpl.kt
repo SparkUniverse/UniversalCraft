@@ -8,7 +8,7 @@ package gg.essential.universal.render
 import org.lwjgl.opengl.GL15
 //#endif
 
-//#if MC >= 1.21.5 && !STANDALONE
+//#if MC >= 1.21.5 && MC < 26.4
 //$$ import net.minecraft.client.gl.GlGpuBuffer
 //#endif
 
@@ -27,7 +27,7 @@ internal class UGpuBufferImpl(
     //$$ override val size: Long get() = mc.size().toLong()
     //$$ override val isClosed: Boolean get() = mc.isClosed
     //$$ override fun close() = mc.close()
-    //$$ val glId: Int get() = (mc as GlGpuBuffer).glId
+    //$$ val glId: Int get() = mc.glId
     //#else
     override var isClosed = false
         private set
@@ -73,9 +73,15 @@ internal val UGpuBuffer.impl: UGpuBufferImpl
     //#else
     //$$ get() = when (buffer) { is UGpuBufferImpl -> buffer.mc.slice(offset.toInt(), size.toInt()) }
     //#endif
-//$$
+//#endif
+
+//#if MC >= 1.21.6 && !STANDALONE
 //$$ private val glGpuBufferIdFieldAccessor by lazy {
-//$$     val field = GlGpuBuffer::class.java
+    //#if MC >= 26.4
+    //$$ val field = Class.forName("com.mojang.renderpearl.backend.opengl.GlBuffer")
+    //#else
+    //$$ val field = GlGpuBuffer::class.java
+    //#endif
         //#if MC >= 26.1
         //$$ .getDeclaredField("handle")
         //#else
@@ -90,6 +96,6 @@ internal val UGpuBuffer.impl: UGpuBufferImpl
 //$$     field.isAccessible = true
 //$$     MethodHandles.lookup().unreflectGetter(field)
 //$$ }
-//$$ private val GlGpuBuffer.glId: Int
+//$$ private val GpuBuffer.glId: Int
 //$$     get() = glGpuBufferIdFieldAccessor.invoke(this) as Int
 //#endif

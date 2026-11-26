@@ -446,7 +446,14 @@ class UFontRenderer(
     //$$
     //#if MC >= 1.21.9
     //$$     private fun draw(drawable: TextDrawable) =
-    //$$         drawable.render(matrix, builder(drawable.pipeline, drawable.textureView()), light, false)
+    //$$         drawable.render(matrix, builder(
+                //#if MC >= 26.4
+                //$$ drawable.guiPipeline().pipeline(),
+                //#else
+                //$$ drawable.pipeline,
+                //#endif
+    //$$             drawable.textureView()
+    //$$         ), light, false)
     //#if MC >= 1.21.11
     //$$     override fun drawGlyph(glyph: TextDrawable.DrawnGlyphRect) = draw(glyph)
     //#else

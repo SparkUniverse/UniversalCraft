@@ -13,8 +13,8 @@ interface DrawCallBuilder {
     fun texture(name: String, textureView: UGpuTextureView, sampler: UGpuSampler): DrawCallBuilder
     fun texture(index: Int, textureView: UGpuTextureView, sampler: UGpuSampler): DrawCallBuilder
 
-    @Deprecated("Does not support Vulkan; uses hard-coded sampler on 1.21.11+, relies on texture configuration on older versions.")
+    @Deprecated("Unsupported on 26.4+. Does not support Vulkan; uses hard-coded sampler on 1.21.11+, relies on texture configuration on older versions.")
     fun texture(name: String, textureGlId: Int): DrawCallBuilder
-    @Deprecated("Does not support Vulkan; uses hard-coded sampler on 1.21.11+, relies on texture configuration on older versions.")
+    @Deprecated("Unsupported on 26.4+. Does not support Vulkan; uses hard-coded sampler on 1.21.11+, relies on texture configuration on older versions.")
     fun texture(index: Int, textureGlId: Int): DrawCallBuilder
 }

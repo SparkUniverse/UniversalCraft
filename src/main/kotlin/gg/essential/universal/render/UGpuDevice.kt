@@ -47,6 +47,35 @@ sealed interface UGpuDevice {
         mipLevel: Int,
         arrayLayer: Int,
     )
+    fun copyTextureToBuffer(
+        source: UGpuTexture,
+        sourceX: Int,
+        sourceY: Int,
+        destination: UGpuBufferSlice,
+        destinationX: Int,
+        destinationY: Int,
+        // Note: destinationWidth currently must match copyWidth when more than one line is being copied
+        destinationWidth: Int,
+        destinationHeight: Int,
+        copyWidth: Int,
+        copyHeight: Int,
+        mipLevel: Int,
+        arrayLayer: Int,
+    )
+    fun copyTextureToTexture(
+        source: UGpuTexture,
+        sourceX: Int,
+        sourceY: Int,
+        sourceMipLevel: Int,
+        sourceArrayLayer: Int,
+        destination: UGpuTexture,
+        destinationX: Int,
+        destinationY: Int,
+        destinationMipLevel: Int,
+        destinationArrayLayer: Int,
+        copyWidth: Int,
+        copyHeight: Int,
+    )
 
     fun createFence(): UGpuFence
 

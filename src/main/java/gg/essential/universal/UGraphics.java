@@ -140,8 +140,6 @@ import org.lwjgl.util.vector.Vector4f;
 //#if MC>=11502
 //$$ import com.mojang.blaze3d.platform.GlStateManager;
 //$$ import net.minecraft.client.renderer.texture.NativeImage;
-//$$ import java.io.ByteArrayInputStream;
-//$$ import java.io.ByteArrayOutputStream;
 //#endif
 
 //#if MC>=11400
@@ -874,14 +872,25 @@ public class UGraphics {
 
     public static ReleasedDynamicTexture getTexture(BufferedImage img) {
         //#if MC>=11502 && !STANDALONE
-        //$$ try {
-        //$$     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        //$$     ImageIO.write(img, "png", baos );
-        //$$     return new ReleasedDynamicTexture(NativeImage.read(new ByteArrayInputStream(baos.toByteArray())));
-        //$$ } catch (IOException e) {
-        //$$     e.printStackTrace();
+        //$$ int width = img.getWidth();
+        //$$ int height = img.getHeight();
+        //$$ int[] rowArgb = new int[width];
+        //$$ NativeImage nativeImage = new NativeImage(width, height, false);
+        //$$ for (int y = 0; y < height; y++) {
+        //$$     // Buffer one row at a time
+        //$$     img.getRGB(0, y, width, 1, rowArgb, 0, width);
+        //$$     for (int x = 0; x < width; x++) {
+        //$$         int argb = rowArgb[x];
+                //#if MC>=12102
+                //$$ nativeImage.setColorArgb(x, y, argb);
+                //#else
+                //$$ // 1.21.1 and below used abgr instead of argb
+                //$$ int abgr = (argb & 0xFF00FF00) | ((argb >> 16) & 0xFF) | ((argb & 0xFF) << 16);
+                //$$ nativeImage.setPixelRGBA(x, y, abgr); // Incorrect mappings, its abgr
+                //#endif
+        //$$     }
         //$$ }
-        //$$ throw new IllegalStateException("Failed to create texture");
+        //$$ return new ReleasedDynamicTexture(nativeImage);
         //#else
         return new ReleasedDynamicTexture(img);
         //#endif
